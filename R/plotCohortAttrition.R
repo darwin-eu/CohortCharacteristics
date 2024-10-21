@@ -78,7 +78,7 @@ plotCohortAttrition <- function(result,
   nCohorts <- length(unique(result$group_level))
   if (nCohorts > 1) {
     return(
-      emptyTable(paste0(nCohorts, " present in the reuslt object, please subset to just one of them"))
+      emptyTable(paste0(nCohorts, " cohorts present in the result object, please subset to just one of them"))
     )
   }
 
