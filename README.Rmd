@@ -13,9 +13,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-# CohortCharacteristics <a href="https://darwin-eu-dev.github.io/CohortCharacteristics/"><img src="man/figures/logo.png" align="right" height="130"/></a>
+# CohortCharacteristics <a href="https://darwin-eu.github.io/CohortCharacteristics/"><img src="man/figures/logo.png" align="right" height="130"/></a>
 
-[![CRAN status](https://www.r-pkg.org/badges/version/CohortCharacteristics)](https://CRAN.R-project.org/package=CohortCharacteristics) [![codecov.io](https://codecov.io/github/darwin-eu-dev/CohortCharacteristics/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu-dev/CohortCharacteristics?branch=main) [![R-CMD-check](https://github.com/darwin-eu-dev/CohortCharacteristics/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu-dev/CohortCharacteristics/actions) [![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/CohortCharacteristics)](https://CRAN.R-project.org/package=CohortCharacteristics) [![codecov.io](https://codecov.io/github/darwin-eu/CohortCharacteristics/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CohortCharacteristics?branch=main) [![R-CMD-check](https://github.com/darwin-eu/CohortCharacteristics/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CohortCharacteristics/actions) [![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 ## Package overview
 
@@ -37,7 +37,7 @@ Or install the development version from github:
 
 ```{r, eval=FALSE}
 install.packages("pak")
-pak::pkg_install("darwin-eu-dev/CohortCharacteristics")
+pak::pkg_install("darwin-eu/CohortCharacteristics")
 ```
 
 ```{r}
@@ -48,7 +48,7 @@ library(CohortCharacteristics)
 
 The package contain three types of functions:
 
--   **summarise**\* type functions. These functions produce <summarised_result> standard output. See [omopgenerics](https://darwin-eu-dev.github.io/omopgenerics/articles/summarised_result.html) for more information on this standardised output format. These functions are the ones that do the work in terms of extracting the necessary data from the cdm and summarising it.
+-   **summarise**\* type functions. These functions produce <summarised_result> standard output. See [omopgenerics](https://darwin-eu.github.io/omopgenerics/articles/summarised_result.html) for more information on this standardised output format. These functions are the ones that do the work in terms of extracting the necessary data from the cdm and summarising it.
 -   **table**\* type functions. These functions work with the output of the summarise ones. They will produce a table visualisation created using the [visOmopresults](https://cran.r-project.org/package=visOmopResults) package.
 -   **plot**\* type functions. These functions work with the output of the summarise ones. They will produce a plot visualisation created using the [visOmopresults](https://cran.r-project.org/package=visOmopResults) package.
 

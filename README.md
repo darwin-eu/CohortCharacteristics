@@ -1,10 +1,10 @@
 
-# CohortCharacteristics <a href="https://darwin-eu-dev.github.io/CohortCharacteristics/"><img src="man/figures/logo.png" align="right" height="130"/></a>
+# CohortCharacteristics <a href="https://darwin-eu.github.io/CohortCharacteristics/"><img src="man/figures/logo.png" align="right" height="130"/></a>
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/CohortCharacteristics)](https://CRAN.R-project.org/package=CohortCharacteristics)
-[![codecov.io](https://codecov.io/github/darwin-eu-dev/CohortCharacteristics/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu-dev/CohortCharacteristics?branch=main)
-[![R-CMD-check](https://github.com/darwin-eu-dev/CohortCharacteristics/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu-dev/CohortCharacteristics/actions)
+[![codecov.io](https://codecov.io/github/darwin-eu/CohortCharacteristics/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CohortCharacteristics?branch=main)
+[![R-CMD-check](https://github.com/darwin-eu/CohortCharacteristics/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CohortCharacteristics/actions)
 [![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 ## Package overview
@@ -15,12 +15,13 @@ table has been created, CohortCharacteristics provides a number of
 functions to help provide a summary of the characteristics of the
 individuals within the cohort.
 
+    #> 
     #> To cite package 'CohortCharacteristics' in publications use:
     #> 
     #>   Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M
     #>   (????). _CohortCharacteristics: Summarise and Visualise
     #>   Characteristics of Patients in the OMOP CDM_. R package version
-    #>   0.3.0, <https://darwin-eu-dev.github.io/CohortCharacteristics/>.
+    #>   0.3.0, <https://darwin-eu.github.io/CohortCharacteristics/>.
     #> 
     #> A BibTeX entry for LaTeX users is
     #> 
@@ -28,7 +29,7 @@ individuals within the cohort.
     #>     title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},
     #>     author = {Marti Catala and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},
     #>     note = {R package version 0.3.0},
-    #>     url = {https://darwin-eu-dev.github.io/CohortCharacteristics/},
+    #>     url = {https://darwin-eu.github.io/CohortCharacteristics/},
     #>   }
 
 ## Package installation
@@ -43,7 +44,7 @@ Or install the development version from github:
 
 ``` r
 install.packages("pak")
-pak::pkg_install("darwin-eu-dev/CohortCharacteristics")
+pak::pkg_install("darwin-eu/CohortCharacteristics")
 ```
 
 ``` r
@@ -56,7 +57,7 @@ The package contain three types of functions:
 
 - **summarise**\* type functions. These functions produce
   <summarised_result> standard output. See
-  [omopgenerics](https://darwin-eu-dev.github.io/omopgenerics/articles/summarised_result.html)
+  [omopgenerics](https://darwin-eu.github.io/omopgenerics/articles/summarised_result.html)
   for more information on this standardised output format. These
   functions are the ones that do the work in terms of extracting the
   necessary data from the cdm and summarising it.
@@ -120,7 +121,7 @@ result |>
 #> $ variable_level   <chr> NA, NA, NA, NA
 #> $ estimate_name    <chr> "count", "count", "count", "count"
 #> $ estimate_type    <chr> "integer", "integer", "integer", "integer"
-#> $ estimate_value   <chr> "13907", "2679", "137", "137"
+#> $ estimate_value   <chr> "137", "137", "13907", "2679"
 #> $ additional_name  <chr> "overall", "overall", "overall", "overall"
 #> $ additional_level <chr> "overall", "overall", "overall", "overall"
 ```
@@ -165,8 +166,8 @@ result |>
   plotCohortAttrition()
 ```
 
-<div class="grViz html-widget html-fill-item" id="htmlwidget-7a2e91c189cd0fba8e9d" style="width:100%;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-7a2e91c189cd0fba8e9d">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Initial events\nN subjects = 2,679\nN records = 13,908\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,2.1!\"] \n  \"2\" [label = \"Final events\nN subjects = 2,679\nN records = 13,907\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,0.7!\"] \n  \"3\" [label = \"N subjects = 0\nN records = 1\", shape = \"box\", color = \"black\", fillcolor = \"#C0C0C0\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", pos = \"3,1.4!\"] \n  \"4\" [label = \"join exposures separated by\n1 or less days\", shape = \"box\", color = \"black\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.4\", width = \"2.16\", pos = \"1,1.4!\"] \n\"1\"->\"2\" [color = \"black\"] \n\"4\"->\"3\" [color = \"black\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item" id="htmlwidget-b6aad825e40fb67e7e82" style="width:100%;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-b6aad825e40fb67e7e82">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Initial events\nN subjects = 2,679\nN records = 13,908\", shape = \"box\", penwidth = \"2\", color = \"black\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", fillcolor = \"#F0F8FF\", pos = \"1,2.1!\"] \n  \"2\" [label = \"Final events\nN subjects = 2,679\nN records = 13,907\", shape = \"box\", penwidth = \"2\", color = \"black\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", fillcolor = \"#F0F8FF\", pos = \"1,0.7!\"] \n  \"3\" [label = \"N subjects = 0\nN records = 1\", shape = \"box\", color = \"black\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", fillcolor = \"#C0C0C0\", pos = \"3,1.4!\"] \n  \"4\" [label = \"join exposures separated by\n1 or less days\", shape = \"box\", color = \"black\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.4\", width = \"2.16\", fillcolor = \"#FFFFFF\", pos = \"1,1.4!\"] \n\"1\"->\"2\" [color = \"black\"] \n\"4\"->\"3\" [color = \"black\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 
 ### Characteristics
 
