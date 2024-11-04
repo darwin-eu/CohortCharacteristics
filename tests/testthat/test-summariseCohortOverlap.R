@@ -94,6 +94,23 @@ test_that("summariseCohortOverlap", {
   expect_true(nrow(overlap3) == 2 * 6 + 2 * 6 * s1 + 2 * 6 * s2)
 
   mockDisconnect(cdm)
+
+  # use pipe
+  cdm <- mockCohortCharacteristics(
+    con = connection(), writeSchema = writeSchema(),
+    person = person, observation_period = obs, table = table
+  )
+  overlap4 <- cdm$table |>
+    PatientProfiles::addAge(ageGroup = list(c(0, 40), c(41, 100))) |>
+    PatientProfiles::addSex() |>
+    summariseCohortOverlap(
+      cohortId = 1:2,
+      strata = list("age_group", c("age_group", "sex"))
+    )
+
+  expect_identical(overlap3, overlap4)
+
+  mockDisconnect(cdm)
 })
 
 test_that("expect result is deterministic", {
