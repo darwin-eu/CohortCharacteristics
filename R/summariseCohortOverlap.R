@@ -43,18 +43,16 @@ summariseCohortOverlap <- function(cohort,
                                    strata = list()) {
   # validate inputs
   cohort <- omopgenerics::validateCohortArgument(cohort)
-  omopgenerics::assertNumeric(cohortId, null = TRUE)
+  cohortId <- omopgenerics::validateCohortIdArgument(cohortId, cohort)
   checkStrata(strata, cohort)
 
-  # add cohort names
-  cdm <- omopgenerics::cdmReference(cohort)
+  # permanent table
   name <- omopgenerics::tableName(cohort)
-
   if (is.na(name)) {
     cli::cli_abort("Please provide a permanent cohort table.")
   }
 
-  ids <- cdm[[name]] |>
+  ids <- cohort |>
     omopgenerics::settings() |>
     dplyr::pull(.data$cohort_definition_id)
 
@@ -67,26 +65,32 @@ summariseCohortOverlap <- function(cohort,
     }
   }
 
-  cdm[[name]] <- PatientProfiles::addCohortName(cdm[[name]]) |>
-    dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
-    dplyr::compute()
+  prefix <- omopgenerics::tmpPrefix()
 
-  overlapOverallData <- cdm[[name]] |>
+  cohort <- PatientProfiles::addCohortName(cohort) |>
+    dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
+    dplyr::compute(
+      name = omopgenerics::uniqueTableName(prefix), temporary = FALSE
+    )
+
+  overlapOverallData <- cohort |>
     dplyr::distinct(.data$subject_id, .data$cohort_name) |>
     dplyr::rename("cohort_name_reference" = "cohort_name") |>
     dplyr::select(dplyr::all_of(c("subject_id", "cohort_name_reference"))) |>
     dplyr::inner_join(
-      cdm[[name]] |>
+      cohort |>
         dplyr::distinct(.data$subject_id, .data$cohort_name) |>
         dplyr::rename("cohort_name_comparator" = "cohort_name") |>
         dplyr::select(dplyr::all_of(c("subject_id", "cohort_name_comparator"))),
       by = "subject_id"
     ) |>
-    dplyr::compute()
+    dplyr::compute(
+      name = omopgenerics::uniqueTableName(prefix), temporary = FALSE
+    )
 
   # overall
-  cohort_counts <- omopgenerics::cohortCount(cdm[[name]]) |>
-    dplyr::inner_join(omopgenerics::settings(cdm[[name]]),
+  cohort_counts <- omopgenerics::cohortCount(cohort) |>
+    dplyr::inner_join(omopgenerics::settings(cohort),
       by = "cohort_definition_id"
     ) |>
     dplyr::select("cohort_name", "number_subjects")
@@ -113,18 +117,20 @@ summariseCohortOverlap <- function(cohort,
 
   # strata
   if (!is.null(unlist(strata))) {
-    overlapStrataData <- cdm[[name]] |>
+    overlapStrataData <- cohort |>
       dplyr::distinct(dplyr::across(dplyr::all_of(c("subject_id", "cohort_name", unique(unlist(strata)))))) |>
       dplyr::rename("cohort_name_reference" = "cohort_name") |>
       dplyr::select(dplyr::all_of(c("subject_id", "cohort_name_reference", unique(unlist(strata))))) |>
       dplyr::inner_join(
-        cdm[[name]] |>
+        cohort |>
           dplyr::distinct(dplyr::across(dplyr::all_of(c("subject_id", "cohort_name", unique(unlist(strata)))))) |>
           dplyr::rename("cohort_name_comparator" = "cohort_name") |>
           dplyr::select(dplyr::all_of(c("subject_id", "cohort_name_comparator", unique(unlist(strata))))),
         by = c("subject_id", unique(unlist(strata)))
       ) |>
-      dplyr::compute()
+      dplyr::compute(
+        name = omopgenerics::uniqueTableName(prefix), temporary = FALSE
+      )
 
     overlap <- overlap |>
       dplyr::union_all(
@@ -179,7 +185,7 @@ summariseCohortOverlap <- function(cohort,
   }
 
   # report even if there is no overlap (number = 0):
-  names <- cdm[[name]] |>
+  names <- cohort |>
     omopgenerics::settings() |>
     dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
     dplyr::pull(.data$cohort_name)
@@ -242,7 +248,7 @@ summariseCohortOverlap <- function(cohort,
     dplyr::select(!"order_id") |>
     dplyr::mutate(
       result_id = as.integer(1),
-      cdm_name = CDMConnector::cdmName(cdm),
+      cdm_name = omopgenerics::cdmName(cohort),
       additional_name = "overall",
       additional_level = "overall",
       variable_level = dplyr::if_else(
@@ -258,6 +264,9 @@ summariseCohortOverlap <- function(cohort,
         package_version = as.character(utils::packageVersion("CohortCharacteristics"))
       )
     )
+
+  cdm <- omopgenerics::cdmReference(cohort)
+  omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(prefix))
 
   return(overlap)
 }
