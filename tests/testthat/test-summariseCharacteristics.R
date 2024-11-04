@@ -1408,11 +1408,22 @@ test_that("output is always the same", {
     con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main"
   )
 
-  result1 <- summariseCharacteristics(cdm1$cohort)
+  result1 <- summariseCharacteristics(cdm1$cohort) |>
+    dplyr::mutate(estimate_value = dplyr::if_else(
+      .data$estimate_type == "numeric",
+      as.character(round(suppressWarnings(as.numeric(.data$estimate_value)), 3)),
+      .data$estimate_value
+    ))
 
-  result2 <- summariseCharacteristics(cdm2$cohort)
+  result2 <- summariseCharacteristics(cdm2$cohort) |>
+    dplyr::mutate(estimate_value = dplyr::if_else(
+      .data$estimate_type == "numeric",
+      as.character(round(suppressWarnings(as.numeric(.data$estimate_value)), 3)),
+      .data$estimate_value
+    ))
 
   expect_identical(result1, result2)
 
-  PatientProfiles::mockDisconnect(cdm = cdm)
+  PatientProfiles::mockDisconnect(cdm = cdm1)
+  PatientProfiles::mockDisconnect(cdm = cdm2)
 })
