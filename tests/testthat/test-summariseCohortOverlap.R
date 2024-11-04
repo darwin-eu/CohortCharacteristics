@@ -102,7 +102,7 @@ test_that("summariseCohortOverlap", {
   )
   overlap4 <- cdm$table |>
     PatientProfiles::addAge(ageGroup = list(c(0, 40), c(41, 100))) |>
-    PatientProfiles::addSex() |>
+    PatientProfiles::addSex(name = "table") |>
     summariseCohortOverlap(
       cohortId = 1:2,
       strata = list("age_group", c("age_group", "sex"))
