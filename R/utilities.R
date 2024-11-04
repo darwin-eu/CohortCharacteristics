@@ -21,7 +21,7 @@ getUniqueCombinationsSr <- function(x) {
     visOmopResults::splitGroup() |>
     dplyr::mutate(id = dplyr::row_number())
   pairs <- xUniques |>
-    dplyr::inner_join(
+    dplyr::left_join(
       xUniques |>
         dplyr::rename(
           "cohort_name_reference" = "cohort_name_comparator",
@@ -30,7 +30,7 @@ getUniqueCombinationsSr <- function(x) {
       by = c("cohort_name_comparator", "cohort_name_reference"),
       suffix = c("_x", "_y")
     ) |>
-    dplyr::filter(.data$id_x < .data$id_y) |>
+    dplyr::filter(is.na(.data$id_y) | .data$id_x < .data$id_y) |>
     dplyr::select("cohort_name_comparator", "cohort_name_reference") |>
     visOmopResults::uniteGroup(
       cols = c("cohort_name_reference", "cohort_name_comparator")
