@@ -192,3 +192,57 @@ test_that("plotCohortTiming, density", {
   # not sure why 41 to 150 does not have density
   mockDisconnect(cdm)
 })
+
+test_that("plotCohortTiming, density x axis", {
+  cdm <- omopgenerics::cdmFromTables(
+    tables = list(
+      person = dplyr::tibble(
+        person_id = 1L, gender_concept_id = 0L, year_of_birth = 2000L,
+        month_of_birth = 1L, day_of_birth = 1L, birth_datetime = as.Date(NA_character_),
+        race_concept_id = 0L, ethnicity_concept_id = 0L, location_id = 0L,
+        provider_id = 0L, care_site_id = 0L, person_source_value = "",
+        gender_source_value = "", gender_source_concept_id = 0L,
+        race_source_value = "", race_source_concept_id = 0L,
+        ethnicity_source_value = "", ethnicity_source_concept_id = 0L
+      ),
+      observation_period = dplyr::tibble(
+        observation_period_id = 1L, person_id = 1L,
+        observation_period_start_date = as.Date("2010-01-01"),
+        observation_period_end_date = as.Date("2020-12-31"),
+        period_type_concept_id = 0L
+      )
+    ),
+    cdmName = "mock",
+    cohortTables = list(cohort = dplyr::tibble(
+      cohort_definition_id = c(1L, 1L, 1L, 2L, 2L, 2L),
+      subject_id = 1L,
+      cohort_start_date = as.Date(c(
+        "2017-01-01", "2016-01-01", "2017-03-15", "2016-09-09", "2017-01-07",
+        "2017-07-23"
+      )),
+      cohort_end_date = cohort_start_date
+    ))
+  )
+  cdm <- CDMConnector::copyCdmTo(
+    con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main")
+
+  # first
+  timing <- summariseCohortTiming(cdm$cohort)
+  expect_no_error(p <- plotCohortTiming(timing, plotType = "density"))
+  xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
+  expect_true(xLimits[2] - xLimits[1] >= 5)
+  expect_no_error(p <- plotCohortTiming(timing, plotType = "density", timeScale = "years"))
+  xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
+  expect_true(xLimits[2] - xLimits[1] >= 5/365)
+
+  # all
+  timing <- summariseCohortTiming(cdm$cohort, restrictToFirstEntry = FALSE)
+  expect_no_error(p <- plotCohortTiming(timing, plotType = "density"))
+  xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
+  expect_true(xLimits[2] - xLimits[1] >= 5)
+  expect_no_error(p <- plotCohortTiming(timing, plotType = "density", timeScale = "years"))
+  xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
+  expect_true(xLimits[2] - xLimits[1] >= 5/365)
+
+  PatientProfiles::mockDisconnect(cdm = cdm)
+})

@@ -136,6 +136,14 @@ plotCohortTiming <- function(result,
         x = xLab,
         y = ggplot2::element_blank()
       )
+    unit <- switch(timeScale, "days" = 1, "years" = 365)
+    scale <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
+    if (scale[2] - scale[1] < 5/unit) {
+      scale <- round(mean(scale)*unit)/unit
+      lims <- scale + 5/unit/2*c(-1, 1)
+      p <- p +
+        ggplot2::coord_cartesian(xlim = lims)
+    }
   }
 
   p <- addLine(p)

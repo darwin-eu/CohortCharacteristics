@@ -121,7 +121,6 @@ plotCharacteristics <- function(result,
     x <- x[purrr::map_lgl(x, \(x) res[[x]] |>
       unique() |>
       length() > 1)]
-    print(x)
     if (plotStyle == "barplot") {
       p <- result |>
         visOmopResults::barPlot(
