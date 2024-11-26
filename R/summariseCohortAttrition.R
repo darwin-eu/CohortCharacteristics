@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of CohortCharacteristics
 #
@@ -16,9 +16,8 @@
 
 #' Summarise attrition associated with cohorts in a cohort table
 #'
-#' @param cohort A cohort table in the cdm.
-#' @param cohortId A cohort definition id to restrict by. If NULL, all cohorts
-#' will be included.
+#' @inheritParams cohortDoc
+#' @inheritParams cohortIdDoc
 #'
 #' @export
 #'
@@ -98,18 +97,20 @@ summariseAttrition <- function(att,
         dplyr::mutate(
           "result_type" = "summarise_cohort_attrition",
           "package_name" = "CohortCharacteristics",
-          "package_version" = as.character(utils::packageVersion("CohortCharacteristics")),
+          "package_version" = pkgVersion(),
           "table_name" = tname
         ) |>
         dplyr::relocate(dplyr::all_of(c(
           "result_id", "result_type", "package_name", "package_version"
-        )))
+        ))) |>
+        dplyr::mutate(
+          cohort_definition_id = as.character(.data$cohort_definition_id)
+        )
     )
 }
 orderSummaryAttrition <- function(x) {
   vars <- c(
-    "number_records", "number_subjects", "excluded_records",
-    "excluded_subjects"
+    "number_records", "number_subjects", "excluded_records", "excluded_subjects"
   )
   x |>
     dplyr::mutate(additional_level = as.numeric(.data$additional_level)) |>

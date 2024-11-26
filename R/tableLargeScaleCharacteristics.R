@@ -18,25 +18,16 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of
-#' summariseLargeScaleCharacteristics().
+#' @inheritParams resultDoc
 #' @param topConcepts Number of concepts to restrict the table.
-#' @param type Type of table. Check supported types with
-#' `visOmopResults::tableType()`.
-#' @param header Columns to use as header. See options with
-#' `tidyColumns(result)`.
-#' @param groupColumn Columns to group by. See options with
-#' `tidyColumns(result)`.
-#' @param hide Columns to hide from the visualisation. See options with
-#' `tidyColumns(result)`.
-#'
-#' @export
+#' @inheritParams tableDoc
 #'
 #' @return A formatted table.
 #'
+#' @export
+#'
 #' @examples
 #' \dontrun{
-#' library(DBI)
 #' library(duckdb)
 #' library(CDMConnector)
 #'
@@ -62,52 +53,33 @@
 tableLargeScaleCharacteristics <- function(result,
                                            topConcepts = NULL,
                                            type = "gt",
-                                           header = c(
-                                             "cdm_name", "cohort_name",
-                                             visOmopResults::strataColumns(result),
-                                             "variable_level"
-                                           ),
+                                           header = c("cdm_name", "cohort_name", strataColumns(result), "variable_level"),
                                            groupColumn = c("table_name", "type", "analysis"),
                                            hide = character()) {
-  # validate result
-  result <- omopgenerics::validateResultArgument(result)
-  omopgenerics::assertChoice(type, c("gt", "flextable", "tibble"))
-  omopgenerics::assertNumeric(topConcepts, integerish = TRUE, length = 1, null = TRUE)
-
-  # check settings
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_large_scale_characteristics"
+  omopgenerics::assertNumeric(topConcepts, integerish = TRUE, min = 1, null = TRUE, length = 1)
+  result |>
+    tableCohortCharacteristics(
+      resultType = "summarise_large_scale_characteristics",
+      header = header,
+      groupColumn = groupColumn,
+      hide = hide,
+      rename = c("CDM name" = "cdm_name"),
+      modifyResults = \(x, ...) {
+        if (!is.null(topConcepts)) {
+          top <- x |>
+            dplyr::filter(.data$estimate_name == "count") |>
+            dplyr::mutate(estimate_value = as.numeric(.data$estimate_value)) |>
+            dplyr::group_by(.data$variable_name) |>
+            dplyr::summarise(max = max(.data$estimate_value)) |>
+            dplyr::arrange(dplyr::desc(.data$max)) |>
+            utils::head(topConcepts) |>
+            dplyr::select("variable_name")
+          x |>
+            dplyr::inner_join(top, by = "variable_name")
+        }
+        return(x)
+      },
+      estimateName = c("N (%)" = "<count> (<percentage> %)"),
+      type = type
     )
-
-  if (nrow(result) == 0) {
-    cli::cli_warn("`result` object does not contain any `result_type == 'summarise_large_scale_characteristics'` information.")
-    return(emptyResultTable(type))
-  }
-
-  # get only topN
-  if (!is.null(topConcepts)) {
-    top <- result |>
-      dplyr::filter(.data$estimate_name == "count") |>
-      dplyr::mutate("estimate_value" = as.numeric(.data$estimate_value)) |>
-      dplyr::group_by(dplyr::across(!c("variable_name", "estimate_value"))) |>
-      dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
-      utils::head(topConcepts) |>
-      dplyr::ungroup() |>
-      dplyr::select(!dplyr::starts_with("estimate"))
-    result <- result |>
-      dplyr::semi_join(top, by = colnames(top))
-  }
-
-  tab <- visOmopResults::visOmopTable(
-    result = result,
-    estimateName = c("N(%)" = "<count>(<percentage>%)"),
-    header = header,
-    settingsColumns = c("table_name", "type", "analysis"),
-    groupColumn = groupColumn,
-    type = type,
-    hide = hide
-  )
-
-  return(tab)
 }

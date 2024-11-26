@@ -8,29 +8,27 @@ tableCharacteristics(
   result,
   type = "gt",
   header = c("cdm_name", "cohort_name"),
-  groupColumn = NULL,
-  hide = character()
+  groupColumn = character(),
+  hide = c(additionalColumns(result), settingsColumns(result))
 )
 }
 \arguments{
-\item{result}{A summarised_result object. Output of
-summariseCharacteristics().}
+\item{result}{A summarised_result object.}
 
 \item{type}{Type of table. Check supported types with
 \code{visOmopResults::tableType()}.}
 
 \item{header}{Columns to use as header. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{groupColumn}{Columns to group by. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{hide}{Columns to hide from the visualisation. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 }
 \value{
-A table with a formatted version of the summariseCharacteristics
-result.
+A formatted table.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

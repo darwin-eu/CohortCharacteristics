@@ -39,7 +39,8 @@ test_that("tableCohortTiming", {
   )
 
   cdm <- mockCohortCharacteristics(
-    person = person, observation_period = obs, table = table
+    person = person, observation_period = obs, table = table,
+    con = connection(), writeSchema = writeSchema()
   )
 
   timing1 <- summariseCohortTiming(cdm$table,
@@ -103,7 +104,8 @@ test_that("tableCohortTiming", {
     timing2 |>
       dplyr::filter(grepl("cohort_1", group_level)) |>
       dplyr::filter(grepl("2|3", group_level)),
-    header = c("cdm_name", "cohort_name", "age_group", "sex")
+    header = c("cdm_name", "cohort_name", "age_group", "sex"),
+    groupColumn = character()
   )
   expect_true("gt_tbl" %in% class(gt3))
   mockDisconnect(cdm)

@@ -360,13 +360,11 @@ test_that("test summariseCharacteristics", {
         )
       ),
       otherVariables = c("blood_type", "number_visits"),
-      otherVariablesEstimates = c("mean", "count")
+      estimates = list(blood_type = "count", number_visits = "mean")
     )
   )
 
-  expect_true(all(
-    c("Blood type", "Number visits") %in% result$variable_name |> unique()
-  ))
+  expect_true(all(c("Blood type", "Number visits") %in% result$variable_name))
   expect_true("mean" == unique(result$estimate_name[result$variable_name == "Number visits"]))
   expect_true("count" == unique(result$estimate_name[result$variable_name == "Blood type"]))
 
@@ -379,7 +377,7 @@ test_that("test summariseCharacteristics", {
         )
       ),
       otherVariables = c("blood_type", "number_visits"),
-      otherVariablesEstimates = c("mean")
+      estimates = list(number_visits = "mean")
     )
   )
 
@@ -395,14 +393,12 @@ test_that("test summariseCharacteristics", {
           targetCohortTable = "medication", window = list("short" = c(-30, 0))
         )
       ),
-      otherVariables = list("blood_type", "number_visits"),
-      otherVariablesEstimates = list("count", "mean")
+      otherVariables = c("blood_type", "number_visits"),
+      estimates = list(blood_type = "count", number_visits = "mean")
     )
   )
 
-  expect_true(all(
-    c("Blood type", "Number visits") %in% result$variable_name |> unique()
-  ))
+  expect_true(all(c("Blood type", "Number visits") %in% result$variable_name))
   expect_true("mean" == unique(result$estimate_name[result$variable_name == "Number visits"]))
   expect_true("count" == unique(result$estimate_name[result$variable_name == "Blood type"]))
 })
@@ -580,7 +576,7 @@ test_that("test cohort id", {
       dplyr::arrange(.data$variable_name, .data$estimate_name, .data$estimate_value)
   )
 
-  expect_warning(
+  expect_error(
     summariseCharacteristics(
       cdm$dus_cohort,
       cohortId = c(1, 5),
@@ -992,6 +988,7 @@ test_that("arguments cohortIntersect", {
     con = connection(), writeSchema = writeSchema(),
     dus_cohort = dus_cohort,
     cohort1 = cohort1,
+    cohort2 = cohort1,
     observation_period = observation_period
   )
 
@@ -1426,4 +1423,119 @@ test_that("output is always the same", {
 
   PatientProfiles::mockDisconnect(cdm = cdm1)
   PatientProfiles::mockDisconnect(cdm = cdm2)
+})
+
+test_that("arrange ageGroup", {
+  person <- dplyr::tibble(
+    person_id = c(1L, 2L),
+    gender_concept_id = c(8507L, 8532L),
+    year_of_birth = c(1950, 2000),
+    month_of_birth = 1L,
+    day_of_birth = 1L,
+    race_concept_id = 0L,
+    ethnicity_concept_id = 0L
+  )
+  my_cohort <- dplyr::tibble(
+    cohort_definition_id = 1L,
+    subject_id = c(1L, 2L),
+    cohort_start_date = as.Date("2020-01-01"),
+    cohort_end_date = as.Date("2020-01-01")
+  )
+  observation_period <- dplyr::tibble(
+    observation_period_id = c(1L, 2L),
+    person_id = c(1L, 2L),
+    observation_period_start_date = as.Date("2010-01-01"),
+    observation_period_end_date = as.Date("2020-01-01"),
+    period_type_concept_id = 0L
+  )
+
+  cdm <- mockCohortCharacteristics(
+    con = connection(),
+    writeSchema = writeSchema(),
+    person = person,
+    my_cohort = my_cohort,
+    observation_period = observation_period
+  )
+
+  # ascendant order
+  ageGroup <- list("0 to 49" = c(0, 49), "50 or older" = c(50, Inf))
+  res1 <- cdm$my_cohort |>
+    summariseCharacteristics(demographics = FALSE, ageGroup = ageGroup)
+  expect_identical(
+    res1$variable_level |> unique() |> purrr::keep(\(x) !is.na(x)),
+    names(ageGroup)
+  )
+
+  # descending order
+  ageGroup <- list("50 or older" = c(50, Inf), "0 to 49" = c(0, 49))
+  res2 <- cdm$my_cohort |>
+    summariseCharacteristics(demographics = FALSE, ageGroup = ageGroup)
+  expect_identical(
+    res2$variable_level |> unique() |> purrr::keep(\(x) !is.na(x)),
+    names(ageGroup)
+  )
+
+  # multiple age groups
+  ageGroup <- list(
+    "Age group 1" = list("0 to 49" = c(0, 49), "50 or older" = c(50, Inf)),
+    "Age group 2" = list("50 or older" = c(50, Inf), "0 to 49" = c(0, 49))
+  )
+  res3 <- cdm$my_cohort |>
+    summariseCharacteristics(demographics = FALSE, ageGroup = ageGroup)
+  expect_equal(
+    res3 |>
+      dplyr::filter(!grepl("Number", .data$variable_name)) |>
+      dplyr::select("variable_name", "variable_level") |>
+      dplyr::distinct(),
+    dplyr::tibble(
+      variable_name = names(ageGroup)[1],
+      variable_level = names(ageGroup[[1]])
+    ) |>
+      dplyr::union_all(dplyr::tibble(
+        variable_name = names(ageGroup)[2],
+        variable_level = names(ageGroup[[2]])
+      )),
+    ignore_attr = TRUE
+  )
+
+  PatientProfiles::mockDisconnect(cdm)
+})
+
+test_that("test estimates", {
+  skip_on_cran()
+  cdm <- mockCohortCharacteristics(
+    con = connection(), writeSchema = writeSchema()
+  )
+
+  # age_group density
+  result <- cdm$cohort1 |>
+    summariseCharacteristics(estimates = list(age = "density"))
+  estimatesAge <- result |>
+    dplyr::filter(variable_name == "Age") |>
+    dplyr::distinct(.data$estimate_name) |>
+    dplyr::pull() |>
+    sort()
+  expect_identical(estimatesAge, c("density_x", "density_y"))
+
+  resultNormal <- cdm$cohort1 |>
+    summariseCharacteristics() |>
+    dplyr::filter(.data$variable_name != "Age")
+  expect_equal(
+    resultNormal,
+    result |> dplyr::filter(.data$variable_name != "Age"),
+    ignore_attr = TRUE
+  )
+
+  # change default of all dates
+  estimatesDate <- cdm$cohort1 |>
+    summariseCharacteristics(estimates = list(date = "median")) |>
+    dplyr::filter(.data$estimate_type == "date") |>
+    dplyr::distinct(.data$estimate_name) |>
+    dplyr::pull()
+  expect_identical(estimatesDate, "median")
+
+  # ignored field
+  expect_warning(
+    summariseCharacteristics(cdm$cohort1, estimates = list(not_present = "min"))
+  )
 })

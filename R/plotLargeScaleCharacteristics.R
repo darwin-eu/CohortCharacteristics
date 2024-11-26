@@ -18,11 +18,8 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of
-#' summariseLargeScaleCharacteristics().
-#' @param facet Columns to facet by. See options with `tidyColumns(result)`.
-#' Formula is also allowed to specify rows and columns.
-#' @param colour Columns to color by. See options with `tidyColumns(result)`.
+#' @inheritParams resultDoc
+#' @inheritParams plotDoc
 #'
 #' @return A ggplot2 object.
 #'
@@ -63,28 +60,18 @@ plotLargeScaleCharacteristics <- function(result,
   # validate result
   result <- omopgenerics::validateResultArgument(result)
 
-  # check settings
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_large_scale_characteristics"
-    )
-
-  if (nrow(result) == 0) {
-    cli::cli_warn("`result` object does not contain any `result_type == 'summarise_large_scale_characteristics'` information.")
-    return(emptyPlot())
-  }
-
   labs <- unique(result$variable_level)
-
   result |>
     dplyr::mutate(variable_level = factor(.data$variable_level, labs)) |>
-    visOmopResults::scatterPlot(
-      x = "variable_name",
-      y = "percentage",
-      line = FALSE,
-      ribbon = FALSE,
-      point = TRUE,
+    plotInternal(
+      resultType = "summarise_large_scale_characteristics",
+      plotType = "scatterplot",
       facet = facet,
-      colour = colour
+      colour = colour,
+      uniqueCombinations = FALSE,
+      x = "variable_level",
+      y = "percentage",
+      oneVariable = FALSE,
+      toYears = FALSE
     )
 }

@@ -17,11 +17,9 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of summariseCohortCount().
+#' @inheritParams resultDoc
 #' @param x Variables to use in x axis.
-#' @param facet Columns to facet by. See options with `tidyColumns(result)`.
-#' Formula is also allowed to specify rows and columns.
-#' @param colour Columns to color by. See options with `tidyColumns(result)`.
+#' @inheritParams plotDoc
 #'
 #' @return A ggplot.
 #' @export
@@ -54,40 +52,27 @@ plotCohortCount <- function(result,
                             x = NULL,
                             facet = c("cdm_name"),
                             colour = NULL) {
-  # initial checks
-  result <- omopgenerics::validateResultArgument(result) |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_cohort_count"
-    )
-  if (nrow(result) == 0) {
-    cli::cli_warn("No cohort count results found")
-    return(emptyPlot())
+  p <- plotInternal(
+    result = result,
+    resultType = "summarise_cohort_count",
+    plotType = "barplot",
+    facet = facet,
+    colour = colour,
+    uniqueCombinations = FALSE,
+    y = "count",
+    x = x,
+    oneVariable = TRUE,
+    toYears = FALSE
+  )
+
+  if (is.null(x)) {
+    p <- p +
+      ggplot2::xlab("")
   }
 
-  opts <- oneVariable(result)
-
-  p <- visOmopResults::barPlot(
-    result = result,
-    x = x,
-    y = "count",
-    colour = colour,
-    facet = facet
-  ) +
-    ggplot2::theme_bw() +
-    ggplot2::labs(y = opts) +
-    ggplot2::theme(
-      legend.position = "top",
-      legend.title = ggplot2::element_blank()
-    )
+  lab <- unique(result$variable_name)
+  p <- p +
+    ggplot2::ylab(lab)
 
   return(p)
-}
-
-oneVariable <- function(result, call = parent.frame()) {
-  opts <- unique(result$variable_name)
-  if (length(opts) > 1) {
-    "Multiple variables present: {.var {opts}}. Please subset to one of them." |>
-      cli::cli_abort(call = call)
-  }
-  return(opts)
 }

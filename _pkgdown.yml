@@ -6,7 +6,7 @@ articles:
 - title: Get started
   navbar: ~
   contents:
-  - summarise_cohort_entries
+  - articles/summarise_cohort_entries
   - summarise_characteristics
   - summarise_large_scale_characteristics
   - summarise_cohort_overlap
@@ -19,10 +19,15 @@ reference:
 - subtitle: Create visual tables from summarised objects
 - contents:
   - matches("table")
+  - availableTableColumns
 - subtitle: Generate ggplot2 plots from summarised_result objects
   desc: Functions to generate plots (ggplot2) from summarised objects.
 - contents:
   - matches("plot")
+  - availablePlotColumns
+- subtitle: Benchmark
+- contents:
+  - benchmarkCohortCharacteristics
 - subtitle: Helper functions
 - contents:
   - matches("mock")

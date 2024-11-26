@@ -8,28 +8,27 @@ tableCohortCount(
   result,
   type = "gt",
   header = "cohort_name",
-  groupColumn = NULL,
-  hide = "variable_level"
+  groupColumn = character(),
+  hide = c("variable_level", settingsColumns(result))
 )
 }
 \arguments{
-\item{result}{A summarise_characteristics object.}
+\item{result}{A summarised_result object.}
 
 \item{type}{Type of table. Check supported types with
 \code{visOmopResults::tableType()}.}
 
 \item{header}{Columns to use as header. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{groupColumn}{Columns to group by. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{hide}{Columns to hide from the visualisation. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 }
 \value{
-A table with a formatted version of the summariseCohortCount result
-result.
+A formatted table.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

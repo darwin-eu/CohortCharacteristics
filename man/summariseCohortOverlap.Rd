@@ -4,16 +4,23 @@
 \alias{summariseCohortOverlap}
 \title{Summarise overlap between cohorts in a cohort table}
 \usage{
-summariseCohortOverlap(cohort, cohortId = NULL, strata = list())
+summariseCohortOverlap(
+  cohort,
+  cohortId = NULL,
+  strata = list(),
+  overlapBy = "subject_id"
+)
 }
 \arguments{
-\item{cohort}{A cohort table in the cdm.}
+\item{cohort}{A cohort_table object.}
 
 \item{cohortId}{A cohort definition id to restrict by. If NULL, all cohorts
 will be included.}
 
 \item{strata}{A list of variables to stratify results. These variables
 must have been added as additional columns in the cohort table.}
+
+\item{overlapBy}{Columns in cohort to use as record identifiers.}
 }
 \value{
 A summary of overlap between cohorts in the cohort table.

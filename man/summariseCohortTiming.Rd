@@ -14,7 +14,7 @@ summariseCohortTiming(
 )
 }
 \arguments{
-\item{cohort}{A cohort table in a cdm reference.}
+\item{cohort}{A cohort_table object.}
 
 \item{cohortId}{A cohort definition id to restrict by. If NULL, all cohorts
 will be included.}

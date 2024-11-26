@@ -4,11 +4,17 @@
 \alias{plotCohortAttrition}
 \title{create a ggplot from the output of summariseLargeScaleCharacteristics.}
 \usage{
-plotCohortAttrition(result, cohortId = lifecycle::deprecated())
+plotCohortAttrition(
+  result,
+  show = c("subjects", "records"),
+  cohortId = lifecycle::deprecated()
+)
 }
 \arguments{
-\item{result}{A summarised_result object. Output of
-summariseCohortAttrition().}
+\item{result}{A summarised_result object.}
+
+\item{show}{Which variables to show in the attrition plot, it can be
+'subjects', 'records' or both.}
 
 \item{cohortId}{deprecated.}
 }
@@ -37,7 +43,7 @@ result <- summariseCohortAttrition(cdm$cohort1)
 
 result |>
   filter(group_level == "cohort_2") |>
-  plotCohortAttrition(cohortId = 2)
+  plotCohortAttrition()
 
 mockDisconnect(cdm)
 }

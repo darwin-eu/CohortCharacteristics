@@ -34,13 +34,25 @@ omopgenerics::importSummarisedResult
 #' @export
 omopgenerics::exportSummarisedResult
 
-#' @importFrom visOmopResults tidyColumns
+#' @importFrom omopgenerics tidy
 #' @export
-visOmopResults::tidyColumns
+omopgenerics::tidy
 
-#' @importFrom visOmopResults tidy
+#' @importFrom omopgenerics groupColumns
 #' @export
-visOmopResults::tidy
+omopgenerics::groupColumns
+
+#' @importFrom omopgenerics strataColumns
+#' @export
+omopgenerics::strataColumns
+
+#' @importFrom omopgenerics additionalColumns
+#' @export
+omopgenerics::additionalColumns
+
+#' @importFrom omopgenerics settingsColumns
+#' @export
+omopgenerics::settingsColumns
 
 #' It creates a mock database for testing CohortCharacteristics package
 #'

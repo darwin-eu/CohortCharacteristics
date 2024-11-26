@@ -137,7 +137,7 @@ test_that("plotCohortTiming, density", {
 
   timing1 <- summariseCohortTiming(cdm$table, restrictToFirstEntry = FALSE)
   density1 <- plotCohortTiming(timing1,
-    plotType = "density",
+    plotType = "densityplot",
     facet = NULL,
     colour = c("cohort_name_reference", "cohort_name_comparator"),
     uniqueCombinations = TRUE
@@ -148,7 +148,7 @@ test_that("plotCohortTiming, density", {
   # expect_true(density1$labels$fill == "color_var")
 
   density2 <- plotCohortTiming(timing1,
-    plotType = "density",
+    plotType = "densityplot",
     colour = c("cohort_name_comparator"),
     facet = c("cdm_name", "cohort_name_reference"),
     uniqueCombinations = FALSE
@@ -159,7 +159,7 @@ test_that("plotCohortTiming, density", {
 
   timing2 <- summariseCohortTiming(cdm$table, estimates = "density")
   density4 <- plotCohortTiming(timing2,
-    plotType = "density",
+    plotType = "densityplot",
     facet = NULL,
     colour = c("cohort_name_reference", "cohort_name_comparator"),
     uniqueCombinations = TRUE
@@ -179,7 +179,7 @@ test_that("plotCohortTiming, density", {
   )
 
   density3 <- plotCohortTiming(timing3,
-    plotType = "density",
+    plotType = "densityplot",
     colour = c("age_group", "sex"),
     facet = c("cohort_name_reference", "cohort_name_comparator"),
     uniqueCombinations = FALSE
@@ -228,21 +228,22 @@ test_that("plotCohortTiming, density x axis", {
 
   # first
   timing <- summariseCohortTiming(cdm$cohort)
-  expect_no_error(p <- plotCohortTiming(timing, plotType = "density"))
+  expect_no_error(p <- plotCohortTiming(timing, plotType = "densityplot"))
   xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
   expect_true(xLimits[2] - xLimits[1] >= 5)
-  expect_no_error(p <- plotCohortTiming(timing, plotType = "density", timeScale = "years"))
+  expect_no_error(p <- plotCohortTiming(timing, plotType = "densityplot", timeScale = "years"))
   xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
   expect_true(xLimits[2] - xLimits[1] >= 5/365)
 
   # all
   timing <- summariseCohortTiming(cdm$cohort, restrictToFirstEntry = FALSE)
-  expect_no_error(p <- plotCohortTiming(timing, plotType = "density"))
+  expect_no_error(p <- plotCohortTiming(timing, plotType = "densityplot"))
   xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
   expect_true(xLimits[2] - xLimits[1] >= 5)
-  expect_no_error(p <- plotCohortTiming(timing, plotType = "density", timeScale = "years"))
+  expect_no_error(p <- plotCohortTiming(timing, plotType = "densityplot", timeScale = "years"))
   xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
   expect_true(xLimits[2] - xLimits[1] >= 5/365)
 
   PatientProfiles::mockDisconnect(cdm = cdm)
 })
+

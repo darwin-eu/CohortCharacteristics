@@ -7,14 +7,16 @@
 plotCohortCount(result, x = NULL, facet = c("cdm_name"), colour = NULL)
 }
 \arguments{
-\item{result}{A summarised_result object. Output of summariseCohortCount().}
+\item{result}{A summarised_result object.}
 
 \item{x}{Variables to use in x axis.}
 
-\item{facet}{Columns to facet by. See options with \code{tidyColumns(result)}.
-Formula is also allowed to specify rows and columns.}
+\item{facet}{Columns to facet by. See options with
+\code{availablePlotColumns(result)}. Formula is also allowed to specify rows and
+columns.}
 
-\item{colour}{Columns to color by. See options with \code{tidyColumns(result)}.}
+\item{colour}{Columns to color by. See options with
+\code{availablePlotColumns(result)}.}
 }
 \value{
 A ggplot.

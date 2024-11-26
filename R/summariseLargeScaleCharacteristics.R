@@ -17,8 +17,9 @@
 #' This function is used to summarise the large scale characteristics of a
 #' cohort table
 #'
-#' @param cohort The cohort to characterise.
-#' @param strata Stratification list.
+#' @inheritParams cohortDoc
+#' @inheritParams cohortIdDoc
+#' @inheritParams strataDoc
 #' @param window Temporal windows that we want to characterize.
 #' @param eventInWindow Tables to characterise the events in the window. eventInWindow must be provided if episodeInWindow is not specified.
 #' @param episodeInWindow Tables to characterise the episodes in the window. episodeInWindow must be provided if eventInWindow is not specified.
@@ -27,7 +28,9 @@
 #' @param censorDate whether to censor overlap events at a specific date
 #' or a column date of x
 #' @param includeSource Whether to include source concepts.
-#' @param minimumFrequency Minimum frequency covariates to report.
+#' @param minimumFrequency Minimum frequency of codes to be reported. If a
+#' concept_id has a frequency smaller than `minimumFrequency` in a certain
+#' window that estimate will be eliminated from the result object.
 #' @param excludedCodes Codes excluded.
 #'
 #' @return The output of this function is a `ResultSummary` containing the
@@ -60,6 +63,7 @@
 #' cdmDisconnect(cdm)
 #' }
 summariseLargeScaleCharacteristics <- function(cohort,
+                                               cohortId = NULL,
                                                strata = list(),
                                                window = list(
                                                  c(-Inf, -366), c(-365, -31),
@@ -76,6 +80,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
   cdm <- omopgenerics::cdmReference(cohort)
 
   # initial checks
+  cohortId <- omopgenerics::validateCohortIdArgument({cohortId}, cohort = cohort)
   checkX(cohort)
   checkStrata(strata, cohort)
   window <- omopgenerics::validateWindowArgument(window, snakeCase = FALSE)
@@ -113,7 +118,9 @@ summariseLargeScaleCharacteristics <- function(cohort,
   tablePrefix <- omopgenerics::tmpPrefix()
 
   # initial table
-  x <- getInitialTable(cohort, tablePrefix, indexDate, censorDate)
+  x <- cohort |>
+    dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
+    getInitialTable(tablePrefix, indexDate, censorDate)
 
   # get analysis table
   analyses <- getAnalyses(eventInWindow, episodeInWindow)
@@ -235,7 +242,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
         dplyr::mutate(
           "result_type" = "summarise_large_scale_characteristics",
           "package_name" = "CohortCharacteristics",
-          "package_version" = as.character(utils::packageVersion("CohortCharacteristics"))
+          "package_version" = pkgVersion()
         )
     )
 

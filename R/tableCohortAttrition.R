@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of CohortCharacteristics
 #
@@ -18,18 +18,10 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of
-#' summariseCohortAttrition().
-#' @param type Type of table. Check supported types with
-#' `visOmopResults::tableType()`.
-#' @param header Columns to use as header. See options with
-#' `tidyColumns(result)`.
-#' @param groupColumn Columns to group by. See options with
-#' `tidyColumns(result)`.
-#' @param hide Columns to hide from the visualisation. See options with
-#' `tidyColumns(result)`.
+#' @inheritParams resultDoc
+#' @inheritParams tableDoc
 #'
-#' @return A visual table.
+#' @return A formatted table.
 #'
 #' @export
 #'
@@ -50,43 +42,16 @@ tableCohortAttrition <- function(result,
                                  type = "gt",
                                  header = "variable_name",
                                  groupColumn = c("cdm_name", "cohort_name"),
-                                 hide = c("variable_level", "reason_id", "estimate_name")) {
-  # initial checks
-  result <- omopgenerics::validateResultArgument(result)
-  omopgenerics::assertChoice(type, c("gt", "flextable", "tibble"))
-
-  # check settings
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_cohort_attrition"
+                                 hide = c("variable_level", "reason_id", "estimate_name", settingsColumns(result))) {
+  result |>
+    tableCohortCharacteristics(
+      resultType = "summarise_cohort_attrition",
+      header = header,
+      groupColumn = groupColumn,
+      hide = hide,
+      rename = c("CDM name" = "cdm_name"),
+      modifyResults = NULL,
+      estimateName = c("N" = "<count>"),
+      type = type
     )
-
-  if (nrow(result) == 0) {
-    cli::cli_warn("`result` object does not contain any `result_type == 'summarise_cohort_attrition'` information.")
-    return(emptyResultTable(type))
-  }
-
-  # format table
-  tab <- visOmopResults::visOmopTable(
-    result = result,
-    estimateName = c("N" = "<count>"),
-    header = header,
-    groupColumn = groupColumn,
-    type = type,
-    hide = hide
-  )
-
-  return(tab)
-}
-
-emptyResultTable <- function(type) {
-  x <- dplyr::tibble(`Table has no data` = character())
-  if (type == "gt") {
-    result <- gt::gt(x)
-  } else if (type == "flextable") {
-    result <- flextable::flextable(x)
-  } else {
-    result <- x
-  }
-  result
 }

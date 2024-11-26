@@ -8,15 +8,13 @@ tableLargeScaleCharacteristics(
   result,
   topConcepts = NULL,
   type = "gt",
-  header = c("cdm_name", "cohort_name", visOmopResults::strataColumns(result),
-    "variable_level"),
+  header = c("cdm_name", "cohort_name", strataColumns(result), "variable_level"),
   groupColumn = c("table_name", "type", "analysis"),
   hide = character()
 )
 }
 \arguments{
-\item{result}{A summarised_result object. Output of
-summariseLargeScaleCharacteristics().}
+\item{result}{A summarised_result object.}
 
 \item{topConcepts}{Number of concepts to restrict the table.}
 
@@ -24,13 +22,13 @@ summariseLargeScaleCharacteristics().}
 \code{visOmopResults::tableType()}.}
 
 \item{header}{Columns to use as header. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{groupColumn}{Columns to group by. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{hide}{Columns to hide from the visualisation. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 }
 \value{
 A formatted table.
@@ -40,7 +38,6 @@ A formatted table.
 }
 \examples{
 \dontrun{
-library(DBI)
 library(duckdb)
 library(CDMConnector)
 

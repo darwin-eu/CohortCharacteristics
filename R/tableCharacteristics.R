@@ -18,16 +18,12 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of
-#' summariseCharacteristics().
-#' @param type Type of table. Check supported types with
-#' `visOmopResults::tableType()`.
-#' @param header Columns to use as header. See options with
-#' `tidyColumns(result)`.
-#' @param groupColumn Columns to group by. See options with
-#' `tidyColumns(result)`.
-#' @param hide Columns to hide from the visualisation. See options with
-#' `tidyColumns(result)`.
+#' @inheritParams resultDoc
+#' @inheritParams tableDoc
+#'
+#' @return A formatted table.
+#'
+#' @export
 #'
 #' @examples
 #' \donttest{
@@ -42,48 +38,29 @@
 #' mockDisconnect(cdm)
 #' }
 #'
-#' @return A table with a formatted version of the summariseCharacteristics
-#' result.
-#'
-#' @export
-#'
 tableCharacteristics <- function(result,
                                  type = "gt",
                                  header = c("cdm_name", "cohort_name"),
-                                 groupColumn = NULL,
-                                 hide = character()) {
-  # initial checks
-  result <- omopgenerics::validateResultArgument(result)
-  omopgenerics::assertChoice(type, c("gt", "flextable", "tibble"))
-
-  # check settings
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_characteristics"
+                                 groupColumn = character(),
+                                 hide = c(additionalColumns(result), settingsColumns(result))) {
+  result |>
+    tableCohortCharacteristics(
+      resultType = "summarise_characteristics",
+      header = header,
+      groupColumn = groupColumn,
+      hide = hide,
+      rename = c("CDM name" = "cdm_name"),
+      modifyResults = \(x, ...) {
+        x |>
+          dplyr::filter(!.data$estimate_name %in% c("density_x", "density_y"))
+      },
+      estimateName = c(
+        "N (%)" = "<count> (<percentage>%)",
+        "N" = "<count>",
+        "Median [Q25 - Q75]" = "<median> [<q25> - <q75>]",
+        "Mean (SD)" = "<mean> (<sd>)",
+        "Range" = "<min> to <max>"
+      ),
+      type = type
     )
-
-  if (nrow(result) == 0) {
-    cli::cli_warn("`result` object does not contain any `result_type == 'summarise_characteristics'` information.")
-    return(emptyResultTable(type))
-  }
-
-  estimateName <- c(
-    "N (%)" = "<count> (<percentage>%)",
-    "N" = "<count>",
-    "Median [Q25 - Q75]" = "<median> [<q25> - <q75>]",
-    "Mean (SD)" = "<mean> (<sd>)",
-    "Range" = "<min> to <max>"
-  )
-
-  # format table
-  tab <- visOmopResults::visOmopTable(
-    result = result,
-    estimateName = estimateName,
-    header = header,
-    groupColumn = groupColumn,
-    type = type,
-    hide = hide
-  )
-
-  return(tab)
 }
