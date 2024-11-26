@@ -79,6 +79,5 @@ test_that("basic functionality summarise large scale characteristics", {
       minimumFrequency = 0
     )
 
-
   expect_no_error(tableLargeScaleCharacteristics(result))
 })

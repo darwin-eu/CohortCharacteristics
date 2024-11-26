@@ -49,8 +49,8 @@ library(CohortCharacteristics)
 The package contain three types of functions:
 
 -   **summarise**\* type functions. These functions produce <summarised_result> standard output. See [omopgenerics](https://darwin-eu.github.io/omopgenerics/articles/summarised_result.html) for more information on this standardised output format. These functions are the ones that do the work in terms of extracting the necessary data from the cdm and summarising it.
--   **table**\* type functions. These functions work with the output of the summarise ones. They will produce a table visualisation created using the [visOmopresults](https://cran.r-project.org/package=visOmopResults) package.
--   **plot**\* type functions. These functions work with the output of the summarise ones. They will produce a plot visualisation created using the [visOmopresults](https://cran.r-project.org/package=visOmopResults) package.
+-   **table**\* type functions. These functions work with the output of the summarise ones. They will produce a table visualisation created using the [visOmopResults](https://cran.r-project.org/package=visOmopResults) package.
+-   **plot**\* type functions. These functions work with the output of the summarise ones. They will produce a plot visualisation created using the [visOmopResults](https://cran.r-project.org/package=visOmopResults) package.
 
 ## Examples
 
@@ -62,9 +62,7 @@ Although the package provides some simple mock data for testing (`mockCohortChar
 library(CDMConnector)
 library(duckdb)
 library(dplyr, warn.conflicts = FALSE)
-folder <- tempdir()
-Sys.setenv("EUNOMIA_DATA_FOLDER" = folder)
-downloadEunomiaData(overwrite = TRUE)
+requireEunomia()
 con <- dbConnect(duckdb(), eunomiaDir())
 cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
 ```
@@ -108,10 +106,21 @@ result <- summariseCohortAttrition(cdm$my_cohort)
 tableCohortAttrition(result, type = "flextable")
 ```
 
-```{r}
+```{r, eval = FALSE}
 result |>
   filter(group_level == "161_acetaminophen") |>
   plotCohortAttrition()
+```
+```{r, echo = FALSE, results='asis'}
+fil <- 'man/figures/attrition.svg'
+file <- file.path(getwd(), fil)
+result |>
+  filter(group_level == "161_acetaminophen") |>
+  plotCohortAttrition() |>
+  DiagrammeRsvg::export_svg() |>
+  writeLines(con = file)
+paste0('<img src="',  fil, '" width="100%" />') |>
+  cat()
 ```
 
 ### Characteristics
@@ -127,7 +136,7 @@ tableCharacteristics(result, type = "flextable")
 ```{r}
 result |>
   filter(variable_name == "Age") |>
-  plotCharacteristics(plotStyle = "boxplot", colour = "cohort_name")
+  plotCharacteristics(plotType = "boxplot", colour = "cohort_name")
 ```
 
 ### Timing between cohorts
@@ -137,7 +146,7 @@ result <- summariseCohortTiming(cdm$my_cohort)
 ```
 
 ```{r}
-tableCohortTiming(result, header = "cdm_name", type = "flextable")
+tableCohortTiming(result, type = "flextable")
 ```
 
 ```{r}
@@ -153,7 +162,7 @@ plotCohortTiming(
 ```{r}
 plotCohortTiming(
   result,
-  plotType = "density",
+  plotType = "densityplot",
   uniqueCombinations = FALSE,
   facet = "cdm_name",
   colour = c("cohort_name_comparator"),

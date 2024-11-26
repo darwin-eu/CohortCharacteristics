@@ -24,15 +24,15 @@ summariseCharacteristics(
   conceptIntersectDate = list(),
   conceptIntersectDays = list(),
   otherVariables = character(),
-  otherVariablesEstimates = c("min", "q25", "median", "q75", "max", "count",
-    "percentage")
+  estimates = list(),
+  otherVariablesEstimates = lifecycle::deprecated()
 )
 }
 \arguments{
-\item{cohort}{A cohort table in the cdm.}
+\item{cohort}{A cohort_table object.}
 
-\item{cohortId}{Vector of cohort definition ids to include. If NULL all
-cohort will be selected.}
+\item{cohortId}{A cohort definition id to restrict by. If NULL, all cohorts
+will be included.}
 
 \item{strata}{A list of variables to stratify results. These variables
 must have been added as additional columns in the cohort table.}
@@ -85,8 +85,14 @@ PatientProfiles::addConceptIntersectDays() to add variables to summarise.}
 \item{otherVariables}{Other variables contained in cohort that you want to be
 summarised.}
 
-\item{otherVariablesEstimates}{Name of the estimates for the otherVariables
-columns.}
+\item{estimates}{To modify the default estimates for a variable.
+By default: 'min', 'q25', 'median', 'q75', 'max' for "date", "numeric" and
+"integer" variables ("numeric" and "integer" also use 'mean' and 'sd'
+estimates). 'count' and 'percentage' for "categorical" and "binary".
+You have to provide them as a list: \code{list(age = c("median", "density"))}. You
+can also use 'date', 'numeric', 'binary' or 'categorical' keywords.}
+
+\item{otherVariablesEstimates}{deprecated.}
 }
 \value{
 A summary of the characteristics of the cohorts in the cohort table.
@@ -111,14 +117,12 @@ cdm$cohort1 |>
     strata = list("sex", "age_group"),
     cohortIntersectFlag = list(
       "Cohort 2 Flag" = list(
-        targetCohortTable = "cohort2",
-        window = c(-365, 0)
+        targetCohortTable = "cohort2", window = c(-365, 0)
       )
     ),
     cohortIntersectCount = list(
       "Cohort 2 Count" = list(
-        targetCohortTable = "cohort2",
-        window = c(-365, 0)
+        targetCohortTable = "cohort2", window = c(-365, 0)
       )
     )
   ) |>

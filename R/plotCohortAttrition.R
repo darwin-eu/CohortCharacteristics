@@ -18,8 +18,9 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of
-#' summariseCohortAttrition().
+#' @inheritParams resultDoc
+#' @param show Which variables to show in the attrition plot, it can be
+#' 'subjects', 'records' or both.
 #' @param cohortId deprecated.
 #'
 #' @return A `grViz` visualisation.
@@ -45,17 +46,23 @@
 #'
 #' result |>
 #'   filter(group_level == "cohort_2") |>
-#'   plotCohortAttrition(cohortId = 2)
+#'   plotCohortAttrition()
 #'
 #' mockDisconnect(cdm)
 #' }
 #'
 plotCohortAttrition <- function(result,
+                                show = c("subjects", "records"),
                                 cohortId = lifecycle::deprecated()) {
   if (lifecycle::is_present(cohortId)) {
     lifecycle::deprecate_soft("0.3.0", "plotCohortAttrition(cohortId = )")
   }
   rlang::check_installed("DiagrammeR")
+  omopgenerics::assertChoice(show, choices = c("subjects", "records"), unique = TRUE)
+  if (length(show) == 0) {
+    cli::cli_warn("`show` can not be empty")
+    return(emptyDiagram("No variable to be displayed. `show` can not be empty."))
+  }
 
   if (inherits(result, "cohort_table")) {
     result <- summariseCohortAttrition(result)
@@ -73,43 +80,46 @@ plotCohortAttrition <- function(result,
     )
   if (nrow(result) == 0) {
     cli::cli_warn("No attrition found in the results")
-    return(emptyTable("No attrition found in the results"))
+    return(emptyDiagram("No attrition found in the results"))
   }
   nCohorts <- length(unique(result$group_level))
   if (nCohorts > 1) {
     return(
-      emptyTable(paste0(nCohorts, " cohorts present in the result object, please subset to just one of them"))
+      emptyDiagram(paste0(nCohorts, " cohorts present in the result object, please subset to just one of them"))
     )
   }
 
-  x <- result |>
+  checkVersion(result)
+
+  cNumb <- paste0("number_", show)
+  cExcl <- paste0("excluded_", show)
+
+  xn <- result |>
     visOmopResults::splitAll() |>
     visOmopResults::pivotEstimates(
       pivotEstimatesBy = c("variable_name", "estimate_name"),
       nameStyle = "{variable_name}"
     ) |>
-    dplyr::select(
-      "reason_id", "reason", "number_records", "number_subjects",
-      "excluded_records", "excluded_subjects"
-    ) |>
+    dplyr::select("reason_id", "reason", dplyr::all_of(c(cNumb, cExcl))) |>
     dplyr::mutate(reason_id = as.numeric(.data$reason_id)) |>
     dplyr::arrange(.data$reason_id) |>
-    dplyr::mutate(dplyr::across(dplyr::everything(), as.character))
+    dplyr::mutate(
+      dplyr::across(dplyr::everything(), as.character),
+      dplyr::across(dplyr::all_of(c(cNumb, cExcl)), formatNum)
+    ) |>
+    createLabels(cNumb)
 
-  # Create table to be used in the graph
-  xn <- createLabels(x)
-
-  y <- selectLabels(xn)
+  y <- selectLabels(xn, cExcl)
   xn <- y$xn
   att <- y$att
 
   # Create graph
-  n <- nrow(x)
+  n <- nrow(xn)
   xg <- DiagrammeR::create_graph()
 
   w1 <- getWidthMainBox(xn)
 
-  if (nrow(x) == 1) {
+  if (nrow(xn) == 1) {
     xg <- getSingleNode(xg, xn, w1)
   } else {
     att <- validateReason(att)
@@ -127,7 +137,7 @@ plotCohortAttrition <- function(result,
   return(DiagrammeR::render_graph(xg))
 }
 
-emptyTable <- function(message) {
+emptyDiagram <- function(message) {
   DiagrammeR::create_graph() |>
     DiagrammeR::add_node(
       label = message,
@@ -152,20 +162,26 @@ formatNum <- function(col) {
   )
 }
 
-createLabels <- function(x) {
-  x <- x |>
-    dplyr::mutate(
-      number_subjects = formatNum(.data$number_subjects),
-      number_records = formatNum(.data$number_records),
-      excluded_subjects = formatNum(.data$excluded_subjects),
-      label = paste0(
-        "N subjects = ", .data$number_subjects, "\nN records = ", .data$number_records
-      )
-    )
+createLabels <- function(x, cols) {
+  subjectCol <- cols[grepl("subjects", cols)]
+  recordsCol <- cols[grepl("records", cols)]
+  if (length(subjectCol) == 0) {
+    x <- x |>
+      dplyr::mutate(label = paste0("N records = ", .data[[recordsCol]]))
+  } else if (length(recordsCol) == 0) {
+    x <- x |>
+      dplyr::mutate(label = paste0("N subjects = ", .data[[subjectCol]]))
+  } else {
+    x <- x |>
+      dplyr::mutate(label = paste0(
+        "N subjects = ", .data[[subjectCol]], "\nN records = ",
+        .data[[recordsCol]]
+      ))
+  }
   return(x)
 }
 
-selectLabels <- function(xn) {
+selectLabels <- function(xn, cExcl) {
   if (nrow(xn) == 1) {
     xn <- xn |>
       dplyr::mutate(label = paste0("Qualifying events", "\n", .data$label)) |>
@@ -175,9 +191,7 @@ selectLabels <- function(xn) {
   } else {
     att <- xn |>
       dplyr::filter(.data$reason_id > min(.data$reason_id)) |>
-      dplyr::mutate(label = paste0(
-        "N subjects = ", .data$excluded_subjects, "\nN records = ", .data$excluded_records
-      )) |>
+      createLabels(cExcl) |>
       dplyr::select("reason", "label")
 
     xn <- xn |>

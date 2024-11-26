@@ -11,13 +11,14 @@ plotLargeScaleCharacteristics(
 )
 }
 \arguments{
-\item{result}{A summarised_result object. Output of
-summariseLargeScaleCharacteristics().}
+\item{result}{A summarised_result object.}
 
-\item{facet}{Columns to facet by. See options with \code{tidyColumns(result)}.
-Formula is also allowed to specify rows and columns.}
+\item{facet}{Columns to facet by. See options with
+\code{availablePlotColumns(result)}. Formula is also allowed to specify rows and
+columns.}
 
-\item{colour}{Columns to color by. See options with \code{tidyColumns(result)}.}
+\item{colour}{Columns to color by. See options with
+\code{availablePlotColumns(result)}.}
 }
 \value{
 A ggplot2 object.

@@ -7,7 +7,7 @@
 summariseCohortCount(cohort, cohortId = NULL, strata = list())
 }
 \arguments{
-\item{cohort}{A cohort table in the cdm.}
+\item{cohort}{A cohort_table object.}
 
 \item{cohortId}{A cohort definition id to restrict by. If NULL, all cohorts
 will be included.}

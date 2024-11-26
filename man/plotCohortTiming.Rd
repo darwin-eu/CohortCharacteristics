@@ -14,20 +14,22 @@ plotCohortTiming(
 )
 }
 \arguments{
-\item{result}{A summarised_result object. Output of summariseCohortTiming().}
+\item{result}{A summarised_result object.}
 
 \item{plotType}{Type of desired formatted table, possibilities are "boxplot" and
-"density".}
+"densityplot".}
 
-\item{timeScale}{Time scale to plot results. Can be days or years.}
+\item{timeScale}{Time scale to show, it can be "days" or "years".}
 
 \item{uniqueCombinations}{Whether to restrict to unique reference and
 comparator comparisons.}
 
-\item{facet}{Columns to facet by. See options with \code{tidyColumns(result)}.
-Formula is also allowed to specify rows and columns.}
+\item{facet}{Columns to facet by. See options with
+\code{availablePlotColumns(result)}. Formula is also allowed to specify rows and
+columns.}
 
-\item{colour}{Columns to color by. See options with \code{tidyColumns(result)}.}
+\item{colour}{Columns to color by. See options with
+\code{availablePlotColumns(result)}.}
 }
 \value{
 A ggplot.
@@ -56,6 +58,16 @@ timings <- summariseCohortTiming(cdm$my_cohort)
 plotCohortTiming(
   timings,
   timeScale = "years",
+  uniqueCombinations = FALSE,
+  facet = c("cdm_name", "cohort_name_reference"),
+  colour = c("cohort_name_comparator")
+)
+
+plotCohortTiming(
+  timings,
+  plotType = "densityplot",
+  timeScale = "years",
+  uniqueCombinations = FALSE,
   facet = c("cdm_name", "cohort_name_reference"),
   colour = c("cohort_name_comparator")
 )

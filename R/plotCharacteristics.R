@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of CohortCharacteristics
 #
@@ -18,12 +18,11 @@
 #'
 #' `r lifecycle::badge('experimental')`
 #'
-#' @param result A summariseCharacteristics result.
-#' @param plotStyle Either `barplot`, `scatterplot` or `boxplot`. If `barplot`
+#' @inheritParams resultDoc
+#' @param plotType Either `barplot`, `scatterplot` or `boxplot`. If `barplot`
 #' or `scatterplot` subset to just one estimate.
-#' @param facet Columns to facet by. See options with `tidyColumns(result)`.
-#' Formula is also allowed to specify rows and columns.
-#' @param colour Columns to color by. See options with `tidyColumns(result)`.
+#' @inheritParams plotDoc
+#' @param plotStyle deprecated.
 #'
 #' @return A ggplot.
 #' @export
@@ -51,7 +50,7 @@
 #'     variable_name == "Cohort2 flag -365 to -1", estimate_name == "percentage"
 #'   ) |>
 #'   plotCharacteristics(
-#'     plotStyle = "barplot",
+#'     plotType = "barplot",
 #'     colour = "variable_level",
 #'     facet = c("cdm_name", "cohort_name")
 #'   )
@@ -59,14 +58,14 @@
 #' results |>
 #'   filter(variable_name == "Age", estimate_name == "mean") |>
 #'   plotCharacteristics(
-#'     plotStyle = "scatterplot",
+#'     plotType = "scatterplot",
 #'     facet = "cdm_name"
 #'   )
 #'
 #' results |>
-#'   filter(variable_name == "Age") |>
+#'   filter(variable_name == "Age", group_level == "cohort_1") |>
 #'   plotCharacteristics(
-#'     plotStyle = "boxplot",
+#'     plotType = "boxplot",
 #'     facet = "cdm_name",
 #'     colour = "cohort_name"
 #'   )
@@ -74,30 +73,34 @@
 #' mockDisconnect(cdm)
 #' }
 plotCharacteristics <- function(result,
-                                plotStyle = "barplot",
+                                plotType = "barplot",
                                 facet = NULL,
-                                colour = NULL) {
+                                colour = NULL,
+                                plotStyle = lifecycle::deprecated()) {
+  # check input
   result <- omopgenerics::validateResultArgument(result)
   omopgenerics::assertChoice(
-    plotStyle, c("barplot", "scatterplot", "boxplot"),
-    length = 1
+    plotType, choices = c("barplot", "scatterplot", "boxplot"), length = 1
   )
 
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_characteristics"
+  # deprecation
+  if (lifecycle::is_present(plotStyle)) {
+    lifecycle::deprecate_soft(
+      when = "0.4.0",
+      what = "plotCharacteristics(plotStyle= )",
+      with = "plotCharacteristics(plotType= )"
     )
-  if (nrow(result) == 0) {
-    cli::cli_warn("No summarised characteristics results found")
-    return(emptyPlot())
+    if (missing(plotType)) {
+      plotType <- plotStyle
+    }
   }
 
-  variable <- oneVariable(result)
+  lab <- unique(result$variable_name)
+  x <- notUniqueColumns(result)
+  x <- x[!x %in% asCharacterFacet(facet)]
 
-  if (plotStyle == "boxplot") {
-    p <- visOmopResults::boxPlot(result, facet = facet, colour = colour) +
-      ggplot2::labs(y = glue::glue("{variable}"))
-  } else {
+  # check only one estimate
+  if (plotType != "boxplot") {
     estimate <- unique(result$estimate_name)
     if (length(estimate) > 1) {
       return(emptyPlot(
@@ -105,41 +108,31 @@ plotCharacteristics <- function(result,
         "Please filter estimate_name column in results before passing to plotCharacteristics()"
       ))
     }
-    x <- c(
-      "variable_level", "cdm_name", visOmopResults::groupColumns(result),
-      visOmopResults::strataColumns(result),
-      visOmopResults::additionalColumns(result)
-    )
-    res <- result |>
-      dplyr::select(
-        "variable_level", "cdm_name", "group_name", "group_level",
-        "strata_name", "strata_level", "additional_name", "additional_level"
-      ) |>
-      dplyr::distinct() |>
-      visOmopResults::splitAll()
-    x <- x[!x %in% facet]
-    x <- x[purrr::map_lgl(x, \(x) res[[x]] |>
-      unique() |>
-      length() > 1)]
-    if (plotStyle == "barplot") {
-      p <- result |>
-        visOmopResults::barPlot(
-          x = x, y = estimate, facet = facet, colour = colour
-        )
-    } else if (plotStyle == "scatterplot") {
-      p <- result |>
-        visOmopResults::scatterPlot(
-          x = x, y = estimate, facet = facet, colour = colour, line = FALSE,
-          point = TRUE, ribbon = FALSE, group = colour
-        )
-    }
-    p <- p +
-      ggplot2::labs(y = glue::glue("{variable} ({estimate})"))
+    lab <- paste0(lab, " (", estimate, ")")
+  } else {
+    estimate <- NULL
   }
 
-  p <- p +
-    ggplot2::theme_bw() +
+  # internal functions
+  p <- plotInternal(
+    result = result,
+    resultType = "summarise_characteristics",
+    plotType = plotType,
+    facet = facet,
+    colour = colour,
+    uniqueCombinations = FALSE,
+    x = x,
+    y = estimate,
+    oneVariable = TRUE,
+    toYears = FALSE
+  ) +
+    ggplot2::ylab(lab) +
     ggplot2::theme(legend.position = "top")
+
+  if (length(x) == 0) {
+    p <- p +
+      ggplot2::xlab(label = ggplot2::element_blank())
+  }
 
   return(p)
 }

@@ -18,20 +18,12 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of summariseCohortTiming().
-#' @param timeScale Time scale to plot results. Can be days or years.
-#' @param uniqueCombinations Whether to restrict to unique reference and
-#' comparator comparisons.
-#' @param type Type of table. Check supported types with
-#' `visOmopResults::tableType()`.
-#' @param header Columns to use as header. See options with
-#' `tidyColumns(result)`.
-#' @param groupColumn Columns to group by. See options with
-#' `tidyColumns(result)`.
-#' @param hide Columns to hide from the visualisation. See options with
-#' `tidyColumns(result)`.
+#' @inheritParams resultDoc
+#' @inheritParams timeScaleDoc
+#' @inheritParams uniqueCombinationsDoc
+#' @inheritParams tableDoc
 #'
-#' @return A formatted table of the summariseCohortTiming result.
+#' @return A formatted table.
 #'
 #' @export
 #'
@@ -53,12 +45,7 @@
 #'
 #' timings <- summariseCohortTiming(cdm$my_cohort)
 #'
-#' plotCohortTiming(
-#'   timings,
-#'   timeScale = "years",
-#'   facet = c("cdm_name", "cohort_name_reference"),
-#'   colour = c("cohort_name_comparator")
-#' )
+#' tableCohortTiming(timings, timeScale = "years")
 #'
 #' cdmDisconnect(cdm)
 #' }
@@ -67,47 +54,35 @@ tableCohortTiming <- function(result,
                               timeScale = "days",
                               uniqueCombinations = TRUE,
                               type = "gt",
-                              header = visOmopResults::strataColumns(result),
-                              groupColumn = NULL,
-                              hide = "variable_level") {
-  # initial checks
-  result <- omopgenerics::validateResultArgument(result)
-  omopgenerics::assertChoice(timeScale, c("days", "years"))
-  omopgenerics::assertChoice(type, c("gt", "flextable", "tibble"))
+                              header = strataColumns(result),
+                              groupColumn = c("cdm_name"),
+                              hide = c("variable_level", settingsColumns(result))) {
+  omopgenerics::assertChoice(timeScale, c("days", "years"), length = 1)
   omopgenerics::assertLogical(uniqueCombinations, length = 1)
-
-  # check settings
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_cohort_timing"
-    ) |>
-    dplyr::filter(!.data$estimate_name %in% c("density_x", "density_y"))
-
-  if (nrow(result) == 0) {
-    cli::cli_warn("`result` object does not contain any `result_type == 'summarise_cohort_timing'` information.")
-    return(emptyResultTable(type))
-  }
-
-  if (timeScale == "years") {
-    result <- changeDaysToYears(result)
-  }
-
-  if (uniqueCombinations) result <- getUniqueCombinationsSr(result)
-
-  # format table
-  tab <- visOmopResults::visOmopTable(
-    result = result,
-    estimateName = c(
-      "N" = "<count>",
-      "Mean (SD)" = "<mean> (<sd>)",
-      "Median [Q25 - Q75]" = "<median> [<q25> - <q75>]",
-      "Range" = "<min> to <max>"
-    ),
-    header = header,
-    groupColumn = groupColumn,
-    type = type,
-    hide = hide
-  )
-
-  return(tab)
+  result |>
+    tableCohortCharacteristics(
+      resultType = "summarise_cohort_timing",
+      header = header,
+      groupColumn = groupColumn,
+      hide = hide,
+      rename = c("CDM name" = "cdm_name"),
+      modifyResults = \(x, ...) {
+        x <- x |>
+          dplyr::filter(!.data$estimate_name %in% c("density_x", "density_y"))
+        if (timeScale == "years") {
+          x <- changeDaysToYears(x)
+        }
+        if (uniqueCombinations) {
+          x <- getUniqueCombinationsSr(x)
+        }
+        return(x)
+      },
+      estimateName = c(
+        "N" = "<count>",
+        "Mean (SD)" = "<mean> (<sd>)",
+        "Median [Q25 - Q75]" = "<median> [<q25> - <q75>]",
+        "Range" = "<min> to <max>"
+      ),
+      type = type
+    )
 }

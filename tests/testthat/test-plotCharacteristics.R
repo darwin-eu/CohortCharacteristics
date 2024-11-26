@@ -95,7 +95,7 @@ test_that("test plot", {
         variable_name == "Medications",
         estimate_type == "percentage"
       ),
-    plotStyle = "barplot",
+    plotType = "barplot",
     facet = c("cohort_name"),
     colour = c("variable_name", "variable_level")
   )
@@ -106,7 +106,7 @@ test_that("test plot", {
   plot2 <- plotCharacteristics(
     result = test_data |>
       dplyr::filter(variable_name == "Age"),
-    plotStyle = "boxplot",
+    plotType = "boxplot",
     facet = "variable_name",
     colour = c("cohort_name")
   )
@@ -116,19 +116,19 @@ test_that("test plot", {
   expect_no_error(plotCharacteristics(
     result = test_data |>
       dplyr::filter(variable_name == "Age"),
-    plotStyle = "boxplot"
+    plotType = "boxplot"
   ))
 
   expect_no_error(plotCharacteristics(
     result = test_data |>
       dplyr::filter(variable_name == "Age"),
-    plotStyle = "barplot"
+    plotType = "barplot"
   ))
 
   expect_no_error(plotCharacteristics(
     result = test_data |>
       dplyr::filter(variable_name == "Age"),
-    plotStyle = "barplot"
+    plotType = "barplot"
   ))
 })
 
@@ -186,7 +186,7 @@ test_that("plotCharacteristics", {
     result1 |>
       dplyr::filter(variable_name ==
         "Age"),
-    plotStyle = "boxplot",
+    plotType = "boxplot",
     colour = "variable_name"
   )
   expect_true(ggplot2::is.ggplot(gg2))

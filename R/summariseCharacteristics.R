@@ -16,11 +16,9 @@
 
 #' Summarise characteristics of cohorts in a cohort table
 #'
-#' @param cohort A cohort table in the cdm.
-#' @param cohortId Vector of cohort definition ids to include. If NULL all
-#' cohort will be selected.
-#' @param strata A list of variables to stratify results. These variables
-#' must have been added as additional columns in the cohort table.
+#' @inheritParams cohortDoc
+#' @inheritParams cohortIdDoc
+#' @inheritParams strataDoc
 #' @param counts TRUE or FALSE. If TRUE, record and person counts will
 #' be produced.
 #' @param demographics TRUE or FALSE. If TRUE, patient demographics (cohort
@@ -53,8 +51,13 @@
 #' PatientProfiles::addConceptIntersectDays() to add variables to summarise.
 #' @param otherVariables Other variables contained in cohort that you want to be
 #' summarised.
-#' @param otherVariablesEstimates Name of the estimates for the otherVariables
-#' columns.
+#' @param estimates To modify the default estimates for a variable.
+#' By default: 'min', 'q25', 'median', 'q75', 'max' for "date", "numeric" and
+#' "integer" variables ("numeric" and "integer" also use 'mean' and 'sd'
+#' estimates). 'count' and 'percentage' for "categorical" and "binary".
+#' You have to provide them as a list: `list(age = c("median", "density"))`. You
+#' can also use 'date', 'numeric', 'binary' or 'categorical' keywords.
+#' @param otherVariablesEstimates deprecated.
 #'
 #' @return A summary of the characteristics of the cohorts in the cohort table.
 #'
@@ -77,14 +80,12 @@
 #'     strata = list("sex", "age_group"),
 #'     cohortIntersectFlag = list(
 #'       "Cohort 2 Flag" = list(
-#'         targetCohortTable = "cohort2",
-#'         window = c(-365, 0)
+#'         targetCohortTable = "cohort2", window = c(-365, 0)
 #'       )
 #'     ),
 #'     cohortIntersectCount = list(
 #'       "Cohort 2 Count" = list(
-#'         targetCohortTable = "cohort2",
-#'         window = c(-365, 0)
+#'         targetCohortTable = "cohort2", window = c(-365, 0)
 #'       )
 #'     )
 #'   ) |>
@@ -111,15 +112,14 @@ summariseCharacteristics <- function(cohort,
                                      conceptIntersectDate = list(),
                                      conceptIntersectDays = list(),
                                      otherVariables = character(),
-                                     otherVariablesEstimates = c("min", "q25", "median", "q75", "max", "count", "percentage")) {
+                                     estimates = list(),
+                                     otherVariablesEstimates = lifecycle::deprecated()) {
   # check initial tables
   cdm <- omopgenerics::cdmReference(cohort)
   checkX(cohort)
+  cohortId <- omopgenerics::validateCohortIdArgument({{cohortId}}, cohort)
   omopgenerics::assertLogical(demographics, length = 1)
   cdm <- omopgenerics::validateCdmArgument(cdm)
-  if (!is.list(strata)) {
-    strata <- list(strata)
-  }
   strata <- checkStrata(strata, cohort)
   ageGroup <- omopgenerics::validateAgeGroupArgument(ageGroup)
   omopgenerics::assertLogical(counts)
@@ -136,31 +136,23 @@ summariseCharacteristics <- function(cohort,
   conceptIntersectDate <- assertIntersect(conceptIntersectDate)
   conceptIntersectDays <- assertIntersect(conceptIntersectDays)
   otherVariables <- checkOtherVariables(otherVariables, cohort)
-  otherVariablesEstimates <- checkOtherVariablesEstimates(otherVariablesEstimates, otherVariables)
-  omopgenerics::assertNumeric(cohortId, integerish = TRUE, null = TRUE)
-  ids <- omopgenerics::settings(cohort)$cohort_definition_id
-  if (is.null(cohortId)) {
-    cohortId <- ids
-  } else {
-    indNot <- !cohortId %in% ids
-    if (sum(indNot) > 0) {
-      if (sum(indNot) == length(cohortId)) {
-        cli::cli_abort("No valid cohort ids supplied.")
-      } else {
-        cli::cli_warn("{paste0(cohortId[indNot], collapse = ', ')} {?is/are} not in the cohort table and won't be used.")
-        cohortId <- cohortId[!indNot]
-      }
-    }
+  omopgenerics::assertList(estimates, named = TRUE, class = "character")
+
+  if (lifecycle::is_present(otherVariablesEstimates)) {
+    lifecycle::deprecate_stop(
+      when = "0.4.0",
+      what = "summariseCharacteristics(otherVariablesEstimates= )",
+      with = "summariseCharacteristics(estimates= )",
+      details = "See `estimates` argument documentation."
+    )
   }
 
   srSet <- dplyr::tibble(
-    "result_id" = 1L,
-    "package_name" = "CohortCharacteristics",
-    "package_version" = as.character(utils::packageVersion(
-      "CohortCharacteristics"
-    )),
-    "result_type" = "summarise_characteristics",
-    "table_name" = omopgenerics::tableName(cohort)
+    result_id = 1L,
+    package_name = "CohortCharacteristics",
+    package_version = pkgVersion(),
+    result_type = "summarise_characteristics",
+    table_name = dplyr::coalesce(omopgenerics::tableName(cohort), "temp")
   )
 
   # return empty result if no analyses chosen
@@ -181,21 +173,8 @@ summariseCharacteristics <- function(cohort,
     length(conceptIntersectDate) == 0 &&
     length(conceptIntersectDays) == 0 &&
     all(lengths(otherVariables) == 0)) {
-    return(
-      omopgenerics::emptySummarisedResult() |>
-        omopgenerics::newSummarisedResult(settings = srSet)
-    )
+    return(omopgenerics::emptySummarisedResult(settings = srSet))
   }
-
-  # functions
-  functions <- list(
-    date = c("min", "q25", "median", "q75", "max"),
-    numeric = c(
-      "min", "q25", "median", "q75", "max", "mean", "sd"
-    ),
-    categorical = c("count", "percentage"),
-    binary = c("count", "percentage")
-  )
 
   # select necessary variables
   cohort <- cohort |>
@@ -203,7 +182,7 @@ summariseCharacteristics <- function(cohort,
     dplyr::select(
       "cohort_definition_id", "subject_id", "cohort_start_date",
       "cohort_end_date", dplyr::all_of(unique(unlist(strata))),
-      dplyr::all_of(unique(unlist(otherVariables)))
+      dplyr::all_of(otherVariables)
     )
 
   if (omopgenerics::isTableEmpty(cohort)) {
@@ -241,7 +220,7 @@ summariseCharacteristics <- function(cohort,
   variables <- list()
 
   # demographics
-  if (demographics) {
+  if (demographics | length(ageGroup) > 0) {
     cli::cli_alert_info("adding demographics columns")
 
     sex <- uniqueVariableName()
@@ -264,41 +243,48 @@ summariseCharacteristics <- function(cohort,
           value = as.character(NA)
         ))
       names(ageGroup) <- newNames
-      demographicsCategorical <- c(demographicsCategorical, newNames)
+      variables <- variables |>
+        updateVariables(categorical = newNames)
     }
-    dic <- dic |>
-      dplyr::union_all(dplyr::tibble(
-        short_name = c(sex, age, priorObservation, futureObservation, duration),
-        new_variable_name = c(
-          "sex", "age", "prior_observation", "future_observation",
-          "days_in_cohort"
-        ),
-        new_variable_level = as.character(NA),
-        table = as.character(NA),
-        window = as.character(NA),
-        value = as.character(NA)
-      ))
+
+    if (demographics) {
+      dic <- dic |>
+        dplyr::union_all(dplyr::tibble(
+          short_name = c(sex, age, priorObservation, futureObservation, duration),
+          new_variable_name = c(
+            "sex", "age", "prior_observation", "future_observation",
+            "days_in_cohort"
+          ),
+          new_variable_level = as.character(NA),
+          table = as.character(NA),
+          window = as.character(NA),
+          value = as.character(NA)
+        ))
+      variables <- variables |>
+        updateVariables(
+          date = c("cohort_start_date", "cohort_end_date"),
+          numeric = c(priorObservation, futureObservation, age, duration),
+          categorical = sex
+        )
+    }
 
     # add demographics
     cohort <- cohort |>
       PatientProfiles::addDemographics(
         ageGroup = ageGroup,
+        sex = demographics,
         sexName = sex,
+        age = demographics,
         ageName = age,
+        priorObservation = demographics,
         priorObservationName = priorObservation,
+        futureObservation = demographics,
         futureObservationName = futureObservation
       ) %>%
       dplyr::mutate(!!duration := as.integer(
         !!CDMConnector::datediff("cohort_start_date", "cohort_end_date") + 1
       ))
 
-    # update summary settings
-    variables <- variables |>
-      updateVariables(
-        date = c("cohort_start_date", "cohort_end_date"),
-        numeric = c(priorObservation, futureObservation, age, duration),
-        categorical = demographicsCategorical
-      )
   }
 
   # intersects
@@ -369,11 +355,14 @@ summariseCharacteristics <- function(cohort,
         )
 
       if (value == "date") {
-        variables <- variables |> updateVariables(date = shortNames)
+        variables <- variables |>
+          updateVariables(date = shortNames)
       } else if (value %in% c("days", "count")) {
-        variables <- variables |> updateVariables(numeric = shortNames)
+        variables <- variables |>
+          updateVariables(numeric = shortNames)
       } else if (value == "flag") {
-        variables <- variables |> updateVariables(binary = shortNames)
+        variables <- variables |>
+          updateVariables(binary = shortNames)
       }
 
       val$x <- cohort
@@ -387,17 +376,14 @@ summariseCharacteristics <- function(cohort,
   }
 
   # update cohort_names
-  cohort <- cohort |> PatientProfiles::addCohortName()
+  cohort <- cohort |>
+    PatientProfiles::addCohortName()
 
   # detect other variables
-  variables <- variables[lengths(variables) > 0]
-  estimates <- functions[names(variables)]
-
-  otherVariables <- otherVariables[lengths(otherVariables) > 0]
-  otherVariablesEstimates <- otherVariablesEstimates[names(otherVariables)]
-
-  variables <- c(variables, otherVariables)
-  estimates <- c(estimates, otherVariablesEstimates)
+  typesOtherVariables <- cohort |>
+    dplyr::select(dplyr::all_of(otherVariables)) |>
+    PatientProfiles::variableTypes()
+  varest <- variablesEstimates(variables, typesOtherVariables, estimates, dic)
 
   cli::cli_alert_info("summarising data")
   # summarise results
@@ -406,12 +392,36 @@ summariseCharacteristics <- function(cohort,
       PatientProfiles::summariseResult(
         group = list("cohort_name"),
         strata = strata,
-        variables = variables,
-        estimates = estimates,
+        variables = varest$variables,
+        estimates = varest$estimates,
         counts = counts
       ) |>
       PatientProfiles::addCdmName(cdm = cdm)
   )
+
+  # order result
+  combinations <- getCombinations(
+    dplyr::tibble(group_level = settings(cohort)$cohort_name),
+    getStratas(cohort, strata),
+    results |>
+      dplyr::select("variable_name", "variable_level") |>
+      dplyr::distinct() |>
+      arrangeAgeGroup(ageGroup),
+    results |>
+      dplyr::select("estimate_name") |>
+      dplyr::distinct()
+  ) |>
+    dplyr::mutate(order_id = dplyr::row_number())
+  results <- results |>
+    dplyr::left_join(
+      combinations,
+      by = c(
+        "group_level", "strata_name", "strata_level", "variable_name",
+        "variable_level", "estimate_name"
+      )
+    ) |>
+    dplyr::arrange(.data$order_id) |>
+    dplyr::select(-"order_id")
 
   # rename variables
   results <- results |>
@@ -441,29 +451,6 @@ summariseCharacteristics <- function(cohort,
     )) |>
     visOmopResults::uniteAdditional(cols = c("table", "window", "value")) |>
     dplyr::as_tibble()
-
-  # order result
-  combinations <- getCombinations(
-    dplyr::tibble(group_level = settings(cohort)$cohort_name),
-    getStratas(cohort, strata),
-    results |>
-      dplyr::select("variable_name", "variable_level") |>
-      dplyr::distinct(),
-    results |>
-      dplyr::select("estimate_name") |>
-      dplyr::distinct()
-  ) |>
-    dplyr::mutate(order_id = dplyr::row_number())
-  results <- results |>
-    dplyr::left_join(
-      combinations,
-      by = c(
-        "group_level", "strata_name", "strata_level", "variable_name",
-        "variable_level", "estimate_name"
-      )
-    ) |>
-    dplyr::arrange(.data$order_id) |>
-    dplyr::select(-"order_id")
 
   results <- results |>
     dplyr::mutate("result_id" = 1L) |>
@@ -522,4 +509,80 @@ getSummaryName <- function(intersect) {
     ),
     collapse = "_"
   )
+}
+arrangeAgeGroup <- function(x, ageGroup) {
+  if (length(ageGroup) == 0) return(x)
+  tib <- ageGroup |>
+    purrr::imap(\(x, nm) {
+      dplyr::tibble(variable_name = nm, variable_level = names(x))
+    }) |>
+    dplyr::bind_rows() |>
+    dplyr::mutate(id = dplyr::row_number())
+  variableId <- x |>
+    dplyr::select("variable_name") |>
+    dplyr::distinct() |>
+    dplyr::mutate(variable_id = dplyr::row_number())
+  x |>
+    dplyr::inner_join(variableId, by = "variable_name") |>
+    dplyr::full_join(tib, by = c("variable_name", "variable_level")) |>
+    dplyr::mutate(id = dplyr::coalesce(.data$id, 0L)) |>
+    dplyr::arrange(.data$variable_id, .data$id) |>
+    dplyr::select("variable_name", "variable_level")
+}
+variablesEstimates <- function(variables, typesOtherVariables, estimates, dic) {
+  # defaults
+  est <- list(
+    date = c("min", "q25", "median", "q75", "max"),
+    numeric = c("min", "q25", "median", "q75", "max", "mean", "sd"),
+    categorical = c("count", "percentage"),
+    binary = c("count", "percentage")
+  )
+
+  # check names that are categories
+  for (key in names(est)) {
+    if (key %in% names(estimates)) {
+      est[[key]] <- estimates[[key]]
+      estimates[[key]] <- NULL
+    }
+  }
+
+  # other variables
+  for (k in seq_len(nrow(typesOtherVariables))) {
+    var <- typesOtherVariables$variable_name[k]
+    typ <- typesOtherVariables$variable_type[k]
+    if (var %in% names(estimates)) {
+      est[[var]] <- estimates[[var]]
+      estimates[[var]] <- NULL
+      variables <- purrr::map(variables, \(x) x[!x %in% var])
+      variables[[var]] <- var
+    }
+  }
+
+  # demographics variables
+  for (nm in names(estimates)) {
+    if (nm %in% dic$new_variable_name) {
+      est[[nm]] <- estimates[[nm]]
+      estimates[[nm]] <- NULL
+      var <- dic$short_name[dic$new_variable_name == nm]
+      variables <- purrr::map(variables, \(x) x[!x %in% var])
+      variables[[nm]] <- var
+    }
+  }
+
+  # warn ignored
+  ignored <- names(purrr::compact(estimates))
+  if (length(ignored) > 0) {
+    "{.var {ignored}} names in estimates ignored as not present in data." |>
+      cli::cli_warn()
+  }
+
+  # eliminate empty elements
+  variables <- purrr::compact(variables)
+  est <- purrr::compact(est)
+  nms <- intersect(names(est), names(variables))
+  variables <- variables[nms]
+  est <- est[nms]
+
+  # return both lists
+  list(variables = variables, estimates = est)
 }

@@ -17,14 +17,11 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of summariseCohortOverlap().
-#' @param uniqueCombinations Whether to restrict to unique reference and
-#' comparator comparisons.
+#' @inheritParams resultDoc
+#' @inheritParams uniqueCombinationsDoc
 #' @param y Variables to use in y axis, if NULL all variables not present in
 #' facet are used.
-#' @param facet Columns to facet by. See options with `tidyColumns(result)`.
-#' Formula is also allowed to specify rows and columns.
-#' @param colour Columns to color by. See options with `tidyColumns(result)`.
+#' @inheritParams plotDoc
 #' @param .options deprecated.
 #'
 #' @return A ggplot.
@@ -38,7 +35,7 @@
 #'
 #' overlap <- summariseCohortOverlap(cdm$cohort2)
 #'
-#' plotCohortOverlap(overlap)
+#' plotCohortOverlap(overlap, uniqueCombinations = FALSE)
 #'
 #' mockDisconnect(cdm)
 #' }
@@ -47,61 +44,22 @@ plotCohortOverlap <- function(result,
                               uniqueCombinations = TRUE,
                               y = NULL,
                               facet = c("cdm_name", "cohort_name_reference"),
-                              colour = "variable_level",
+                              colour = "variable_name",
                               .options = lifecycle::deprecated()) {
-  # initial checks
-  result <- omopgenerics::validateResultArgument(result) |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_cohort_overlap"
-    ) |>
-    dplyr::filter(.data$estimate_name == "percentage")
-  if (nrow(result) == 0) {
-    cli::cli_warn("No cohort overlap results found")
-    return(emptyPlot())
-  }
-
-  # initial checks
-  omopgenerics::assertCharacter(facet, null = TRUE)
-  omopgenerics::assertCharacter(y, null = TRUE)
-  omopgenerics::assertLogical(uniqueCombinations, length = 1)
-
-  if (uniqueCombinations) {
-    result <- result |>
-      getUniqueCombinationsSr()
-  }
-
-  result <- result |>
-    dplyr::mutate(
-      variable_level = dplyr::case_when(
-        .data$variable_name == "reference" ~ "Only in reference cohort",
-        .data$variable_name == "comparator" ~ "Only in comparator cohort",
-        .data$variable_name == "overlap" ~ "In both cohorts",
-      ),
-      variable_name = "Individuals"
-    )
-
-  if (is.null(y)) {
-    y <- c(
-      "cdm_name", visOmopResults::groupColumns(result),
-      visOmopResults::strataColumns(result)
-    )
-    y <- y[!y %in% facet]
-  }
-
-  p <- visOmopResults::barPlot(
+  plotInternal(
     result = result,
-    x = y,
-    y = "percentage",
+    resultType = "summarise_cohort_overlap",
+    plotType = "barplot",
+    facet = facet,
     colour = colour,
-    facet = facet
+    uniqueCombinations = uniqueCombinations,
+    y = "percentage",
+    oneVariable = FALSE,
+    toYears = FALSE
   ) +
     ggplot2::coord_flip() +
-    ggplot2::ylim(c(0, 100.5)) +
-    ggplot2::theme_bw() +
     ggplot2::theme(
       legend.position = "top",
       legend.title = ggplot2::element_blank()
     )
-
-  return(p)
 }

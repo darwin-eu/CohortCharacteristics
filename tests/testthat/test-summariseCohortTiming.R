@@ -48,7 +48,7 @@ test_that("summariseCohortTiming", {
 
   expect_true(all(c("min", "q25", "median", "q75", "max", "count") %in%
     timing1$estimate_name |> unique()))
-  expect_true(omopgenerics::settings(timing1)$restrict_to_first_entry)
+  expect_true(as.logical(omopgenerics::settings(timing1)$restrict_to_first_entry))
 
   timing2 <- summariseCohortTiming(cdm$table,
     restrictToFirstEntry = FALSE,

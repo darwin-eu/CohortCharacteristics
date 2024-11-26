@@ -16,11 +16,9 @@
 
 #' Summarise timing between entries into cohorts in a cohort table
 #'
-#' @param cohort  A cohort table in a cdm reference.
-#' @param cohortId A cohort definition id to restrict by. If NULL, all cohorts
-#' will be included.
-#' @param strata A list of variables to stratify results. These variables
-#' must have been added as additional columns in the cohort table.
+#' @inheritParams cohortDoc
+#' @inheritParams cohortIdDoc
+#' @inheritParams strataDoc
 #' @param restrictToFirstEntry If TRUE only an individual's first entry per
 #' cohort will be considered. If FALSE all entries per individual will be
 #' considered.
@@ -170,9 +168,9 @@ summariseCohortTiming <- function(cohort,
     omopgenerics::newSummarisedResult(settings = dplyr::tibble(
       "result_id" = 1L,
       "package_name" = "CohortCharacteristics",
-      "package_version" = as.character(utils::packageVersion("CohortCharacteristics")),
+      "package_version" = pkgVersion(),
       "result_type" = "summarise_cohort_timing",
-      "restrict_to_first_entry" = restrictToFirstEntry
+      "restrict_to_first_entry" = as.character(restrictToFirstEntry)
     ))
 
   return(result)

@@ -53,13 +53,69 @@ test_that("summariseCohortOverlap", {
     "cohort_name_reference &&& cohort_name_comparator"
   )
   expect_true(nrow(overlap1) == 5 * 4 * 6)
-  expect_true(overlap1 |> dplyr::filter(grepl("cohort_5", .data$group_level)) |> dplyr::pull(estimate_value) |> unique() == "0")
   expect_equal(unique(overlap1$strata_name), "overall")
   expect_equal(unique(overlap1$strata_level), "overall")
   expect_equal(unique(overlap1$additional_name), "overall")
   expect_equal(unique(overlap1$additional_level), "overall")
   expect_true(all(c("count", "percentage") %in% unique(overlap1$estimate_name)))
 
+  # check some numbers
+  id1 <- c(1, 2, 3, 4, 5)
+  id2 <- c(1, 2, 3, 4, 5)
+  set <- omopgenerics::settings(cdm$table) |>
+    dplyr::select("cohort_name", "cohort_definition_id")
+  for (i in id1) {
+    for (j in id2) {
+      if (i != j) {
+        x <- cdm$table |>
+          dplyr::filter(.data$cohort_definition_id %in% .env$i) |>
+          dplyr::distinct(.data$subject_id) |>
+          dplyr::inner_join(
+            cdm$table |>
+              dplyr::filter(.data$cohort_definition_id %in% .env$j) |>
+              dplyr::distinct(.data$subject_id),
+            by = "subject_id"
+          ) |>
+          dplyr::tally() |>
+          dplyr::pull() |>
+          as.character()
+        y <- overlap1 |>
+          visOmopResults::filterGroup(
+            cohort_name_reference == !!set$cohort_name[set$cohort_definition_id == i],
+            cohort_name_comparator == !!set$cohort_name[set$cohort_definition_id == j]
+          ) |>
+          dplyr::filter(variable_name == "In both cohorts", estimate_type == "integer") |>
+          dplyr::pull("estimate_value")
+        expect_identical(x, y)
+      }
+    }
+    count1 <- overlap1 |>
+      visOmopResults::filterGroup(
+        cohort_name_reference == !!set$cohort_name[set$cohort_definition_id == i]
+      ) |>
+      dplyr::filter(estimate_type == "integer" & .data$variable_name != "Only in comparator cohort") |>
+      dplyr::mutate(estimate_value = as.integer(.data$estimate_value)) |>
+      dplyr::group_by(.data$group_level) |>
+      dplyr::summarise(n = sum(.data$estimate_value)) |>
+      dplyr::pull("n") |>
+      unique()
+    count2 <- omopgenerics::cohortCount(cdm$table) |>
+      dplyr::filter(.data$cohort_definition_id == i) |>
+      dplyr::pull("number_subjects") |>
+      as.integer()
+    count3 <- overlap1 |>
+      visOmopResults::filterGroup(
+        cohort_name_comparator == !!set$cohort_name[set$cohort_definition_id == i]
+      ) |>
+      dplyr::filter(estimate_type == "integer" & .data$variable_name != "Only in reference cohort") |>
+      dplyr::mutate(estimate_value = as.integer(.data$estimate_value)) |>
+      dplyr::group_by(.data$group_level) |>
+      dplyr::summarise(n = sum(.data$estimate_value)) |>
+      dplyr::pull("n") |>
+      unique()
+    expect_identical(count1, count2)
+    expect_identical(count1, count3)
+  }
 
   # strata and cohortID ----
   overlap2 <- summariseCohortOverlap(cdm$table,
@@ -159,4 +215,78 @@ test_that("expect result is deterministic", {
 
   CDMConnector::cdmDisconnect(cdm1)
   CDMConnector::cdmDisconnect(cdm2)
+})
+
+test_that("test countBy", {
+  person <- dplyr::tibble(
+    person_id = 1:4L,
+    gender_concept_id = 8532L,
+    year_of_birth = 1950L,
+    month_of_birth = 1L,
+    day_of_birth = 1L,
+    race_concept_id = 0L,
+    ethnicity_concept_id = 0L
+  )
+  cohort <- dplyr::tibble(
+    cohort_definition_id = c(1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L),
+    subject_id = c(1L, 2L, 3L, 4L, 1L, 1L, 1L, 2L, 4L),
+    cohort_start_date = as.Date("2020-01-01"),
+    cohort_end_date = as.Date("2020-12-31"),
+    variable1 = c("A", "A", "A", "A", "A", "A", "B", "B", "A"),
+    variable2 = c("x", "y", "y", "y", "x", "y", "z", "z", "y")
+  )
+  obs <- dplyr::tibble(
+    observation_period_id = 1:4L,
+    person_id = 1:4L,
+    observation_period_start_date = as.Date("1930-01-01"),
+    observation_period_end_date = as.Date("2025-01-01"),
+    period_type_concept_id = 0L
+  )
+
+  cdm <- mockCohortCharacteristics(
+    con = connection(), writeSchema = writeSchema(),
+    person = person, observation_period = obs, cohort = cohort
+  )
+
+  filterOverlap <- function(x) {
+    x |>
+      dplyr::filter(.data$estimate_name == "count") |>
+      getUniqueCombinationsSr() |>
+      dplyr::arrange(.data$variable_name) |>
+      dplyr::pull("estimate_value") |>
+      as.numeric()
+  }
+
+  # order: overlap, (1&2), comparator (2), reference (1)
+
+  # only subject_id
+  summariseCohortOverlap(cdm$cohort) |>
+    filterOverlap() |>
+    expect_identical(c(3, 0, 1))
+
+  # subject_id and variable1
+  cdm$cohort |>
+    summariseCohortOverlap(overlapBy = c("subject_id", "variable1")) |>
+    filterOverlap() |>
+    expect_identical(c(2, 2, 2))
+
+  # subject_id and variable2
+  cdm$cohort |>
+    summariseCohortOverlap(overlapBy = c("subject_id", "variable2")) |>
+    filterOverlap() |>
+    expect_identical(c(2, 3, 2))
+
+  # subject_id, variable1 and variable2
+  cdm$cohort |>
+    summariseCohortOverlap(overlapBy = c("subject_id", "variable1", "variable2")) |>
+    filterOverlap() |>
+    expect_identical(c(2, 3, 2))
+
+  # variable1
+  cdm$cohort |>
+    summariseCohortOverlap(overlapBy = "variable1") |>
+    filterOverlap() |>
+    expect_identical(c(1, 1, 0))
+
+  mockDisconnect(cdm)
 })

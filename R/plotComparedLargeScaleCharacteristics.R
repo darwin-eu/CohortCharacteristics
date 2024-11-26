@@ -18,14 +18,11 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarised_result object. Output of
-#' summariseLargeScaleCharacteristics().
+#' @inheritParams resultDoc
 #' @param reference A named character to set up the reference.
 #' @param missings Value to replace the missing value with. If NULL missing
 #' values will be eliminated.
-#' @param facet Columns to facet by. See options with `tidyColumns(result)`.
-#' Formula is also allowed to specify rows and columns.
-#' @param colour Columns to color by. See options with `tidyColumns(result)`.
+#' @inheritParams plotDoc
 #'
 #' @return A ggplot.
 #'
@@ -83,6 +80,8 @@ plotComparedLargeScaleCharacteristics <- function(result,
     cli::cli_warn("`result` object does not contain any `result_type == 'summarise_large_scale_characteristics'` information.")
     return(emptyPlot())
   }
+
+  checkVersion(result)
 
   checkReference(reference, result)
 

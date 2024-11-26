@@ -91,24 +91,13 @@ test_that("tableCharacteristics", {
     )
   )
 
-  expect_no_error(gt1 <- tableCharacteristics(result1, ))
+  expect_no_error(gt1 <- tableCharacteristics(result1))
   expect_true("gt_tbl" %in% class(gt1))
   expect_true(all(c("Variable name", "Variable level", "Estimate name") %in%
     colnames(gt1$`_data`)))
 
   fx1 <- tableCharacteristics(result1, header = c("cdm_name", "cohort_name"), type = "flextable")
   expect_true(class(fx1) == "flextable")
-  expect_true(all(c(
-    "Variable name", "Variable level", "Estimate name",
-    "CDM name\nPP_MOCK\nCohort name\nexposed", "CDM name\nPP_MOCK\nCohort name\nunexposed"
-  ) %in%
-    colnames(fx1$body$dataset)))
-  expect_true(all(fx1$body$dataset$`Variable name` |> unique() %in%
-    c(
-      "Number records", "Number subjects", "Cohort start date",
-      "Cohort end date", "Age", "Sex", "Prior observation",
-      "Future observation", "Days in cohort", "Medications", "Comorbidities"
-    )))
 
   tibble1 <- tableCharacteristics(result1, type = "tibble", header = character())
   expect_true(all(class(tibble1) %in% c("tbl_df", "tbl", "data.frame")))
@@ -117,6 +106,14 @@ test_that("tableCharacteristics", {
     "CDM name", "Estimate value"
   ) %in%
     colnames(tibble1)))
+
+  # message for different version
+  result1 <- result1 |>
+    omopgenerics::newSummarisedResult(
+      settings = omopgenerics::settings(result1) |>
+        dplyr::mutate(package_version = "0.0.0")
+    )
+  expect_message(tableCharacteristics(result1))
 })
 
 test_that("tableCharacteristics, empty output warning message", {

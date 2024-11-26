@@ -18,71 +18,48 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summariseOverlapCohort result.
-#' @param uniqueCombinations Whether to display unique combinations
-#' reference - comparator.
-#' @param type Type of table. Check supported types with
-#' `visOmopResults::tableType()`.
-#' @param header Columns to use as header. See options with
-#' `tidyColumns(result)`.
-#' @param groupColumn Columns to group by. See options with
-#' `tidyColumns(result)`.
-#' @param hide Columns to hide from the visualisation. See options with
-#' `tidyColumns(result)`.
+#' @inheritParams resultDoc
+#' @inheritParams uniqueCombinationsDoc
+#' @inheritParams tableDoc
+#'
+#' @return A formatted table.
+#'
+#' @export
 #'
 #' @examples
 #' \donttest{
 #' library(CohortCharacteristics)
+#'
 #' cdm <- mockCohortCharacteristics()
+#'
 #' overlap <- summariseCohortOverlap(cdm$cohort2)
+#'
 #' tableCohortOverlap(overlap)
+#'
 #' mockDisconnect(cdm = cdm)
 #' }
-#'
-#' @return A formatted table of the summariseOverlapCohort result.
-#'
-#' @export
 #'
 tableCohortOverlap <- function(result,
                                uniqueCombinations = TRUE,
                                type = "gt",
                                header = c("variable_name"),
                                groupColumn = c("cdm_name"),
-                               hide = c("variable_level")) {
-  # validate result
-  result <- omopgenerics::validateResultArgument(result)
-  omopgenerics::assertChoice(type, c("gt", "flextable", "tibble"))
-
-  # check settings
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_cohort_overlap"
+                               hide = c("variable_level", settingsColumns(result))) {
+  omopgenerics::assertLogical(uniqueCombinations, length = 1)
+  result |>
+    tableCohortCharacteristics(
+      resultType = "summarise_cohort_overlap",
+      header = header,
+      groupColumn = groupColumn,
+      hide = hide,
+      rename = c("CDM name" = "cdm_name"),
+      modifyResults = \(x, ...) {
+        if (uniqueCombinations) {
+          x <- getUniqueCombinationsSr(x)
+        }
+        return(x)
+      },
+      estimateName = c("N (%)" = "<count> (<percentage>%)"),
+      type = type
     )
-
-  if (nrow(result) == 0) {
-    cli::cli_warn("`result` object does not contain any `result_type == 'summarise_cohort_overlap'` information.")
-    return(emptyResultTable(type))
-  }
-
-  result <- result |>
-    dplyr::mutate(variable_name = dplyr::case_when(
-      variable_name == "overlap" ~ "In both cohorts",
-      variable_name == "comparator" ~ "Only in comparator cohort",
-      variable_name == "reference" ~ "Only in reference cohort"
-    ))
-
-  # unique reference - comparator combinations
-  if (uniqueCombinations) result <- getUniqueCombinationsSr(result)
-
-  # format table
-  tab <- visOmopResults::visOmopTable(
-    result = result,
-    formatEstimateName = c("N (%)" = "<count> (<percentage>%)"),
-    header = header,
-    groupColumn = groupColumn,
-    type = type,
-    hide = hide
-  )
-
-  return(tab)
 }

@@ -9,15 +9,15 @@ tableCohortTiming(
   timeScale = "days",
   uniqueCombinations = TRUE,
   type = "gt",
-  header = visOmopResults::strataColumns(result),
-  groupColumn = NULL,
-  hide = "variable_level"
+  header = strataColumns(result),
+  groupColumn = c("cdm_name"),
+  hide = c("variable_level", settingsColumns(result))
 )
 }
 \arguments{
-\item{result}{A summarised_result object. Output of summariseCohortTiming().}
+\item{result}{A summarised_result object.}
 
-\item{timeScale}{Time scale to plot results. Can be days or years.}
+\item{timeScale}{Time scale to show, it can be "days" or "years".}
 
 \item{uniqueCombinations}{Whether to restrict to unique reference and
 comparator comparisons.}
@@ -26,16 +26,16 @@ comparator comparisons.}
 \code{visOmopResults::tableType()}.}
 
 \item{header}{Columns to use as header. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{groupColumn}{Columns to group by. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{hide}{Columns to hide from the visualisation. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 }
 \value{
-A formatted table of the summariseCohortTiming result.
+A formatted table.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -58,12 +58,7 @@ cdm <- generateIngredientCohortSet(
 
 timings <- summariseCohortTiming(cdm$my_cohort)
 
-plotCohortTiming(
-  timings,
-  timeScale = "years",
-  facet = c("cdm_name", "cohort_name_reference"),
-  colour = c("cohort_name_comparator")
-)
+tableCohortTiming(timings, timeScale = "years")
 
 cdmDisconnect(cdm)
 }

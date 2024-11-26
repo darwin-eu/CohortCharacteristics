@@ -10,29 +10,29 @@ tableCohortOverlap(
   type = "gt",
   header = c("variable_name"),
   groupColumn = c("cdm_name"),
-  hide = c("variable_level")
+  hide = c("variable_level", settingsColumns(result))
 )
 }
 \arguments{
-\item{result}{A summariseOverlapCohort result.}
+\item{result}{A summarised_result object.}
 
-\item{uniqueCombinations}{Whether to display unique combinations
-reference - comparator.}
+\item{uniqueCombinations}{Whether to restrict to unique reference and
+comparator comparisons.}
 
 \item{type}{Type of table. Check supported types with
 \code{visOmopResults::tableType()}.}
 
 \item{header}{Columns to use as header. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{groupColumn}{Columns to group by. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{hide}{Columns to hide from the visualisation. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 }
 \value{
-A formatted table of the summariseOverlapCohort result.
+A formatted table.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -40,9 +40,13 @@ A formatted table of the summariseOverlapCohort result.
 \examples{
 \donttest{
 library(CohortCharacteristics)
+
 cdm <- mockCohortCharacteristics()
+
 overlap <- summariseCohortOverlap(cdm$cohort2)
+
 tableCohortOverlap(overlap)
+
 mockDisconnect(cdm = cdm)
 }
 

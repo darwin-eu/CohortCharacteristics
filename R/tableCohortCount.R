@@ -18,15 +18,12 @@
 #'
 #' `r lifecycle::badge("experimental")`
 #'
-#' @param result A summarise_characteristics object.
-#' @param type Type of table. Check supported types with
-#' `visOmopResults::tableType()`.
-#' @param header Columns to use as header. See options with
-#' `tidyColumns(result)`.
-#' @param groupColumn Columns to group by. See options with
-#' `tidyColumns(result)`.
-#' @param hide Columns to hide from the visualisation. See options with
-#' `tidyColumns(result)`.
+#' @inheritParams resultDoc
+#' @inheritParams tableDoc
+#'
+#' @return A formatted table.
+#'
+#' @export
 #'
 #' @examples
 #' \donttest{
@@ -41,40 +38,20 @@
 #' mockDisconnect(cdm = cdm)
 #' }
 #'
-#' @return A table with a formatted version of the summariseCohortCount result
-#' result.
-#'
-#' @export
-#'
 tableCohortCount <- function(result,
                              type = "gt",
                              header = "cohort_name",
-                             groupColumn = NULL,
-                             hide = "variable_level") {
-  # validate result
-  result <- omopgenerics::validateResultArgument(result)
-  omopgenerics::assertChoice(type, c("gt", "flextable", "tibble"))
-
-  # check settings
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_cohort_count"
+                             groupColumn = character(),
+                             hide = c("variable_level", settingsColumns(result))) {
+  result |>
+    tableCohortCharacteristics(
+      resultType = "summarise_cohort_count",
+      header = header,
+      groupColumn = groupColumn,
+      hide = hide,
+      rename = c("CDM name" = "cdm_name"),
+      modifyResults = NULL,
+      estimateName = c("N" = "<count>"),
+      type = type
     )
-
-  if (nrow(result) == 0) {
-    cli::cli_warn("`result` object does not contain any `result_type == 'summarise_cohort_count'` information.")
-    return(emptyResultTable(type))
-  }
-
-  # format table
-  tab <- visOmopResults::visOmopTable(
-    result = result,
-    estimateName = c("N" = "<count>"),
-    header = header,
-    groupColumn = groupColumn,
-    type = type,
-    hide = hide
-  )
-
-  return(tab)
 }

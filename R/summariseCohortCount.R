@@ -1,4 +1,4 @@
-# Copyright 2022 DARWIN EU (C)
+# Copyright 2024 DARWIN EU (C)
 #
 # This file is part of CohortCharacteristics
 #
@@ -16,11 +16,9 @@
 
 #' Summarise counts for cohorts in a cohort table
 #'
-#' @param cohort A cohort table in the cdm.
-#' @param cohortId A cohort definition id to restrict by. If NULL, all cohorts
-#' will be included.
-#' @param strata A list of variables to stratify results. These variables
-#' must have been added as additional columns in the cohort table.
+#' @inheritParams cohortDoc
+#' @inheritParams cohortIdDoc
+#' @inheritParams strataDoc
 #'
 #' @export
 #'
@@ -53,7 +51,7 @@ summariseCohortCount <- function(cohort,
     settings = settings(res) |>
       dplyr::mutate(
         "result_type" = "summarise_cohort_count",
-        "table_name" = omopgenerics::tableName(cohort)
+        "table_name" = dplyr::coalesce(omopgenerics::tableName(cohort), "temp")
       )
   )
 }

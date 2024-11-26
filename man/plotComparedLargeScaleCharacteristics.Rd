@@ -13,18 +13,19 @@ plotComparedLargeScaleCharacteristics(
 )
 }
 \arguments{
-\item{result}{A summarised_result object. Output of
-summariseLargeScaleCharacteristics().}
+\item{result}{A summarised_result object.}
 
 \item{reference}{A named character to set up the reference.}
 
 \item{missings}{Value to replace the missing value with. If NULL missing
 values will be eliminated.}
 
-\item{facet}{Columns to facet by. See options with \code{tidyColumns(result)}.
-Formula is also allowed to specify rows and columns.}
+\item{facet}{Columns to facet by. See options with
+\code{availablePlotColumns(result)}. Formula is also allowed to specify rows and
+columns.}
 
-\item{colour}{Columns to color by. See options with \code{tidyColumns(result)}.}
+\item{colour}{Columns to color by. See options with
+\code{availablePlotColumns(result)}.}
 }
 \value{
 A ggplot.

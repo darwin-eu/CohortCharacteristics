@@ -9,27 +9,26 @@ tableCohortAttrition(
   type = "gt",
   header = "variable_name",
   groupColumn = c("cdm_name", "cohort_name"),
-  hide = c("variable_level", "reason_id", "estimate_name")
+  hide = c("variable_level", "reason_id", "estimate_name", settingsColumns(result))
 )
 }
 \arguments{
-\item{result}{A summarised_result object. Output of
-summariseCohortAttrition().}
+\item{result}{A summarised_result object.}
 
 \item{type}{Type of table. Check supported types with
 \code{visOmopResults::tableType()}.}
 
 \item{header}{Columns to use as header. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{groupColumn}{Columns to group by. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 
 \item{hide}{Columns to hide from the visualisation. See options with
-\code{tidyColumns(result)}.}
+\code{availableTableColumns(result)}.}
 }
 \value{
-A visual table.
+A formatted table.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}

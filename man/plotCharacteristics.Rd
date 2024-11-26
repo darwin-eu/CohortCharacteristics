@@ -4,18 +4,28 @@
 \alias{plotCharacteristics}
 \title{Create a ggplot from the output of summariseCharacteristics.}
 \usage{
-plotCharacteristics(result, plotStyle = "barplot", facet = NULL, colour = NULL)
+plotCharacteristics(
+  result,
+  plotType = "barplot",
+  facet = NULL,
+  colour = NULL,
+  plotStyle = lifecycle::deprecated()
+)
 }
 \arguments{
-\item{result}{A summariseCharacteristics result.}
+\item{result}{A summarised_result object.}
 
-\item{plotStyle}{Either \code{barplot}, \code{scatterplot} or \code{boxplot}. If \code{barplot}
+\item{plotType}{Either \code{barplot}, \code{scatterplot} or \code{boxplot}. If \code{barplot}
 or \code{scatterplot} subset to just one estimate.}
 
-\item{facet}{Columns to facet by. See options with \code{tidyColumns(result)}.
-Formula is also allowed to specify rows and columns.}
+\item{facet}{Columns to facet by. See options with
+\code{availablePlotColumns(result)}. Formula is also allowed to specify rows and
+columns.}
 
-\item{colour}{Columns to color by. See options with \code{tidyColumns(result)}.}
+\item{colour}{Columns to color by. See options with
+\code{availablePlotColumns(result)}.}
+
+\item{plotStyle}{deprecated.}
 }
 \value{
 A ggplot.
@@ -46,7 +56,7 @@ results |>
     variable_name == "Cohort2 flag -365 to -1", estimate_name == "percentage"
   ) |>
   plotCharacteristics(
-    plotStyle = "barplot",
+    plotType = "barplot",
     colour = "variable_level",
     facet = c("cdm_name", "cohort_name")
   )
@@ -54,14 +64,14 @@ results |>
 results |>
   filter(variable_name == "Age", estimate_name == "mean") |>
   plotCharacteristics(
-    plotStyle = "scatterplot",
+    plotType = "scatterplot",
     facet = "cdm_name"
   )
 
 results |>
-  filter(variable_name == "Age") |>
+  filter(variable_name == "Age", group_level == "cohort_1") |>
   plotCharacteristics(
-    plotStyle = "boxplot",
+    plotType = "boxplot",
     facet = "cdm_name",
     colour = "cohort_name"
   )

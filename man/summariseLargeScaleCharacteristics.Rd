@@ -7,6 +7,7 @@ cohort table}
 \usage{
 summariseLargeScaleCharacteristics(
   cohort,
+  cohortId = NULL,
   strata = list(),
   window = list(c(-Inf, -366), c(-365, -31), c(-30, -1), c(0, 0), c(1, 30), c(31, 365),
     c(366, Inf)),
@@ -20,9 +21,13 @@ summariseLargeScaleCharacteristics(
 )
 }
 \arguments{
-\item{cohort}{The cohort to characterise.}
+\item{cohort}{A cohort_table object.}
 
-\item{strata}{Stratification list.}
+\item{cohortId}{A cohort definition id to restrict by. If NULL, all cohorts
+will be included.}
+
+\item{strata}{A list of variables to stratify results. These variables
+must have been added as additional columns in the cohort table.}
 
 \item{window}{Temporal windows that we want to characterize.}
 
@@ -38,7 +43,9 @@ or a column date of x}
 
 \item{includeSource}{Whether to include source concepts.}
 
-\item{minimumFrequency}{Minimum frequency covariates to report.}
+\item{minimumFrequency}{Minimum frequency of codes to be reported. If a
+concept_id has a frequency smaller than \code{minimumFrequency} in a certain
+window that estimate will be eliminated from the result object.}
 
 \item{excludedCodes}{Codes excluded.}
 }

@@ -67,3 +67,6 @@ emptyPlot <- function(title = "No result to plot",
       subtitle = subtitle
     )
 }
+pkgVersion <- function() {
+  as.character(utils::packageVersion("CohortCharacteristics"))
+}
