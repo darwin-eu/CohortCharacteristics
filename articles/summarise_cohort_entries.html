@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Summarise cohort entries">
 </head>
 <body>
@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Summarise cohort entries</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/vignettes/summarise_cohort_entries.Rmd" class="external-link"><code>vignettes/summarise_cohort_entries.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/vignettes/articles/summarise_cohort_entries.Rmd" class="external-link"><code>vignettes/articles/summarise_cohort_entries.Rmd</code></a></small>
       <div class="d-none name"><code>summarise_cohort_entries.Rmd</code></div>
     </div>
 
@@ -617,7 +617,7 @@ we add age groups and then stratify our counts by t We can summarise the
 overall counts of our cohorts.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">injuries</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">injuries</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/PatientProfiles/man/addAge.html" class="external-link">addAge</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://darwin-eu.github.io/PatientProfiles/reference/addAge.html" class="external-link">addAge</a></span><span class="op">(</span></span>
 <span>    ageGroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">3</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">17</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">18</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    name <span class="op">=</span> <span class="st">"injuries"</span></span>
 <span>  <span class="op">)</span></span>
@@ -1212,7 +1212,7 @@ overall counts of our cohorts.</p>
 counts. In this case we will obscure any counts below 10.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cohortCounts</span> <span class="op">&lt;-</span> <span class="va">cohortCounts</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/omopgenerics/man/suppress.html" class="external-link">suppress</a></span><span class="op">(</span>minCellCount <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/suppress.html" class="external-link">suppress</a></span><span class="op">(</span>minCellCount <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/tableCohortCount.html">tableCohortCount</a></span><span class="op">(</span><span class="va">cohortCounts</span><span class="op">)</span></span></code></pre></div>
 <div id="kadgwxbhis" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#kadgwxbhis table {
@@ -1679,7 +1679,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #E1E1E1; text-align: center; font-weight: bold;" scope="col" id="[header_name]Cohort-name-[header_level]ankle_sprain">ankle_sprain</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #E1E1E1; text-align: center; font-weight: bold;" scope="col" id="[header_name]Cohort-name-[header_level]ankle_fracture">ankle_fracture</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #E1E1E1; text-align: center; font-weight: bold;" scope="col" id="[header_name]Cohort-name-[header_level]forearm_fracture">forearm_fracture</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #E1E1E1; text-align: center; font-weight: bold;" scope="col" id="[header_name]Cohort-name-[header_level]hip_fracture">hip_fracture</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #E1E1E1; text-align: center; font-weight: bold;" scope="col" id="[header_name]Cohort-name-[header_level]hip_fracture">hip_fracture</th>
     </tr>
 </thead>
 <tbody class="gt_table_body">
@@ -1695,7 +1695,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <td headers="[header_name]Cohort name
 [header_level]forearm_fracture" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">569</td>
 <td headers="[header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">138</td>
+[header_level]hip_fracture" class="gt_row gt_right" style="text-align: right;">138</td>
 </tr>
 <tr>
 <td headers="CDM name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
@@ -1709,7 +1709,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <td headers="[header_name]Cohort name
 [header_level]forearm_fracture" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">510</td>
 <td headers="[header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">132</td>
+[header_level]hip_fracture" class="gt_row gt_right" style="text-align: right;">132</td>
 </tr>
 <tr>
 <td headers="CDM name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
@@ -1723,7 +1723,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <td headers="[header_name]Cohort name
 [header_level]forearm_fracture" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">51</td>
 <td headers="[header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">&lt;10</td>
+[header_level]hip_fracture" class="gt_row gt_right" style="text-align: right;">-</td>
 </tr>
 <tr>
 <td headers="CDM name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
@@ -1737,7 +1737,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <td headers="[header_name]Cohort name
 [header_level]forearm_fracture" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">51</td>
 <td headers="[header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">&lt;10</td>
+[header_level]hip_fracture" class="gt_row gt_right" style="text-align: right;">-</td>
 </tr>
 <tr>
 <td headers="CDM name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
@@ -1751,7 +1751,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <td headers="[header_name]Cohort name
 [header_level]forearm_fracture" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">268</td>
 <td headers="[header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">88</td>
+[header_level]hip_fracture" class="gt_row gt_right" style="text-align: right;">88</td>
 </tr>
 <tr>
 <td headers="CDM name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
@@ -1765,7 +1765,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <td headers="[header_name]Cohort name
 [header_level]forearm_fracture" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">249</td>
 <td headers="[header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">83</td>
+[header_level]hip_fracture" class="gt_row gt_right" style="text-align: right;">83</td>
 </tr>
 <tr>
 <td headers="CDM name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
@@ -1779,7 +1779,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <td headers="[header_name]Cohort name
 [header_level]forearm_fracture" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">250</td>
 <td headers="[header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">43</td>
+[header_level]hip_fracture" class="gt_row gt_right" style="text-align: right;">43</td>
 </tr>
 <tr>
 <td headers="CDM name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
@@ -1793,7 +1793,7 @@ counts. In this case we will obscure any counts below 10.</p>
 <td headers="[header_name]Cohort name
 [header_level]forearm_fracture" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">239</td>
 <td headers="[header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">43</td>
+[header_level]hip_fracture" class="gt_row gt_right" style="text-align: right;">43</td>
 </tr>
 </tbody>
 </table>
@@ -1824,9 +1824,9 @@ cohort attrition.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/plotCohortAttrition.html">plotCohortAttrition</a></span><span class="op">(</span><span class="va">attritionSummary</span><span class="op">)</span></span></code></pre></div>
 <div class="grViz html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:672px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Initial events\nN subjects = 1,357\nN records = 1,915\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,2.1!\"] \n  \"2\" [label = \"Final events\nN subjects = 422\nN records = 456\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,0.9!\"] \n  \"3\" [label = \"N subjects = 935\nN records = 1459\", shape = \"box\", color = \"black\", fillcolor = \"#C0C0C0\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", pos = \"3,1.5!\"] \n  \"4\" [label = \"Restrict to cohort_start_date >= 2000\", shape = \"box\", color = \"black\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.2\", width = \"2.25\", pos = \"1,1.5!\"] \n\"1\"->\"2\" [color = \"black\"] \n\"4\"->\"3\" [color = \"black\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Initial events\nN subjects = 1,357\nN records = 1,915\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,2.1!\"] \n  \"2\" [label = \"Final events\nN subjects = 422\nN records = 456\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,0.9!\"] \n  \"3\" [label = \"N subjects = 935\nN records = 1,459\", shape = \"box\", color = \"black\", fillcolor = \"#C0C0C0\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", pos = \"3,1.5!\"] \n  \"4\" [label = \"Restrict to cohort_start_date >= 2000\", shape = \"box\", color = \"black\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.2\", width = \"2.25\", pos = \"1,1.5!\"] \n\"1\"->\"2\" [color = \"black\"] \n\"4\"->\"3\" [color = \"black\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/PatientProfiles/man/addAge.html" class="external-link">addAge</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://darwin-eu.github.io/PatientProfiles/reference/addAge.html" class="external-link">addAge</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age</span> <span class="op">&gt;=</span> <span class="fl">18</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">compute</a></span><span class="op">(</span>temporary <span class="op">=</span> <span class="cn">FALSE</span>, name <span class="op">=</span> <span class="st">"ankle_sprain"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">recordCohortAttrition</span><span class="op">(</span><span class="st">"Restrict to age &gt;= 18"</span><span class="op">)</span></span>
@@ -1835,7 +1835,7 @@ cohort attrition.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/plotCohortAttrition.html">plotCohortAttrition</a></span><span class="op">(</span><span class="va">attritionSummary</span><span class="op">)</span></span></code></pre></div>
 <div class="grViz html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:672px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Initial events\nN subjects = 1,357\nN records = 1,915\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,3.1!\"] \n  \"2\" [label = \"N subjects = 422\nN records = 456\", shape = \"box\", penwidth = \"1\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.4\", width = \"1.44\", pos = \"1,2!\"] \n  \"3\" [label = \"Final events\nN subjects = 420\nN records = 454\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,0.9!\"] \n  \"4\" [label = \"N subjects = 935\nN records = 1459\", shape = \"box\", color = \"black\", fillcolor = \"#C0C0C0\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", pos = \"3,2.5!\"] \n  \"5\" [label = \"Restrict to cohort_start_date >= 2000\", shape = \"box\", color = \"black\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.2\", width = \"2.25\", pos = \"1,2.5!\"] \n  \"6\" [label = \"N subjects = 2\nN records = 2\", shape = \"box\", color = \"black\", fillcolor = \"#C0C0C0\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", pos = \"3,1.5!\"] \n  \"7\" [label = \"Restrict to age >= 18\", shape = \"box\", color = \"black\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.2\", width = \"2.25\", pos = \"1,1.5!\"] \n\"1\"->\"2\" [color = \"black\"] \n\"2\"->\"3\" [color = \"black\"] \n\"5\"->\"4\" [color = \"black\"] \n\"7\"->\"6\" [color = \"black\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><p>We could, of course, have applied these requirements the other way
+<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Initial events\nN subjects = 1,357\nN records = 1,915\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,3.1!\"] \n  \"2\" [label = \"N subjects = 422\nN records = 456\", shape = \"box\", penwidth = \"1\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.4\", width = \"1.44\", pos = \"1,2!\"] \n  \"3\" [label = \"Final events\nN subjects = 420\nN records = 454\", shape = \"box\", penwidth = \"2\", color = \"black\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", pos = \"1,0.9!\"] \n  \"4\" [label = \"N subjects = 935\nN records = 1,459\", shape = \"box\", color = \"black\", fillcolor = \"#C0C0C0\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", pos = \"3,2.5!\"] \n  \"5\" [label = \"Restrict to cohort_start_date >= 2000\", shape = \"box\", color = \"black\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.2\", width = \"2.25\", pos = \"1,2.5!\"] \n  \"6\" [label = \"N subjects = 2\nN records = 2\", shape = \"box\", color = \"black\", fillcolor = \"#C0C0C0\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", pos = \"3,1.5!\"] \n  \"7\" [label = \"Restrict to age >= 18\", shape = \"box\", color = \"black\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.2\", width = \"2.25\", pos = \"1,1.5!\"] \n\"1\"->\"2\" [color = \"black\"] \n\"2\"->\"3\" [color = \"black\"] \n\"5\"->\"4\" [color = \"black\"] \n\"7\"->\"6\" [color = \"black\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><p>We could, of course, have applied these requirements the other way
 around.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/generateConceptCohortSet.html" class="external-link">generateConceptCohortSet</a></span><span class="op">(</span></span>
@@ -1847,7 +1847,7 @@ around.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/PatientProfiles/man/addAge.html" class="external-link">addAge</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://darwin-eu.github.io/PatientProfiles/reference/addAge.html" class="external-link">addAge</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age</span> <span class="op">&gt;=</span> <span class="fl">18</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">compute</a></span><span class="op">(</span>temporary <span class="op">=</span> <span class="cn">FALSE</span>, name <span class="op">=</span> <span class="st">"ankle_sprain"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">recordCohortAttrition</span><span class="op">(</span><span class="st">"Restrict to age &gt;= 18"</span><span class="op">)</span></span>

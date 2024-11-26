@@ -13,6 +13,11 @@
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/index.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/news/index.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/CohortCharacteristics-package.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/availablePlotColumns.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/availableTableColumns.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/benchmarkCohortCharacteristics.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/cohortDoc.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/cohortIdDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/index.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/mockCohortCharacteristics.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/plotCharacteristics.html</loc></url>
@@ -21,8 +26,11 @@
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/plotCohortOverlap.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/plotCohortTiming.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/plotComparedLargeScaleCharacteristics.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/plotDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/plotLargeScaleCharacteristics.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/reexports.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/resultDoc.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/strataDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/summariseCharacteristics.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/summariseCohortAttrition.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/summariseCohortCount.html</loc></url>
@@ -34,6 +42,9 @@
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/tableCohortCount.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/tableCohortOverlap.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/tableCohortTiming.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/tableDoc.html</loc></url>
 <url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/tableLargeScaleCharacteristics.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/timeScaleDoc.html</loc></url>
+<url><loc>https://darwin-eu.github.io/CohortCharacteristics/reference/uniqueCombinationsDoc.html</loc></url>
 </urlset>
 

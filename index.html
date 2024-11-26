@@ -14,8 +14,8 @@
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Summarise and Visualise Characteristics of Patients in the OMOP CDM">
 <meta name="description" content="Summarise and visualise the characteristics of patients in data mapped to the Observational Medical Outcomes Partnership (OMOP) common data model (CDM).">
 <meta property="og:description" content="Summarise and visualise the characteristics of patients in data mapped to the Observational Medical Outcomes Partnership (OMOP) common data model (CDM).">
@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.900</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,22 +74,21 @@
 <h2 id="package-overview">Package overview<a class="anchor" aria-label="anchor" href="#package-overview"></a>
 </h2>
 <p>CohortCharacteristics contains functions for summarising characteristics of cohorts of patients identified in an OMOP CDM dataset. Once a cohort table has been created, CohortCharacteristics provides a number of functions to help provide a summary of the characteristics of the individuals within the cohort.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; To cite package 'CohortCharacteristics' in publications use:</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;   Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt;   (????). _CohortCharacteristics: Summarise and Visualise</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt;   Characteristics of Patients in the OMOP CDM_. R package version</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt;   0.3.0, &lt;https://darwin-eu.github.io/CohortCharacteristics/&gt;.</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt;   @Manual{,</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt;     title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt;     author = {Marti Catala and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt;     note = {R package version 0.3.0},</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt;     url = {https://darwin-eu.github.io/CohortCharacteristics/},</span></span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt;   }</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#&gt; To cite package 'CohortCharacteristics' in publications use:</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt;   Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;   (????). _CohortCharacteristics: Summarise and Visualise</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt;   Characteristics of Patients in the OMOP CDM_. R package version</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt;   0.4.0, &lt;https://darwin-eu.github.io/CohortCharacteristics/&gt;.</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt;   @Manual{,</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt;     title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt;     author = {Marti Catala and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt;     note = {R package version 0.4.0},</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt;     url = {https://darwin-eu.github.io/CohortCharacteristics/},</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="package-installation">Package installation<a class="anchor" aria-label="anchor" href="#package-installation"></a>
@@ -113,9 +112,9 @@
 <strong>summarise</strong>* type functions. These functions produce <summarised_result> standard output. See <a href="https://darwin-eu.github.io/omopgenerics/articles/summarised_result.html" class="external-link">omopgenerics</a> for more information on this standardised output format. These functions are the ones that do the work in terms of extracting the necessary data from the cdm and summarising it.</summarised_result>
 </li>
 <li>
-<strong>table</strong>* type functions. These functions work with the output of the summarise ones. They will produce a table visualisation created using the <a href="https://cran.r-project.org/package=visOmopResults" class="external-link">visOmopresults</a> package.</li>
+<strong>table</strong>* type functions. These functions work with the output of the summarise ones. They will produce a table visualisation created using the <a href="https://cran.r-project.org/package=visOmopResults" class="external-link">visOmopResults</a> package.</li>
 <li>
-<strong>plot</strong>* type functions. These functions work with the output of the summarise ones. They will produce a plot visualisation created using the <a href="https://cran.r-project.org/package=visOmopResults" class="external-link">visOmopresults</a> package.</li>
+<strong>plot</strong>* type functions. These functions work with the output of the summarise ones. They will produce a plot visualisation created using the <a href="https://cran.r-project.org/package=visOmopResults" class="external-link">visOmopResults</a> package.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -129,17 +128,13 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CDMConnector/" class="external-link">CDMConnector</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.duckdb.org/" class="external-link">duckdb</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">folder</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span><span class="st">"EUNOMIA_DATA_FOLDER"</span> <span class="op">=</span> <span class="va">folder</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/downloadEunomiaData.html" class="external-link">downloadEunomiaData</a></span><span class="op">(</span>overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Download completed!</span></span>
+<span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/requireEunomia.html" class="external-link">requireEunomia</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdm_from_con.html" class="external-link">cdmFromCon</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">con</span>, cdmSchema <span class="op">=</span> <span class="st">"main"</span>, writeSchema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s create a simple cohort:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu-dev.github.io/DrugUtilisation/" class="external-link">DrugUtilisation</a></span><span class="op">)</span></span>
-<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/DrugUtilisation/man/generateIngredientCohortSet.html" class="external-link">generateIngredientCohortSet</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"my_cohort"</span>, ingredient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warfarin"</span>, <span class="st">"acetaminophen"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/DrugUtilisation/reference/generateIngredientCohortSet.html" class="external-link">generateIngredientCohortSet</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"my_cohort"</span>, ingredient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warfarin"</span>, <span class="st">"acetaminophen"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="cohort-counts">Cohort counts<a class="anchor" aria-label="anchor" href="#cohort-counts"></a>
@@ -188,10 +183,7 @@
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">group_level</span> <span class="op">==</span> <span class="st">"161_acetaminophen"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/plotCohortAttrition.html">plotCohortAttrition</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<div id="htmlwidget-b6aad825e40fb67e7e82" class="grViz html-widget html-fill-item" style="width:100%;height:480px;">
-
-</div>
-<script type="application/json" data-for="htmlwidget-b6aad825e40fb67e7e82">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Initial events\nN subjects = 2,679\nN records = 13,908\", shape = \"box\", penwidth = \"2\", color = \"black\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", fillcolor = \"#F0F8FF\", pos = \"1,2.1!\"] \n  \"2\" [label = \"Final events\nN subjects = 2,679\nN records = 13,907\", shape = \"box\", penwidth = \"2\", color = \"black\", fontname = \"Calibri\", fontsize = \"11\", fontcolor = \"black\", height = \"0.6\", width = \"1.44\", fillcolor = \"#F0F8FF\", pos = \"1,0.7!\"] \n  \"3\" [label = \"N subjects = 0\nN records = 1\", shape = \"box\", color = \"black\", fontname = \"Calibri\", fontsize = \"9\", fontcolor = \"black\", height = \"0.4\", width = \"1.2\", fillcolor = \"#C0C0C0\", pos = \"3,1.4!\"] \n  \"4\" [label = \"join exposures separated by\n1 or less days\", shape = \"box\", color = \"black\", fontname = \"Calibri\", fontsize = \"10\", fontcolor = \"back\", height = \"0.4\", width = \"2.16\", fillcolor = \"#FFFFFF\", pos = \"1,1.4!\"] \n\"1\"->\"2\" [color = \"black\"] \n\"4\"->\"3\" [color = \"black\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<p><img src="reference/figures/attrition.svg" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="characteristics">Characteristics<a class="anchor" aria-label="anchor" href="#characteristics"></a>
@@ -200,12 +192,12 @@
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/summariseCharacteristics.html">summariseCharacteristics</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">$</span><span class="va">my_cohort</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tableCharacteristics.html">tableCharacteristics</a></span><span class="op">(</span><span class="va">result</span>, type <span class="op">=</span> <span class="st">"flextable"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-15-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-16-1.png" width="100%"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">variable_name</span> <span class="op">==</span> <span class="st">"Age"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/plotCharacteristics.html">plotCharacteristics</a></span><span class="op">(</span>plotStyle <span class="op">=</span> <span class="st">"boxplot"</span>, colour <span class="op">=</span> <span class="st">"cohort_name"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-16-1.png" width="100%"></p>
+<span>  <span class="fu"><a href="reference/plotCharacteristics.html">plotCharacteristics</a></span><span class="op">(</span>plotType <span class="op">=</span> <span class="st">"boxplot"</span>, colour <span class="op">=</span> <span class="st">"cohort_name"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-17-1.png" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="timing-between-cohorts">Timing between cohorts<a class="anchor" aria-label="anchor" href="#timing-between-cohorts"></a>
@@ -213,8 +205,8 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/summariseCohortTiming.html">summariseCohortTiming</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">$</span><span class="va">my_cohort</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/tableCohortTiming.html">tableCohortTiming</a></span><span class="op">(</span><span class="va">result</span>, header <span class="op">=</span> <span class="st">"cdm_name"</span>, type <span class="op">=</span> <span class="st">"flextable"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-18-1.png" width="100%"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/tableCohortTiming.html">tableCohortTiming</a></span><span class="op">(</span><span class="va">result</span>, type <span class="op">=</span> <span class="st">"flextable"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-19-1.png" width="100%"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plotCohortTiming.html">plotCohortTiming</a></span><span class="op">(</span></span>
 <span>  <span class="va">result</span>,</span>
@@ -223,17 +215,17 @@
 <span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cohort_name_reference"</span>, <span class="st">"cohort_name_comparator"</span><span class="op">)</span>,</span>
 <span>  timeScale <span class="op">=</span> <span class="st">"years"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-19-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-20-1.png" width="100%"></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plotCohortTiming.html">plotCohortTiming</a></span><span class="op">(</span></span>
 <span>  <span class="va">result</span>,</span>
-<span>  plotType <span class="op">=</span> <span class="st">"density"</span>,</span>
+<span>  plotType <span class="op">=</span> <span class="st">"densityplot"</span>,</span>
 <span>  uniqueCombinations <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  facet <span class="op">=</span> <span class="st">"cdm_name"</span>,</span>
 <span>  colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cohort_name_comparator"</span><span class="op">)</span>,</span>
 <span>  timeScale <span class="op">=</span> <span class="st">"years"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-20-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-21-1.png" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="overlap-between-cohort">Overlap between cohort<a class="anchor" aria-label="anchor" href="#overlap-between-cohort"></a>
@@ -242,10 +234,10 @@
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/summariseCohortOverlap.html">summariseCohortOverlap</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">$</span><span class="va">my_cohort</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tableCohortOverlap.html">tableCohortOverlap</a></span><span class="op">(</span><span class="va">result</span>, type <span class="op">=</span> <span class="st">"flextable"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-22-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-23-1.png" width="100%"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/plotCohortOverlap.html">plotCohortOverlap</a></span><span class="op">(</span><span class="va">result</span>, uniqueCombinations <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-23-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-24-1.png" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="large-scale-characteristics">Large scale characteristics<a class="anchor" aria-label="anchor" href="#large-scale-characteristics"></a>
@@ -258,26 +250,26 @@
 <span>  <span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tableLargeScaleCharacteristics.html">tableLargeScaleCharacteristics</a></span><span class="op">(</span><span class="va">result</span>, type <span class="op">=</span> <span class="st">"flextable"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-25-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-26-1.png" width="100%"></p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">group_level</span> <span class="op">==</span> <span class="st">"161_acetaminophen"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/plotLargeScaleCharacteristics.html">plotLargeScaleCharacteristics</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-26-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-27-1.png" width="100%"></p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">group_level</span> <span class="op">==</span> <span class="st">"161_acetaminophen"</span>, <span class="va">variable_level</span> <span class="op">!=</span> <span class="st">"0 to 0"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/plotComparedLargeScaleCharacteristics.html">plotComparedLargeScaleCharacteristics</a></span><span class="op">(</span></span>
 <span>    reference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>variable_level <span class="op">=</span> <span class="st">"-90 to -1"</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"variable_name"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-27-1.png" width="100%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-28-1.png" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="disconnect">Disconnect<a class="anchor" aria-label="anchor" href="#disconnect"></a>
 </h3>
-<p>Disconnect from your database using <code><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmDisconnect.html" class="external-link">CDMConnector::cdmDisconnect()</a></code> to close the connection or with <code><a href="https://rdrr.io/pkg/PatientProfiles/man/mockDisconnect.html" class="external-link">mockDisconnect()</a></code> to close connection and delete the created mock data:</p>
+<p>Disconnect from your database using <code><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmDisconnect.html" class="external-link">CDMConnector::cdmDisconnect()</a></code> to close the connection or with <code><a href="https://darwin-eu.github.io/PatientProfiles/reference/mockDisconnect.html" class="external-link">mockDisconnect()</a></code> to close connection and delete the created mock data:</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/PatientProfiles/man/mockDisconnect.html" class="external-link">mockDisconnect</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://darwin-eu.github.io/PatientProfiles/reference/mockDisconnect.html" class="external-link">mockDisconnect</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="recommendations">Recommendations<a class="anchor" aria-label="anchor" href="#recommendations"></a>

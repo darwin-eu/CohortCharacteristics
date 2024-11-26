@@ -3,11 +3,11 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   summarise_characteristics: summarise_characteristics.html
-  summarise_cohort_entries: summarise_cohort_entries.html
+  articles/summarise_cohort_entries: summarise_cohort_entries.html
   summarise_cohort_overlap: summarise_cohort_overlap.html
   summarise_cohort_timing: summarise_cohort_timing.html
   summarise_large_scale_characteristics: summarise_large_scale_characteristics.html
-last_built: 2024-11-06T11:20Z
+last_built: 2024-11-26T22:29Z
 urls:
   reference: https://darwin-eu.github.io/CohortCharacteristics/reference
   article: https://darwin-eu.github.io/CohortCharacteristics/articles
