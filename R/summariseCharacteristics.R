@@ -386,18 +386,30 @@ summariseCharacteristics <- function(cohort,
   varest <- variablesEstimates(variables, typesOtherVariables, estimates, dic)
 
   cli::cli_alert_info("summarising data")
-  # summarise results
-  suppressMessages(
-    results <- cohort |>
-      PatientProfiles::summariseResult(
-        group = list("cohort_name"),
-        strata = strata,
-        variables = varest$variables,
-        estimates = varest$estimates,
-        counts = counts
-      ) |>
-      PatientProfiles::addCdmName(cdm = cdm)
-  )
+  #summarise results
+  results <- purrr::map(cohortId, \(x) {
+
+    cohortX <- cohort |>
+      dplyr::filter(.data$cohort_definition_id == x) |>
+      dplyr::collect()
+
+    cohortName <- unique(cohortX$cohort_name)
+
+    cli::cli_alert_info("summarising cohort {.pkg {cohortName}}")
+    suppressMessages(
+      cohortX |>
+        PatientProfiles::summariseResult(
+          group = list(),
+          strata = strata,
+          variables = varest$variables,
+          estimates = varest$estimates,
+          counts = counts
+        ) |>
+        dplyr::mutate(group_level = .env$cohortName, group_name = "cohort_name")
+    )
+  }) |>
+    omopgenerics::bind() |>
+    PatientProfiles::addCdmName(cdm = cdm)
 
   # order result
   combinations <- getCombinations(
