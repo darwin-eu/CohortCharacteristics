@@ -392,21 +392,22 @@ summariseCharacteristics <- function(cohort,
     cohortX <- cohort |>
       dplyr::filter(.data$cohort_definition_id == x) |>
       dplyr::collect()
+    if (nrow(cohortX) > 0){
+      cohortName <- unique(cohortX$cohort_name)
 
-    cohortName <- unique(cohortX$cohort_name)
-
-    cli::cli_alert_info("summarising cohort {.pkg {cohortName}}")
-    suppressMessages(
-      cohortX |>
-        PatientProfiles::summariseResult(
-          group = list(),
-          strata = strata,
-          variables = varest$variables,
-          estimates = varest$estimates,
-          counts = counts
-        ) |>
-        dplyr::mutate(group_level = .env$cohortName, group_name = "cohort_name")
-    )
+      cli::cli_alert_info("summarising cohort {.pkg {cohortName}}")
+      suppressMessages(
+        cohortX |>
+          PatientProfiles::summariseResult(
+            group = list(),
+            strata = strata,
+            variables = varest$variables,
+            estimates = varest$estimates,
+            counts = counts
+            ) |>
+          dplyr::mutate(group_level = .env$cohortName, group_name = "cohort_name")
+      )
+      }
   }) |>
     omopgenerics::bind() |>
     PatientProfiles::addCdmName(cdm = cdm)
