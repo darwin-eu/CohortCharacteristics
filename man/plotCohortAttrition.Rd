@@ -7,6 +7,7 @@
 plotCohortAttrition(
   result,
   show = c("subjects", "records"),
+  type = "htmlwidget",
   cohortId = lifecycle::deprecated()
 )
 }
@@ -15,6 +16,9 @@ plotCohortAttrition(
 
 \item{show}{Which variables to show in the attrition plot, it can be
 'subjects', 'records' or both.}
+
+\item{type}{type of the output, it can either be: 'htmlwidget', 'png', or
+'DiagrammeR'.}
 
 \item{cohortId}{deprecated.}
 }

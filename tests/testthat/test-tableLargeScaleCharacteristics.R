@@ -81,3 +81,34 @@ test_that("basic functionality summarise large scale characteristics", {
 
   expect_no_error(tableLargeScaleCharacteristics(result))
 })
+
+test_that("topConcepts working", {
+  skip_on_cran()
+  con <- duckdb::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
+  cdm <- CDMConnector::cdmFromCon(
+    con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
+  )
+
+  cdm <- CDMConnector::generateConceptCohortSet(
+    cdm = cdm,
+    name = "ankle_sprain",
+    conceptSet = list("ankle_sprain" = 81151),
+    end = "event_end_date",
+    limit = "first",
+    overwrite = TRUE
+  )
+
+  lsc <- cdm$ankle_sprain |>
+    summariseLargeScaleCharacteristics(
+      window = list(c(-Inf, -1), c(0, 0)),
+      eventInWindow = c("condition_occurrence", "procedure_occurrence"),
+      episodeInWindow = "drug_exposure",
+      minimumFrequency = 0.1
+    )
+
+  x <- tableLargeScaleCharacteristics(lsc, topConcepts = 1, type = "tibble")
+
+  expect_true(nrow(x) == 1)
+
+  CDMConnector::cdmDisconnect(cdm)
+})

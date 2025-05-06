@@ -74,7 +74,7 @@ tableLargeScaleCharacteristics <- function(result,
             dplyr::arrange(dplyr::desc(.data$max)) |>
             utils::head(topConcepts) |>
             dplyr::select("variable_name")
-          x |>
+          x <- x |>
             dplyr::inner_join(top, by = "variable_name")
         }
         return(x)

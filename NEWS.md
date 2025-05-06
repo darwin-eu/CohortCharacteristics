@@ -1,8 +1,24 @@
+# CohortCharacteristics 0.5.0
+
+* Update benchmarkCohortCharacteristics.R by @cecicampanile
+* fix typo in tableLargeScaleCharacteristics by @catalamarti
+* fix typo in source_type by @catalamarti
+* `summariseCharacteristics` cohort by cohort by @cecicampanile
+* Allow multiple cdm and cohorts in plotCohortAttrition + png format by @catalamarti
+* Stack bar in plotCohortOverlap by @ilovemane
+* variable_name as factor in plotCohortOverlap by @catalamarti
+* none -> unknown in summariseCharacteristics by @catalamarti
+* Add weights argument to `summariseCharacteristics` by @catalamarti
+* Use filterCohortId when needed by @catalamarti
+* Fix ' character in plotCohortAttrition by @catalamarti
+* filter excludeCodes at the end by @catalamarti
+* use <minCellCount in tables by @catalamarti
+
 # CohortCharacteristics 0.4.0
 
 * Update links darwin-eu-dev -> darwin-eu @catalamarti
 * Typo in plotCohortAttrition by @martaalcalde
-* uniqueCombination paramters to work in a general way @catalamarti
+* uniqueCombination parameter to work in a general way @catalamarti
 * minimum 5 days in x axis for density plots @catalamarti
 * improve documentation of minimumFrequency by @catalamarti
 * add show argument to plotCohortAttrition by @catalamarti

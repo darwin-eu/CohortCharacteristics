@@ -70,7 +70,7 @@ summariseCohortTiming <- function(cohort,
   }
 
   cohort <- cohort |>
-    dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
+    PatientProfiles::filterCohortId(cohortId = cohortId) |>
     PatientProfiles::addCohortName()
 
   if (isTRUE(restrictToFirstEntry)) {

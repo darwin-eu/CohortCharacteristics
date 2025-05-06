@@ -31,8 +31,7 @@ test_that("plot cohort attrition", {
     plotCohortAttrition()
 
   # test attrition object (to consider if this is needed)
-  res <- plotCohortAttrition(omopgenerics::attrition(cdm$cohort1))
-  expect_identical(out, res)
+  expect_no_error(plotCohortAttrition(omopgenerics::attrition(cdm$cohort1)))
 
   # test cohort object (to consider if this is needed)
   res <- plotCohortAttrition(cdm$cohort1)

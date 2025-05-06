@@ -25,6 +25,7 @@ summariseCharacteristics(
   conceptIntersectDays = list(),
   otherVariables = character(),
   estimates = list(),
+  weights = NULL,
   otherVariablesEstimates = lifecycle::deprecated()
 )
 }
@@ -90,7 +91,10 @@ By default: 'min', 'q25', 'median', 'q75', 'max' for "date", "numeric" and
 "integer" variables ("numeric" and "integer" also use 'mean' and 'sd'
 estimates). 'count' and 'percentage' for "categorical" and "binary".
 You have to provide them as a list: \code{list(age = c("median", "density"))}. You
-can also use 'date', 'numeric', 'binary' or 'categorical' keywords.}
+can also use 'date', 'numeric', 'integer', 'binary', 'categorical',
+'demographics', 'intersect', 'other', 'table_intersect_count', ...}
+
+\item{weights}{Column in cohort that points to weights of each individual.}
 
 \item{otherVariablesEstimates}{deprecated.}
 }

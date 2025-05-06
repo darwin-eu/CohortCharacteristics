@@ -19,8 +19,7 @@ knitr::opts_chunk$set(
   comment = "#>", message = FALSE, warning = FALSE
 )
 
-library(CDMConnector)
-requireEunomia()
+CDMConnector::requireEunomia()
 ```
   
 When creating multiple cohorts we might be interested in the overlap between them. That is, how many individuals appear in multiple cohorts. CohortCharacteristics provides functions to generate such estimates and then summarise these estimates in tables and plots.

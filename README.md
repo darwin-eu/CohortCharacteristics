@@ -20,14 +20,14 @@ individuals within the cohort.
     #>   Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M
     #>   (????). _CohortCharacteristics: Summarise and Visualise
     #>   Characteristics of Patients in the OMOP CDM_. R package version
-    #>   0.4.0, <https://darwin-eu.github.io/CohortCharacteristics/>.
+    #>   0.3.1, <https://darwin-eu.github.io/CohortCharacteristics/>.
     #> 
     #> A BibTeX entry for LaTeX users is
     #> 
     #>   @Manual{,
     #>     title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},
     #>     author = {Marti Catala and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},
-    #>     note = {R package version 0.4.0},
+    #>     note = {R package version 0.3.1},
     #>     url = {https://darwin-eu.github.io/CohortCharacteristics/},
     #>   }
 

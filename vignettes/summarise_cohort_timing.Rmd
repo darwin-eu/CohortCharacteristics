@@ -19,8 +19,7 @@ knitr::opts_chunk$set(
   comment = "#>", message = FALSE, warning = FALSE
 )
 
-library(CDMConnector)
-requireEunomia()
+CDMConnector::requireEunomia()
 ```
 
 We saw in the previous vignette how we can summarise the overlap between cohorts. In addition to this, we might also be interested in timings between cohorts. That is, the time between an individual entering one cohort and another. For this we can use the `summariseCohortTiming()`. In this example we'll look at the time between entering cohorts for acetaminophen, morphine, and oxycodone using the Eunomia data.

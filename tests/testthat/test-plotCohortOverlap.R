@@ -9,7 +9,6 @@ test_that("plotCohortOverlap", {
     race_concept_id = 0L,
     ethnicity_concept_id = 0L
   )
-
   table <- dplyr::tibble(
     cohort_definition_id = c(rep(1, 15), rep(2, 10), rep(3, 15), rep(4, 5)) |>
       as.integer(),
@@ -30,7 +29,6 @@ test_that("plotCohortOverlap", {
       rep("2012-09-05", 5), rep("1996-05-01", 5), rep("1989-03-31", 5)
     ))
   )
-
   obs <- dplyr::tibble(
     observation_period_id = 1:20L,
     person_id = 1:20L,
@@ -51,10 +49,7 @@ test_that("plotCohortOverlap", {
   # expect_false("cohort_4" %in% gg1$data$cohort_name_reference)
 
   gg2 <- plotCohortOverlap(
-    overlap |> dplyr::filter(
-      .data$variable_level == "number_subjects",
-      .data$estimate_name == "percentage"
-    ),
+    overlap,
     facet = "cdm_name",
     uniqueCombinations = TRUE
   )
@@ -70,7 +65,8 @@ test_that("plotCohortOverlap", {
     strata = list("age_group", c("age_group", "sex"))
   )
 
-  gg3 <- plotCohortOverlap(overlap2 |> dplyr::filter(.data$variable_level == "number_subjects"),
+  gg3 <- plotCohortOverlap(
+    overlap2,
     facet = c("age_group", "sex"),
     uniqueCombinations = TRUE
   )
@@ -82,15 +78,9 @@ test_that("plotCohortOverlap", {
       overlap |>
         dplyr::mutate(cdm_name = "cdm2") |>
         dplyr::filter(.data$group_level != "cohort_2 &&& cohort_4")
-    ) |>
-    dplyr::filter(.data$variable_level == "number_subjects")
-  gg4 <- plotCohortOverlap(overlap3,
-    facet = "cdm_name",
-    uniqueCombinations = FALSE,
-    .options = list(
-      facetNcols = 2,
-      facetScales = "fixed"
     )
+  gg4 <- plotCohortOverlap(
+    overlap3, facet = "cdm_name", uniqueCombinations = FALSE
   )
 
   mockDisconnect(cdm)
