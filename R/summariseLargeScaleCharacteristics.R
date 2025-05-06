@@ -119,7 +119,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
 
   # initial table
   x <- cohort |>
-    dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
+    PatientProfiles::filterCohortId(cohortId = cohortId) |>
     getInitialTable(tablePrefix, indexDate, censorDate)
 
   # get analysis table
@@ -140,7 +140,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
     )
     analysesTable <- analyses |> dplyr::filter(.data$table == .env$tab)
     table <- getTable(
-      tab, x, includeSource, minWindow, maxWindow, tablePrefix, excludedCodes
+      tab, x, includeSource, minWindow, maxWindow, tablePrefix
     )
     for (k in seq_len(nrow(analysesTable))) {
       type <- analysesTable$type[k]
@@ -184,7 +184,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
 
   # format results
   results <- lsc |>
-    formatLscResult(den, cdm, minimumFrequency)
+    formatLscResult(den, cdm, minimumFrequency, excludedCodes)
 
   # summarised_result format
   results <- results |>
@@ -247,7 +247,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
     )
 
   # eliminate permanent tables
-  cdm <- omopgenerics::dropTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
+  cdm <- omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
 
   # return
   return(results)
@@ -318,16 +318,13 @@ getInitialTable <- function(cohort, tablePrefix, indexDate, censorDate) {
     )
   return(x)
 }
-getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix, excludedCodes) {
+getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix) {
   cdm <- omopgenerics::cdmReference(x)
   toSelect <- c(
     "subject_id" = "person_id",
     "start_diff" = PatientProfiles::startDateColumn(tab),
-    "end_diff" = ifelse(
-      is.na(PatientProfiles::endDateColumn(tab)),
-      PatientProfiles::startDateColumn(tab),
-      PatientProfiles::endDateColumn(tab)
-    ),
+    "end_diff" = PatientProfiles::endDateColumn(tab) |>
+      dplyr::coalesce(PatientProfiles::startDateColumn(tab)),
     "standard" = PatientProfiles::standardConceptIdColumn(tab),
     "source" = PatientProfiles::sourceConceptIdColumn(tab)
   )
@@ -337,9 +334,8 @@ getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix, e
   table <- cdm[[tab]] |>
     dplyr::select(dplyr::all_of(toSelect)) |>
     dplyr::inner_join(x, by = "subject_id") |>
-    dplyr::mutate(end_diff = dplyr::if_else(
-      is.na(.data$end_diff), .data$start_diff, .data$end_diff
-    )) %>% # to be removed
+    dplyr::mutate(end_diff = dplyr::coalesce(.data$end_diff, .data$start_diff)
+    ) %>% # to be removed
     dplyr::mutate(start_diff = !!CDMConnector::datediff(
       "cohort_start_date", "start_diff"
     )) %>% # to be removed
@@ -356,23 +352,6 @@ getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix, e
   if (!is.infinite(maxWindow)) {
     table <- table |>
       dplyr::filter(.data$start_diff <= .env$maxWindow)
-  }
-  if (length(excludedCodes) > 0) {
-    nm <- paste0(tablePrefix, "concepts")
-    cdm <- omopgenerics::insertTable(
-      cdm = cdm, name = nm, table = dplyr::tibble("standard" = excludedCodes),
-      overwrite = TRUE
-    )
-    cdm[[nm]] <- cdm[[nm]] |> dplyr::compute()
-    table <- table |>
-      dplyr::anti_join(cdm[[nm]], by = "standard")
-    if ("source" %in% colnames(table)) {
-      table <- table |>
-        dplyr::anti_join(
-          cdm[[nm]] |> dplyr::rename("source" = "standard"),
-          by = "source"
-        )
-    }
   }
   table <- table |>
     dplyr::select(-"start_obs", -"end_obs") |>
@@ -446,7 +425,7 @@ denominatorCounts <- function(cohort, x, strata, window, tablePrefix) {
   }
   return(den)
 }
-formatLscResult <- function(lsc, den, cdm, minimumFrequency) {
+formatLscResult <- function(lsc, den, cdm, minimumFrequency, excludedCodes) {
   lsc <- lsc |>
     dplyr::inner_join(
       den |>
@@ -471,6 +450,7 @@ formatLscResult <- function(lsc, den, cdm, minimumFrequency) {
   }
 
   lsc <- lsc |>
+    dplyr::filter(!.data$concept %in% .env$excludedCodes) |>
     tidyr::pivot_longer(
       cols = c("count", "percentage"), names_to = "estimate_type",
       values_to = "estimate"
@@ -512,7 +492,7 @@ addConceptName <- function(lsc, cdm) {
     ) |>
     dplyr::collect()
 
-  omopgenerics::dropTable(cdm = cdm, name = conceptsTblName)
+  omopgenerics::dropSourceTable(cdm = cdm, name = conceptsTblName)
 
   return(conceptNames)
 }

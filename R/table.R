@@ -67,6 +67,8 @@ tableCohortCharacteristics <- function(result,
                                        estimateName,
                                        type,
                                        call = parent.frame()) {
+  rlang::check_installed("visOmopResults")
+
   # check inputs
   result <- omopgenerics::validateResultArgument(result, call = call)
 
@@ -88,7 +90,7 @@ tableCohortCharacteristics <- function(result,
   # settings columns
   ignore <- c(
     "result_id", "result_type", "package_name", "package_version", "group",
-    "strata", "additional", "min_cell_count"
+    "strata", "additional"
   )
   setColumns <- set |>
     dplyr::filter(.data$result_id %in% unique(.env$result$result_id)) |>
@@ -103,7 +105,12 @@ tableCohortCharacteristics <- function(result,
         dplyr::select("result_id", dplyr::all_of(setColumns)),
       by = "result_id"
     ) |>
-    dplyr::select(!"result_id") |>
+    dplyr::mutate(estimate_value = dplyr::if_else(
+      stringr::str_detect(.data$estimate_name, "count") & .data$estimate_value == "-",
+      paste0("<", as.character(.data$min_cell_count)),
+      .data$estimate_value
+    )) |>
+    dplyr::select(!c("result_id", "min_cell_count")) |>
     omopgenerics::splitAll() |>
     visOmopResults::visTable(
       estimateName = estimateName,

@@ -56,7 +56,9 @@
 #' "integer" variables ("numeric" and "integer" also use 'mean' and 'sd'
 #' estimates). 'count' and 'percentage' for "categorical" and "binary".
 #' You have to provide them as a list: `list(age = c("median", "density"))`. You
-#' can also use 'date', 'numeric', 'binary' or 'categorical' keywords.
+#' can also use 'date', 'numeric', 'integer', 'binary', 'categorical',
+#' 'demographics', 'intersect', 'other', 'table_intersect_count', ...
+#' @param weights Column in cohort that points to weights of each individual.
 #' @param otherVariablesEstimates deprecated.
 #'
 #' @return A summary of the characteristics of the cohorts in the cohort table.
@@ -113,6 +115,7 @@ summariseCharacteristics <- function(cohort,
                                      conceptIntersectDays = list(),
                                      otherVariables = character(),
                                      estimates = list(),
+                                     weights = NULL,
                                      otherVariablesEstimates = lifecycle::deprecated()) {
   # check initial tables
   cdm <- omopgenerics::cdmReference(cohort)
@@ -137,6 +140,9 @@ summariseCharacteristics <- function(cohort,
   conceptIntersectDays <- assertIntersect(conceptIntersectDays)
   otherVariables <- checkOtherVariables(otherVariables, cohort)
   omopgenerics::assertList(estimates, named = TRUE, class = "character")
+  if (!is.null(weights)) {
+    weights <- omopgenerics::validateColumn(weights, x = cohort, type = "numeric")
+  }
 
   if (lifecycle::is_present(otherVariablesEstimates)) {
     lifecycle::deprecate_stop(
@@ -178,19 +184,19 @@ summariseCharacteristics <- function(cohort,
 
   # select necessary variables
   cohort <- cohort |>
-    dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) %>%
+    PatientProfiles::filterCohortId(cohortId = cohortId) |>
     dplyr::select(
       "cohort_definition_id", "subject_id", "cohort_start_date",
       "cohort_end_date", dplyr::all_of(unique(unlist(strata))),
-      dplyr::all_of(otherVariables)
+      dplyr::all_of(otherVariables), dplyr::all_of(weights)
     )
 
   if (omopgenerics::isTableEmpty(cohort)) {
     cohortNames <- omopgenerics::settings(cohort)$cohort_name
     if (any(c("subject_id", "person_id") %in% colnames(cohort))) {
-      variables <- c("number subjects", "number records")
+      variables <- c("Number subjects", "Number records")
     } else {
-      variables <- "number records"
+      variables <- "Number records"
     }
     result <- tidyr::expand_grid(
       "group_level" = cohortNames, "variable_name" = variables
@@ -244,7 +250,7 @@ summariseCharacteristics <- function(cohort,
         ))
       names(ageGroup) <- newNames
       variables <- variables |>
-        updateVariables(categorical = newNames)
+        updateVariables(list(categorical = newNames, demographics = newNames))
     }
 
     if (demographics) {
@@ -261,19 +267,25 @@ summariseCharacteristics <- function(cohort,
           value = as.character(NA)
         ))
       variables <- variables |>
-        updateVariables(
+        updateVariables(list(
           date = c("cohort_start_date", "cohort_end_date"),
           numeric = c(priorObservation, futureObservation, age, duration),
-          categorical = sex
-        )
+          categorical = sex,
+          demographics = c(
+            priorObservation, futureObservation, age, duration, sex,
+            "cohort_start_date", "cohort_end_date"
+          )
+        ))
     }
 
     # add demographics
     cohort <- cohort |>
       PatientProfiles::addDemographics(
         ageGroup = ageGroup,
+        missingAgeGroupValue = "Unknown",
         sex = demographics,
         sexName = sex,
+        missingSexValue = "Unknown",
         age = demographics,
         ageName = age,
         priorObservation = demographics,
@@ -354,16 +366,17 @@ summariseCharacteristics <- function(cohort,
             )
         )
 
-      if (value == "date") {
-        variables <- variables |>
-          updateVariables(date = shortNames)
-      } else if (value %in% c("days", "count")) {
-        variables <- variables |>
-          updateVariables(numeric = shortNames)
-      } else if (value == "flag") {
-        variables <- variables |>
-          updateVariables(binary = shortNames)
-      }
+      vars <- list()
+      vars$intersect <- shortNames
+      vars[[omopgenerics::toSnakeCase(intersect)]] <- shortNames
+      nm <- switch (value,
+        "date" = "date",
+        "days" = "numeric",
+        "count" = "numeric",
+        "flag" = "binary"
+      )
+      vars[[nm]] <- shortNames
+      variables <- updateVariables(variables, vars)
 
       val$x <- cohort
 
@@ -375,29 +388,51 @@ summariseCharacteristics <- function(cohort,
     }
   }
 
-  # update cohort_names
-  cohort <- cohort |>
-    PatientProfiles::addCohortName()
-
-  # detect other variables
+  # other variables
   typesOtherVariables <- cohort |>
     dplyr::select(dplyr::all_of(otherVariables)) |>
     PatientProfiles::variableTypes()
-  varest <- variablesEstimates(variables, typesOtherVariables, estimates, dic)
+  vars <- list()
+  vars$date <- typesOtherVariables$variable_name[typesOtherVariables$variable_type == "date"]
+  vars$numeric <- typesOtherVariables$variable_name[typesOtherVariables$variable_type == "numeric"]
+  vars$integer <- typesOtherVariables$variable_name[typesOtherVariables$variable_type == "integer"]
+  vars$categorical <- typesOtherVariables$variable_name[typesOtherVariables$variable_type == "categorical"]
+  vars$binary <- typesOtherVariables$variable_name[typesOtherVariables$variable_type == "binary"]
+  vars$other <- typesOtherVariables$variable_name
+  variables <- updateVariables(variables, vars)
+
+  # assign each variable each estimate
+  varest <- variablesEstimates(variables, estimates, dic)
 
   cli::cli_alert_info("summarising data")
-  # summarise results
-  suppressMessages(
-    results <- cohort |>
-      PatientProfiles::summariseResult(
-        group = list("cohort_name"),
-        strata = strata,
-        variables = varest$variables,
-        estimates = varest$estimates,
-        counts = counts
-      ) |>
-      PatientProfiles::addCdmName(cdm = cdm)
-  )
+  #summarise results
+  results <- purrr::map(cohortId, \(x) {
+
+    cohortX <- cohort |>
+      dplyr::filter(.data$cohort_definition_id == .env$x) |>
+      dplyr::collect()
+
+    cohortName <- omopgenerics::settings(cohort) |>
+      dplyr::filter(.data$cohort_definition_id == .env$x) |>
+      dplyr::pull("cohort_name")
+
+    cli::cli_alert_info("summarising cohort {.pkg {cohortName}}")
+    suppressMessages(
+      cohortX |>
+        PatientProfiles::summariseResult(
+          group = list(),
+          strata = strata,
+          variables = varest$variables,
+          estimates = varest$estimates,
+          counts = counts,
+          weights = weights
+        ) |>
+        dplyr::mutate(group_level = .env$cohortName, group_name = "cohort_name")
+    )
+
+  }) |>
+    omopgenerics::bind() |>
+    dplyr::mutate(cdm_name = omopgenerics::cdmName(cdm))
 
   # order result
   combinations <- getCombinations(
@@ -462,14 +497,10 @@ summariseCharacteristics <- function(cohort,
 }
 
 updateVariables <- function(variables,
-                            date = NULL,
-                            numeric = NULL,
-                            binary = NULL,
-                            categorical = NULL) {
-  variables$date <- c(variables$date, date)
-  variables$numeric <- c(variables$numeric, numeric)
-  variables$binary <- c(variables$binary, binary)
-  variables$categorical <- c(variables$categorical, categorical)
+                            args) {
+  for (nm in names(args)) {
+    variables[[nm]] <- c(variables[[nm]], args[[nm]])
+  }
   return(variables)
 }
 binaryVariable <- function(x) {
@@ -529,60 +560,61 @@ arrangeAgeGroup <- function(x, ageGroup) {
     dplyr::arrange(.data$variable_id, .data$id) |>
     dplyr::select("variable_name", "variable_level")
 }
-variablesEstimates <- function(variables, typesOtherVariables, estimates, dic) {
-  # defaults
-  est <- list(
-    date = c("min", "q25", "median", "q75", "max"),
-    numeric = c("min", "q25", "median", "q75", "max", "mean", "sd"),
-    categorical = c("count", "percentage"),
-    binary = c("count", "percentage")
-  )
-
-  # check names that are categories
-  for (key in names(est)) {
-    if (key %in% names(estimates)) {
-      est[[key]] <- estimates[[key]]
-      estimates[[key]] <- NULL
-    }
-  }
-
-  # other variables
-  for (k in seq_len(nrow(typesOtherVariables))) {
-    var <- typesOtherVariables$variable_name[k]
-    typ <- typesOtherVariables$variable_type[k]
-    if (var %in% names(estimates)) {
-      est[[var]] <- estimates[[var]]
-      estimates[[var]] <- NULL
-      variables <- purrr::map(variables, \(x) x[!x %in% var])
-      variables[[var]] <- var
-    }
-  }
-
-  # demographics variables
-  for (nm in names(estimates)) {
-    if (nm %in% dic$new_variable_name) {
-      est[[nm]] <- estimates[[nm]]
-      estimates[[nm]] <- NULL
-      var <- dic$short_name[dic$new_variable_name == nm]
-      variables <- purrr::map(variables, \(x) x[!x %in% var])
-      variables[[nm]] <- var
-    }
-  }
-
+variablesEstimates <- function(variables, estimates, dic) {
   # warn ignored
-  ignored <- names(purrr::compact(estimates))
+  ignored <- names(estimates) |>
+    purrr::keep(\(x) !x %in% c(names(variables), unlist(variables), dic$new_variable_name))
   if (length(ignored) > 0) {
     "{.var {ignored}} names in estimates ignored as not present in data." |>
       cli::cli_warn()
   }
 
-  # eliminate empty elements
-  variables <- purrr::compact(variables)
-  est <- purrr::compact(est)
-  nms <- intersect(names(est), names(variables))
-  variables <- variables[nms]
-  est <- est[nms]
+  if (length(variables) == 0) {
+    return(list(variables = list(), estimates = list()))
+  }
+
+  # get new variables
+  newVariables <- variables |>
+    unlist(use.names = FALSE) |>
+    unique() |>
+    rlang::set_names() |>
+    as.list() |>
+    purrr::map(\(x) {
+      nms <- variables |>
+        purrr::keep(\(xx) x %in% xx) |>
+        purrr::compact() |>
+        names()
+      unique(c(x, nms, dic$new_variable_name[dic$short_name == x]))
+    })
+
+  # get new estimates
+  newEstimates <- newVariables |>
+    purrr::map(\(x) unique(unlist(purrr::map(x, \(xx) estimates[[xx]]))))
+
+  # add default estimates if empty
+  defaults <- list(
+    date = c("min", "q25", "median", "q75", "max"),
+    numeric = c("min", "q25", "median", "q75", "max", "mean", "sd"),
+    integer = c("min", "q25", "median", "q75", "max", "mean", "sd"),
+    categorical = c("count", "percentage"),
+    binary = c("count", "percentage")
+  )
+  newEstimates <- newEstimates |>
+    purrr::imap(\(x, nm) {
+      if (is.null(x)) {
+        type <- names(defaults)[names(defaults) %in% newVariables[[nm]]]
+        x <- unique(unlist(defaults[type]))
+      }
+      x
+    }) |>
+    purrr::compact()
+
+  newVariables <- names(newEstimates) |>
+    rlang::set_names() |>
+    as.list()
+
+  nms <- names(newVariables)
 
   # return both lists
-  list(variables = variables, estimates = est)
+  list(variables = newVariables[nms], estimates = newEstimates[nms])
 }

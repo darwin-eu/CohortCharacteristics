@@ -68,7 +68,7 @@ summariseCohortOverlap <- function(cohort,
 
   cohort <- cohort |>
     PatientProfiles::addCohortName() |>
-    dplyr::filter(.data$cohort_definition_id %in% .env$cohortId) |>
+    PatientProfiles::filterCohortId(cohortId = cohortId) |>
     dplyr::select(dplyr::all_of(c("cohort_name", overlapBy, strataCols))) |>
     dplyr::distinct() |>
     dplyr::compute(name = tmpName, temporary = FALSE)

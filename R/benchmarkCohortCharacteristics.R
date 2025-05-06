@@ -46,7 +46,7 @@ benchmarkCohortCharacteristics <- function(cohort,
     package_name = "CohortCharacteristics",
     package_version = pkgVersion(),
     cohort = dplyr::coalesce(omopgenerics::tableName(cohort), "temp"),
-    source_type = omopgenerics::sourceType(cohort),
+    source_type = omopgenerics::sourceType(.env$cohort),
     person_n = nPerson,
     !!!listCounts(cohort)
   )
@@ -234,7 +234,7 @@ benchmarkCohortCharacteristics <- function(cohort,
       cdm_name = omopgenerics::cdmName(cohort),
       variable_name = "overall",
       variable_level = "overall",
-      estimate_name = "time_in_seconds",
+      estimate_name = "time_seconds",
       estimate_type = "numeric",
       estimate_value = as.character(round(.data$time, 3))
     ) |>

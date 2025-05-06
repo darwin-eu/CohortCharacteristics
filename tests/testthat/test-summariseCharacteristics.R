@@ -381,7 +381,11 @@ test_that("test summariseCharacteristics", {
     )
   )
 
-  expect_false("Blood type" %in% result$variable_name |> unique())
+  expect_true("Blood type" %in% result$variable_name |> unique())
+  expect_identical(
+    sort(unique(result$estimate_name[result$variable_name == "Blood type"])),
+    c("count", "percentage")
+  )
   expect_true("Number visits" %in% result$variable_name |> unique())
   expect_true("mean" == unique(result$estimate_name[result$variable_name == "Number visits"]))
 
@@ -1157,7 +1161,7 @@ test_that("arguments cohortIntersect", {
 
 test_that("arguments conceptIntersect", {
   skip_on_cran()
-  con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomia_dir())
+  con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
 
   # create a cohort
@@ -1378,7 +1382,7 @@ test_that("empty input cohort contains name issue #170", {
       dplyr::as_tibble(),
     tidyr::expand_grid(
       "group_level" = omopgenerics::settings(cdm$cohort1)$cohort_name,
-      "variable_name" = c("number subjects", "number records")
+      "variable_name" = c("Number subjects", "Number records")
     )
   )
 
@@ -1538,4 +1542,114 @@ test_that("test estimates", {
   expect_warning(
     summariseCharacteristics(cdm$cohort1, estimates = list(not_present = "min"))
   )
+})
+
+test_that("weights in summariseCharacteristics", {
+  person <- dplyr::tibble(
+    person_id = c(1, 2, 3) |> as.integer(),
+    gender_concept_id = c(8507, 8532, 8532) |> as.integer(),
+    year_of_birth = c(1985, 2000, 1962) |> as.integer(),
+    month_of_birth = c(10, 5, 9) |> as.integer(),
+    day_of_birth = c(30, 10, 24) |> as.integer(),
+    race_concept_id = 0L,
+    ethnicity_concept_id = 0L
+  )
+  dus_cohort <- dplyr::tibble(
+    cohort_definition_id = c(1, 1, 1, 2) |> as.integer(),
+    subject_id = c(1, 1, 2, 3) |> as.integer(),
+    cohort_start_date = as.Date(c(
+      "1990-04-19", "1991-04-19", "2010-11-14", "2000-05-25"
+    )),
+    cohort_end_date = as.Date(c(
+      "1990-04-19", "1992-04-19", "2010-12-14", "2000-05-26"
+    )),
+    blood_type = c("a", "a", "0", "0"),
+    number_visits = c(0, 1, 5, 12) |> as.integer(),
+    my_weights_column = c(1.3, 0.25, 0.75, 0.15)
+  )
+  medication <- dplyr::tibble(
+    cohort_definition_id = c(1, 1, 2, 1) |> as.integer(),
+    subject_id = c(1, 1, 2, 3) |> as.integer(),
+    cohort_start_date = as.Date(c(
+      "1990-02-01", "1990-08-01", "2009-01-01", "1995-06-01"
+    )),
+    cohort_end_date = as.Date(c(
+      "1990-02-01", "1990-08-01", "2009-01-01", "1995-06-01"
+    ))
+  )
+  observation_period <- dplyr::tibble(
+    observation_period_id = c(1, 2, 3) |> as.integer(),
+    person_id = c(1, 2, 3) |> as.integer(),
+    observation_period_start_date = as.Date(c(
+      "1985-01-01", "1989-04-29", "1974-12-03"
+    )),
+    observation_period_end_date = as.Date(c(
+      "2011-03-04", "2022-03-14", "2023-07-10"
+    )),
+    period_type_concept_id = 0L
+  )
+
+  cdm <- mockCohortCharacteristics(
+    con = connection(), writeSchema = writeSchema(),
+    dus_cohort = dus_cohort, person = person,
+    medication = medication, observation_period = observation_period
+  )
+
+  expect_no_error(
+    result <- cdm$dus_cohort |>
+      summariseCharacteristics(
+        cohortIntersectFlag = list("Medication prior year" = list(
+          targetCohortTable = "medication", window = c(-365, -1)
+        ))
+      ) |>
+      omopgenerics::tidy()
+  )
+  expect_no_error(
+    resultW <- cdm$dus_cohort |>
+      summariseCharacteristics(
+        cohortIntersectFlag = list("Medication prior year" = list(
+          targetCohortTable = "medication", window = c(-365, -1)
+        )),
+        weights = "my_weights_column"
+      ) |>
+      omopgenerics::tidy()
+  )
+
+  # cohort 2 has only one individual so the expected results must be the same
+  expect_identical(
+    result$mean[result$cohort_name == "cohort_2" & result$variable_name == "Age"],
+    resultW$mean[resultW$cohort_name == "cohort_2" & resultW$variable_name == "Age"]
+  )
+  expect_identical(
+    result$mean[result$cohort_name == "cohort_2" & result$variable_name == "Days in cohort"],
+    resultW$mean[resultW$cohort_name == "cohort_2" & resultW$variable_name == "Days in cohort"]
+  )
+  expect_identical(
+    result$mean[result$cohort_name == "cohort_2" & result$variable_name == "Future observation"],
+    resultW$mean[resultW$cohort_name == "cohort_2" & resultW$variable_name == "Future observation"]
+  )
+  expect_identical(
+    result$percentage[result$cohort_name == "cohort_2" & result$variable_name == "Sex" & result$variable_level == "Female"],
+    resultW$percentage[resultW$cohort_name == "cohort_2" & resultW$variable_name == "Sex" & resultW$variable_level == "Female"]
+  )
+
+  # cohort 1 has 3 individuala so the expected results must be different
+  expect_identical(
+    round((4 * 1.3 + 5 * 0.25 + 21 * 0.75) / (1.3 + 0.25 + 0.75), 3),
+    round(resultW$mean[resultW$cohort_name == "cohort_1" & resultW$variable_name == "Age"], 3)
+  )
+  expect_identical(
+    round((1 * 1.3 + 367 * 0.25 + 31 * 0.75) / (1.3 + 0.25 + 0.75), 3),
+    round(resultW$mean[resultW$cohort_name == "cohort_1" & resultW$variable_name == "Days in cohort"], 3)
+  )
+  expect_identical(
+    round((7624 * 1.3 + 7259 * 0.25 + 4138 * 0.75) / (1.3 + 0.25 + 0.75), 3),
+    round(resultW$mean[resultW$cohort_name == "cohort_1" & resultW$variable_name == "Future observation"], 3)
+  )
+  expect_identical(
+    round(100 * 0.75 / (1.3 + 0.25 + 0.75), 3),
+    round(resultW$percentage[resultW$cohort_name == "cohort_1" & resultW$variable_name == "Sex" & resultW$variable_level == "Female"], 3)
+  )
+
+  omopgenerics::cdmDisconnect(cdm = cdm)
 })
