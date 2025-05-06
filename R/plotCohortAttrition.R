@@ -69,7 +69,10 @@ plotCohortAttrition <- function(result,
     graph <- emptyDiagram("No variable to be displayed. `show` can not be empty.")
   } else {
     if (inherits(result, "cohort_table")) {
-      result <- summariseCohortAttrition(result)
+      cli::cli_abort(c(
+        x = "{.cls cohort_table} objects not accepted as inputs for `plotCohortAttrition()`",
+        i = "Please use `cdm$cohort |> summariseCohortAttrition() |> plotCohortAttrition()` instead."
+      ))
     }
     colsAttr <- omopgenerics::cohortColumns("cohort_attrition")
     if (inherits(result, "data.frame") && all(colsAttr %in% colnames(result))) {
@@ -152,16 +155,19 @@ prepareData <- function(result, show) {
         dplyr::select("result_id", "min_cell_count"),
       by = "result_id"
     ) |>
-    dplyr::mutate(estimate_value = dplyr::if_else(
-      .data$estimate_value == "-",
-      paste0("<", .data$min_cell_count),
-      prettyNum(suppressWarnings(as.numeric(.data$estimate_value)), big.mark = ",")
-    )) |>
     omopgenerics::splitAll() |>
     omopgenerics::pivotEstimates(
       pivotEstimatesBy = c("variable_name", "estimate_name"),
       nameStyle = "{variable_name}"
     ) |>
+    dplyr::mutate(dplyr::across(
+      dplyr::any_of(c("number_records", "number_subjects", "excluded_records", "excluded_subjects")),
+      ~ dplyr::if_else(
+        . == "-",
+        paste0("<", .data$min_cell_count),
+        prettyNum(suppressWarnings(as.numeric(.)), big.mark = ",")
+      )
+    )) |>
     dplyr::select(!c("variable_level", "min_cell_count", "result_id")) |>
     dplyr::group_by(.data$cdm_name, .data$cohort_name) |>
     dplyr::group_split() |>

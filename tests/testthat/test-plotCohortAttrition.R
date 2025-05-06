@@ -34,8 +34,7 @@ test_that("plot cohort attrition", {
   expect_no_error(plotCohortAttrition(omopgenerics::attrition(cdm$cohort1)))
 
   # test cohort object (to consider if this is needed)
-  res <- plotCohortAttrition(cdm$cohort1)
-  expect_identical(out, res)
+  expect_error(plotCohortAttrition(cdm$cohort1))
 
   PatientProfiles::mockDisconnect(cdm = cdm)
 })
