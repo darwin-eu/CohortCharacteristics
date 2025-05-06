@@ -1,3 +1,8 @@
+# CohortCharacteristics 0.5.1
+
+* Fix bug in plotCohortAttrition to not display NAs by @martaalcalde
+* Throw error if cohort table is the input of plotCohortAttrition() by @catalamarti
+
 # CohortCharacteristics 0.5.0
 
 * Update benchmarkCohortCharacteristics.R by @cecicampanile
