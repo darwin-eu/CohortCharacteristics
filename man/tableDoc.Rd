@@ -15,6 +15,9 @@
 
 \item{hide}{Columns to hide from the visualisation. See options with
 \code{availableTableColumns(result)}.}
+
+\item{.options}{A named list with additional formatting options.
+\code{visOmopResults::tableOptions()} shows allowed arguments and their default values.}
 }
 \description{
 Helper for consistent documentation of \code{table}.

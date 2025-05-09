@@ -42,7 +42,8 @@ tableCohortCount <- function(result,
                              type = "gt",
                              header = "cohort_name",
                              groupColumn = character(),
-                             hide = c("variable_level", settingsColumns(result))) {
+                             hide = c("variable_level", settingsColumns(result)),
+                             .options = list()) {
   result |>
     tableCohortCharacteristics(
       resultType = "summarise_cohort_count",
@@ -52,6 +53,7 @@ tableCohortCount <- function(result,
       rename = c("CDM name" = "cdm_name"),
       modifyResults = NULL,
       estimateName = c("N" = "<count>"),
-      type = type
+      type = type,
+      .options = .options
     )
 }

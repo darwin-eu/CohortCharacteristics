@@ -19,9 +19,9 @@ CDMConnector::requireEunomia()
 ```
 
 ## Introduction
-In this example we're going to summarise the characteristics of individuals with an ankle sprain, ankle fracture, forearm fracture, or a hip fracture using the Eunomia synthetic data. 
+In this example we're going to summarise the characteristics of individuals with an ankle sprain, ankle fracture, forearm fracture, or a hip fracture using the Eunomia synthetic database. 
 
-We'll begin by creating our study cohorts.
+We'll begin by creating our condition study cohorts with the `generateConceptCohortSet` function from `CDMConnector`. 
 
 ```{r}
 library(duckdb)
@@ -55,7 +55,7 @@ cohortCount(cdm$injuries)
 
 ## Summarising study cohorts
 
-Now we've created our cohorts, we can obtain a summary of the characteristics in the patients included in these cohorts. 
+Now we've created our cohorts, we can obtain a summary of the characteristics in the patients included in these cohorts. We'll create two different age group in below example: under 50 and 50+. 
 
 ```{r}
 chars <- cdm$injuries |>
@@ -64,10 +64,12 @@ chars |>
   glimpse()
 ```
 
-Now we have these results, we can create a table with an overall summary of the people in each cohort.
+Now we have generated the results, we can create a nice table in gt format to display the results using `tableCharacteristics` function.
 ```{r}
 tableCharacteristics(chars)
 ```
+
+We can also use the `plotCharacteristics` function to display the results in a plot. The `plotCharacteristics` function can only take in one variable. So you will need to filter the results to the variable you want to create a plot for beforehand.
 
 ```{r}
 chars |>
@@ -81,7 +83,7 @@ chars |>
 
 ## Stratified summaries
 
-We can also generate summaries that are stratified by some variable of interest. In this case we add an age group variable to our cohort table and then stratify our results by age group.
+We can also generate summaries that are stratified by some variable of interest. In this example we added an age group variable to our cohort table and then created the stratification for age group in our results.
 
 ```{r}
 chars <- cdm$injuries |>
@@ -92,11 +94,15 @@ chars <- cdm$injuries |>
   summariseCharacteristics(strata = list("age_group"))
 ```
 
+Again we used the `tableCharacteristics` function to display the results in gt table format.
+
 ```{r}
 tableCharacteristics(chars,
   groupColumn = "age_group"
 )
 ```
+
+Then plotted age stratified prior observation time.
 
 ```{r}
 chars |>
@@ -110,6 +116,8 @@ chars |>
 ```
 
 ## Summaries including presence in other cohorts
+
+We explored whether patients had any exposure to a list of selected medications (acetaminophen, morphine, warfarin)
 
 ```{r}
 medsCs <- getDrugIngredientCodes(
@@ -126,6 +134,8 @@ cdm <- generateConceptCohortSet(
 )
 ```
 
+We can use the `intersects` arguement inside the function to get this information.
+
 ```{r}
 chars <- cdm$injuries |>
   summariseCharacteristics(cohortIntersectFlag = list(
@@ -140,13 +150,13 @@ chars <- cdm$injuries |>
   ))
 ```
 
-These results will automatically be included when we create our table with patient characteristics.
+To view the summary table
 
 ```{r}
 tableCharacteristics(chars)
 ```
 
-We can now also plot our results for these medication cohorts of interest. 
+To visualise the exposure of these drugs in a bar plot.
 
 ```{r}
 plot_data <- chars |>
@@ -166,7 +176,7 @@ plot_data |>
   ggtitle("Medication use prior to index date")
 ```
 
-## Summaries using concept sets
+## Summaries Using Concept Sets Directly
 Instead of creating cohorts, we could have directly used our concept sets for medications when characterising our study cohorts.
 
 ```{r}
@@ -220,5 +230,3 @@ chars <- cdm$injuries |>
 tableCharacteristics(chars)
 ```
 
-## Summaries including additional variables 
-TO ADD

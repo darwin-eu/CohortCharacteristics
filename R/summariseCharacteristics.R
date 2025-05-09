@@ -484,10 +484,8 @@ summariseCharacteristics <- function(cohort,
       c("variable_name", "variable_level"),
       ~ stringr::str_to_sentence(gsub("_", " ", .x))
     )) |>
-    visOmopResults::uniteAdditional(cols = c("table", "window", "value")) |>
-    dplyr::as_tibble()
-
-  results <- results |>
+    omopgenerics::uniteAdditional() |>
+    dplyr::select(!c("table", "window", "value")) |>
     dplyr::mutate("result_id" = 1L) |>
     omopgenerics::newSummarisedResult(settings = srSet)
 

@@ -98,21 +98,22 @@ test_that("Function returns a ggplot object", {
     colour = c("age_group", "sex")
   )
 
-  expect_true(ggplot2::is.ggplot(plot_multiple))
+  expect_true(ggplot2::is_ggplot(plot_multiple))
 
   # do not throw error even if they do not specify color or facet or position
   expect_no_error(plotLargeScaleCharacteristics(test_data))
 
   plot_multiple <- plotComparedLargeScaleCharacteristics(
-    result = test_data |> dplyr::filter(group_level %in% c("cohort_1", "cohort_2")),
-    reference = c(cohort_name = "cohort_1", age_group = "overall", sex = "overall", variable_level = "-inf to -366"),
-    facet = NULL,
-    colour = NULL,
+    result = test_data |>
+      dplyr::filter(group_level == "cohort_1"),
+    colour = "variable_level",
+    reference = "-inf to -366",
+    facet = age_group ~ sex,
     missings = 0
   )
 
   # do not throw error even if they do not specify color or facet or position
-  expect_true(ggplot2::is.ggplot(plot_multiple))
+  expect_true(ggplot2::is_ggplot(plot_multiple))
 })
 
 test_that("output is always the same", {

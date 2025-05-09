@@ -160,9 +160,9 @@ summariseCohortOverlap <- function(cohort,
         )) |>
         getOverlapEstimates() |>
         dplyr::mutate(variable_level = .env$var) |>
-        visOmopResults::uniteGroup(cols = c("cohort_name_reference", "cohort_name_comparator")) |>
-        visOmopResults::uniteStrata(cols = strataCols) |>
-        visOmopResults::uniteAdditional(cols = character()) |>
+        omopgenerics::uniteGroup(cols = c("cohort_name_reference", "cohort_name_comparator")) |>
+        omopgenerics::uniteStrata(cols = strataCols) |>
+        omopgenerics::uniteAdditional(cols = character()) |>
         dplyr::mutate(result_id = 1L, cdm_name = omopgenerics::cdmName(cohort))
     }) |>
     dplyr::bind_rows() |>

@@ -79,7 +79,7 @@ test_that("basic functionality summarise large scale characteristics", {
       minimumFrequency = 0
     )
 
-  expect_no_error(tableLargeScaleCharacteristics(result))
+  expect_no_error(tableTopLargeScaleCharacteristics(result))
 })
 
 test_that("topConcepts working", {
@@ -106,9 +106,20 @@ test_that("topConcepts working", {
       minimumFrequency = 0.1
     )
 
-  x <- tableLargeScaleCharacteristics(lsc, topConcepts = 1, type = "tibble")
+  x <- tableTopLargeScaleCharacteristics(lsc, topConcepts = 1, type = "tibble")
 
   expect_true(nrow(x) == 1)
+
+  x <- tableTopLargeScaleCharacteristics(lsc, topConcepts = 1, type = "gt")
+
+  expect_no_error(tab1 <- tableLargeScaleCharacteristics(lsc))
+
+  expect_no_error(tab2 <- tableLargeScaleCharacteristics(lsc,
+                                                         compareBy = "variable_level"))
+
+  expect_no_error(tab3 <- tableLargeScaleCharacteristics(lsc,
+                                                         compareBy = "variable_level",
+                                                         smdReference = "-inf to -1"))
 
   CDMConnector::cdmDisconnect(cdm)
 })

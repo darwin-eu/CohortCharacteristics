@@ -54,6 +54,25 @@ test_that("plotCohortOverlap", {
     uniqueCombinations = TRUE
   )
   expect_true("ggplot" %in% class(gg2))
+  #filter cohort check
+  expect_no_error(
+    CohortCharacteristics::plotCohortOverlap(
+      overlap |>
+        omopgenerics::filterGroup(cohort_name_comparator  %in%
+                                    "cohort_1"),
+      facet = c("cdm_name", "cohort_name_reference")
+    )
+  )
+
+  expect_no_error(
+    CohortCharacteristics::plotCohortOverlap(
+      overlap |>
+        omopgenerics::filterGroup(cohort_name_reference  %in%
+                                    "cohort_1"),
+      facet = c("cdm_name", "cohort_name_comparator")
+    )
+  )
+
   # strata ----
   cdm$table <- cdm$table |>
     PatientProfiles::addAge(ageGroup = list(c(0, 40), c(41, 150))) |>

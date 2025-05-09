@@ -42,7 +42,8 @@ tableCharacteristics <- function(result,
                                  type = "gt",
                                  header = c("cdm_name", "cohort_name"),
                                  groupColumn = character(),
-                                 hide = c(additionalColumns(result), settingsColumns(result))) {
+                                 hide = c(additionalColumns(result), settingsColumns(result)),
+                                 .options = list()) {
   result |>
     tableCohortCharacteristics(
       resultType = "summarise_characteristics",
@@ -61,6 +62,7 @@ tableCharacteristics <- function(result,
         "Mean (SD)" = "<mean> (<sd>)",
         "Range" = "<min> to <max>"
       ),
-      type = type
+      type = type,
+      .options = .options
     )
 }

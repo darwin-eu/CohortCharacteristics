@@ -7,7 +7,6 @@
 plotCohortOverlap(
   result,
   uniqueCombinations = TRUE,
-  y = NULL,
   facet = c("cdm_name", "cohort_name_reference"),
   colour = "variable_name",
   .options = lifecycle::deprecated()
@@ -18,9 +17,6 @@ plotCohortOverlap(
 
 \item{uniqueCombinations}{Whether to restrict to unique reference and
 comparator comparisons.}
-
-\item{y}{Variables to use in y axis, if NULL all variables not present in
-facet are used.}
 
 \item{facet}{Columns to facet by. See options with
 \code{availablePlotColumns(result)}. Formula is also allowed to specify rows and

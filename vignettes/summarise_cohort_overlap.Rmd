@@ -70,7 +70,7 @@ medsOverlap |>
   glimpse()
 ```
 
-We have table and plotting functions to help view our results.
+We have table and plotting functions to help view our results. The `uniqueCombinations` can be use to include/exclude non unique combinations between the comparator and reference cohorts for the overlap.
 
 ```{r}
 tableCohortOverlap(medsOverlap, uniqueCombinations = FALSE)
@@ -98,7 +98,6 @@ tableCohortOverlap(medsOverlap, uniqueCombinations = FALSE)
 ```{r}
 plotCohortOverlap(
   medsOverlap,
-  y = c("cohort_name_reference", "cohort_name_comparator"),
   facet = c("age_group"),
   uniqueCombinations = TRUE
 )

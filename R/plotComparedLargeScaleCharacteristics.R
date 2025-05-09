@@ -19,10 +19,15 @@
 #' `r lifecycle::badge("experimental")`
 #'
 #' @inheritParams resultDoc
-#' @param reference A named character to set up the reference.
+#' @param colour Columns to color by. See options with
+#' `availablePlotColumns(result)`.
+#' @param reference A named character to set up the reference. It must be one of
+#' the levels of reference.
+#' @param facet Columns to facet by. See options with
+#' `availablePlotColumns(result)`. Formula is also allowed to specify rows and
+#' columns.
 #' @param missings Value to replace the missing value with. If NULL missing
 #' values will be eliminated.
-#' @inheritParams plotDoc
 #'
 #' @return A ggplot.
 #'
@@ -51,8 +56,8 @@
 #'
 #' resultsLsc |>
 #'   plotComparedLargeScaleCharacteristics(
-#'     reference = c(variable_level = "-365 to -1"),
-#'     colour = "variable_name",
+#'     colour = "variable_level",
+#'     reference = "-365 to -1",
 #'     missings = NULL
 #'   ) |>
 #'   ggplotly()
@@ -61,127 +66,94 @@
 #' }
 #'
 plotComparedLargeScaleCharacteristics <- function(result,
-                                                  reference,
-                                                  missings = 0,
+                                                  colour,
+                                                  reference = NULL,
                                                   facet = NULL,
-                                                  colour = NULL) {
-  # validate result
-  result <- omopgenerics::validateResultArgument(result)
-  omopgenerics::assertNumeric(missings, min = 0, max = 100, length = 1, null = TRUE)
-  omopgenerics::assertCharacter(reference, named = TRUE)
+                                                  missings = 0) {
+  rlang::check_installed("visOmopResults")
 
-  # check settings
-  result <- result |>
-    visOmopResults::filterSettings(
-      .data$result_type == "summarise_large_scale_characteristics"
+  # initial checks
+  result <- omopgenerics::validateResultArgument(result) |>
+    omopgenerics::filterSettings(.data$result_type == "summarise_large_scale_characteristics") |>
+    dplyr::filter(.data$estimate_name == "percentage")
+  strataCols <- omopgenerics::strataColumns(result)
+  omopgenerics::assertNumeric(missings, length = 1, null = TRUE)
+
+  choic <- c("cdm_name", "cohort_name", strataCols, "variable_level", "type")
+  omopgenerics::assertChoice(colour, choices = choic, length = 1)
+  result <- omopgenerics::tidy(result) |>
+    dplyr::rename(concept_name = "variable_name")
+  opts <- unique(result[[colour]])
+
+  if (length(opts) < 2) {
+    cli::cli_inform(c(x = "No multiple values for {.var {colour}} to compare."))
+    p <- ggplot2::ggplot() +
+      ggplot2::annotate(
+        geom = "text", x = 0.5, y = 0.5, size = 6, hjust = 0.5,
+        label = paste0("No multiple values to compare for: ", colour),
+      ) +
+      ggplot2::theme_void() +
+      ggplot2::xlim(0, 1) +
+      ggplot2::ylim(0, 1)
+  } else {
+    if (is.null(reference)) {
+      reference <- opts[1]
+    }
+    omopgenerics::assertChoice(reference, choices = opts, length = 1)
+
+    # prepare reference
+    ref <- result |>
+      dplyr::filter(.data[[colour]] == .env$reference) |>
+      dplyr::rename(reference_percentage = "percentage") |>
+      dplyr::select(!dplyr::all_of(colour)) |>
+      dplyr::cross_join(dplyr::tibble(!!colour := opts[opts != reference]))
+    join <- colnames(ref)[colnames(ref) != "reference_percentage"]
+    result <- result |>
+      dplyr::filter(.data[[colour]] != .env$reference) |>
+      dplyr::full_join(ref, by = join) |>
+      correctMissings(missings)
+
+    label <- c(choic[choic != colour], "concept_name", "concept_id")
+    colourLab <- paste0(
+      "Comparator (",
+      colour |>
+        stringr::str_replace_all(pattern = "_", replacement = " ") |>
+        stringr::str_to_sentence(),
+      ")"
     )
 
-  if (nrow(result) == 0) {
-    cli::cli_warn("`result` object does not contain any `result_type == 'summarise_large_scale_characteristics'` information.")
-    return(emptyPlot())
+    p <- visOmopResults::scatterPlot(
+      result = result, x= "reference_percentage", y = "percentage",
+      point = TRUE, line = FALSE, ribbon = FALSE, ymin = NULL, ymax = NULL,
+      facet = facet, colour = colour, group = NULL, label = label
+    ) +
+      ggplot2::geom_line(
+        mapping = ggplot2::aes(x = .data$x, y = .data$y),
+        data = dplyr::tibble(x = c(0, 100), y = c(0, 100)),
+        color = "black",
+        linetype = "dashed",
+        inherit.aes = FALSE
+      ) +
+      ggplot2::ylab("Comparator (%)") +
+      ggplot2::xlab("Reference (%)") +
+      ggplot2::labs(colour = colourLab, fill = colourLab)
   }
 
-  checkVersion(result)
-
-  checkReference(reference, result)
-
-  labs <- unique(result$variable_level)
-
-  result <- result |>
-    dplyr::filter(.data$estimate_name == "percentage") |>
-    tidy() |>
-    dplyr::mutate(variable_level = factor(.data$variable_level, labs))
-
-  cols <- colnames(result)
-  cols <- cols[cols != "percentage"]
-  result <- filterRef(result, reference) |>
-    dplyr::select("concept_id", "percentage_reference" = "percentage") |>
-    dplyr::full_join(
-      filterRef(result, reference, TRUE) |>
-        dplyr::rename("percentage_comparator" = "percentage"),
-      by = "concept_id"
-    ) |>
-    correctMissings(missings)
-
-  visOmopResults::scatterPlot(
-    result = result,
-    x = "percentage_reference",
-    y = "percentage_comparator",
-    point = TRUE,
-    line = FALSE,
-    ribbon = FALSE,
-    facet = facet,
-    colour = colour,
-    group = "variable_name"
-  )
+  return(p)
 }
 
-checkReference <- function(reference, result, call = parent.frame()) {
-  opts <- list(
-    cdm_name = unique(result$cdm_name),
-    variable_level = unique(result$variable_level)
-  )
-  opts <- c(opts, getValues(result, "group"), getValues(result, "strata"))
-  comp <- names(opts)[lengths(opts) > 1]
-  notPresent <- comp[!comp %in% names(reference)]
-  if (length(notPresent) > 0) {
-    c(
-      "x" = "The following variables need to be present on reference: {.var {notPresent}}.",
-      "i" = "Example: {.code reference = c({exampleRef(opts)})}."
-    ) |>
-      cli::cli_abort(call = call)
-  }
-  for (k in seq_along(reference)) {
-    ref <- reference[k]
-    variable <- names(ref)
-    if (!ref %in% opts[[variable]]) {
-      "wrong reference supplied for: {variable}; '{ref}' is not part of possible choices: {opts[[variable]]}." |>
-        cli::cli_abort(call = call)
-    }
-  }
-  invisible(reference)
-}
-getValues <- function(result, prefix) {
-  result |>
-    dplyr::select(dplyr::all_of(paste0(prefix, c("_name", "_level")))) |>
-    dplyr::distinct() |>
-    visOmopResults::splitAll() |>
-    purrr::map(unique)
-}
-exampleRef <- function(opts) {
-  purrr::imap_chr(opts, ~ paste0(.y, " = '", .x[1], "'")) |>
-    paste0(collapse = ", ")
-}
-filterRef <- function(result, reference, negate = FALSE) {
-  for (k in seq_along(reference)) {
-    nm <- names(reference)[k]
-    val <- reference[k] |> unname()
-    id <- result[[nm]] == val
-    if (negate) id <- !id
-    if (k == 1) {
-      idx <- id
-    } else if (negate) {
-      idx <- idx | id
-    } else {
-      idx <- idx & id
-    }
-  }
-  result <- result |>
-    dplyr::filter(.env$idx)
-  return(result)
-}
 correctMissings <- function(result, missings) {
   if (is.null(missings)) {
     result <- result |>
       dplyr::filter(
-        !is.na(.data$percentage_reference),
-        !is.na(.data$percentage_comparator)
+        !is.na(.data$percentage),
+        !is.na(.data$reference_percentage)
       )
   } else {
     result <- result |>
       dplyr::mutate(dplyr::across(
-        c("percentage_reference", "percentage_comparator"),
-        ~ dplyr::if_else(is.na(.x), missings, .x)
+        c("reference_percentage", "percentage"),
+        \(x) dplyr::if_else(is.na(x), missings, x)
       ))
   }
   return(result)

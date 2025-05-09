@@ -118,12 +118,11 @@ summariseLargeScaleCharacteristics <- function(cohort,
   tablePrefix <- omopgenerics::tmpPrefix()
 
   # initial table
-  x <- cohort |>
-    PatientProfiles::filterCohortId(cohortId = cohortId) |>
-    getInitialTable(tablePrefix, indexDate, censorDate)
+  cohort <- PatientProfiles::filterCohortId(cohort = cohort, cohortId = cohortId)
+  x <- getInitialTable(cohort, tablePrefix, indexDate, censorDate)
 
   # get analysis table
-  analyses <- getAnalyses(eventInWindow, episodeInWindow)
+  analyses <- getAnalyses(eventInWindow, episodeInWindow, includeSource)
 
   minWindow <- min(unlist(window))
   maxWindow <- max(unlist(window))
@@ -131,21 +130,17 @@ summariseLargeScaleCharacteristics <- function(cohort,
   # perform lsc
   lsc <- NULL
   cli::cli_alert_info("Summarising large scale characteristics ")
-  id <- cli::cli_status("")
-  for (i in seq_along(unique(analyses$table))) {
+  tables <- unique(analyses$table)
+  for (i in seq_along(tables)) {
     tab <- unique(analyses$table)[i]
-    cli::cli_status_update(
-      id,
-      " - getting characteristics from table {tab} ({i} of {length(unique(analyses$table))})"
-    )
+    " - getting characteristics from table {.pkg {tab}} ({i} of {length(tables)})" |>
+      cli::cli_progress_message()
     analysesTable <- analyses |> dplyr::filter(.data$table == .env$tab)
     table <- getTable(
       tab, x, includeSource, minWindow, maxWindow, tablePrefix
     )
     for (k in seq_len(nrow(analysesTable))) {
-      type <- analysesTable$type[k]
-      analysis <- analysesTable$analysis[k]
-      tableAnalysis <- getTableAnalysis(table, type, analysis, tablePrefix)
+      tableAnalysis <- getTableAnalysis(table, analysesTable[k, ], tablePrefix)
       for (win in seq_along(window)) {
         tableWindow <- getTableWindow(tableAnalysis, window[[win]], tablePrefix)
         lsc <- lsc |>
@@ -154,66 +149,59 @@ summariseLargeScaleCharacteristics <- function(cohort,
               dplyr::mutate(
                 "window_name" = names(window)[win],
                 "table_name" = .env$tab,
-                "analysis" = .env$analysis,
-                "type" = .env$type
+                "analysis" = .env$analysesTable$analysis[k],
+                "type" = .env$analysesTable$type[k]
               )
           )
       }
-      if ("source" %in% colnames(table) && analysis == "standard") {
-        tableAnalysis <- getTableAnalysis(table, type, "source", tablePrefix)
-        for (win in seq_along(window)) {
-          tableWindow <- getTableWindow(tableAnalysis, window[[win]], tablePrefix)
-          lsc <- lsc |>
-            dplyr::bind_rows(
-              summariseConcept(cohort, tableWindow, strata, tablePrefix) |>
-                dplyr::mutate(
-                  "window_name" = names(window)[win],
-                  "table_name" = .env$tab,
-                  "analysis" = "source",
-                  "type" = .env$type
-                )
-            )
-        }
-      }
     }
   }
-  cli::cli_status_clear(id)
 
+  cli::cli_progress_message("Formatting result")
   # calculate denominators
   den <- denominatorCounts(cohort, x, strata, window, tablePrefix)
 
+  if (includeSource) {
+    addCols <- c("concept_id", "source_concept_id", "source_concept_name")
+  } else {
+    addCols <- "concept_id"
+  }
+
   # format results
   results <- lsc |>
-    formatLscResult(den, cdm, minimumFrequency, excludedCodes)
-
-  # summarised_result format
-  results <- results |>
-    dplyr::mutate(
-      "variable_name" = .data$variable,
-      "estimate_name" = .data$estimate_type,
-      "estimate_value" = .data$estimate,
-      "estimate_type" = dplyr::if_else(
-        .data$estimate_type == "count", "integer", "percentage"
-      )
+    addPercentages(den) |>
+    trimFrequency(minimumFrequency) |>
+    excludeLscCodes(excludedCodes) |>
+    PatientProfiles::addCdmName(cdm = cdm) |>
+    addConceptNames(cdm) |>
+    dplyr::rename(variable_level = "window_name") |>
+    dplyr::mutate(count = sprintf("%i", .data$count)) |>
+    tidyr::pivot_longer(
+      cols = c("count", "percentage"),
+      names_to = "estimate_name",
+      values_to = "estimate_value"
     ) |>
-    dplyr::rename("concept_id" = "concept") |>
-    visOmopResults::uniteAdditional(cols = c("concept_id")) |>
-    dplyr::select(!c("estimate", "variable")) |>
-    dplyr::select(dplyr::all_of(c(
-      "cdm_name", "table_name", "type", "analysis",
-      "group_name", "group_level", "strata_name", "strata_level",
-      "variable_name", "variable_level", "estimate_name", "estimate_type",
-      "estimate_value", "additional_name", "additional_level"
-    )))
+    dplyr::mutate(estimate_type = dplyr::if_else(
+      .data$estimate_name == "count", "integer", "percentage"
+    )) |>
+    omopgenerics::uniteAdditional(cols = addCols)
 
+  # add result_id
   sets <- results |>
     dplyr::select("table_name", "type", "analysis") |>
     dplyr::distinct() |>
-    dplyr::mutate("result_id" = dplyr::row_number())
-
+    dplyr::mutate(result_id = as.integer(dplyr::row_number()))
   results <- results |>
     dplyr::left_join(sets, by = c("table_name", "type", "analysis")) |>
-    dplyr::select(-"table_name", -"type", -"analysis")
+    dplyr::select(-"table_name", -"type", -"analysis") |>
+    omopgenerics::newSummarisedResult(
+      settings = sets |>
+        dplyr::mutate(
+          result_type = "summarise_large_scale_characteristics",
+          package_name = "CohortCharacteristics",
+          package_version = pkgVersion()
+        )
+    )
 
   # order final result
   group <- dplyr::tibble(
@@ -229,61 +217,38 @@ summariseLargeScaleCharacteristics <- function(cohort,
       by = c("group_level", "strata_name", "strata_level", "variable_level"),
       relationship = "many-to-many"
     ) |>
-    dplyr::mutate(order_id2 = as.numeric(.data$additional_level)) |>
     dplyr::arrange(
-      .data$result_id, .data$order_id, .data$order_id2, .data$estimate_name
+      .data$result_id, .data$order_id, .data$variable_name, .data$estimate_name
     ) |>
-    dplyr::select(!c("order_id", "order_id2"))
-  # TO consider -> order by prevalence/percentage
-
-  results <- results |>
-    omopgenerics::newSummarisedResult(
-      settings = sets |>
-        dplyr::mutate(
-          "result_type" = "summarise_large_scale_characteristics",
-          "package_name" = "CohortCharacteristics",
-          "package_version" = pkgVersion()
-        )
-    )
+    dplyr::select(!"order_id")
 
   # eliminate permanent tables
-  cdm <- omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
+  omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(tablePrefix))
+
+  cli::cli_inform(c(v = "Summarising large scale characteristics "))
 
   # return
   return(results)
 }
 
-getAnalyses <- function(eventInWindow, episodeInWindow) {
+getAnalyses <- function(eventInWindow, episodeInWindow, includeSource) {
   atc <- c("ATC 1st", "ATC 2nd", "ATC 3rd", "ATC 4th", "ATC 5th")
   icd10 <- c("icd10 chapter", "icd10 subchapter")
-  list(
-    dplyr::tibble(
-      table = eventInWindow[!(eventInWindow %in% c(atc, icd10))],
-      type = "event", analysis = "standard"
-    ),
-    dplyr::tibble(
-      table = episodeInWindow[!(episodeInWindow %in% c(atc, icd10))],
-      type = "episode", analysis = "standard"
-    ),
-    dplyr::tibble(
-      table = "drug_exposure", type = "event",
-      analysis = eventInWindow[eventInWindow %in% atc],
-    ),
-    dplyr::tibble(
-      table = "drug_exposure", type = "episode",
-      analysis = episodeInWindow[episodeInWindow %in% atc],
-    ),
-    dplyr::tibble(
-      table = "condition_occurrence", type = "event",
-      analysis = eventInWindow[eventInWindow %in% icd10],
-    ),
-    dplyr::tibble(
-      table = "condition_occurrence", type = "episode",
-      analysis = episodeInWindow[episodeInWindow %in% icd10],
+  analysis <- ifelse(includeSource, "standard-source", "standard")
+  dplyr::tibble(table = eventInWindow %||% character(), type = "event") |>
+    dplyr::union_all(
+      dplyr::tibble(table = episodeInWindow %||% character(), type = "episode")
+    ) |>
+    dplyr::mutate(
+      analysis = dplyr::if_else(
+        .data$table %in% c(.env$atc, .env$icd10), .data$table, .env$analysis
+      ),
+      table = dplyr::case_when(
+        .data$table %in% .env$icd10 ~ "condition_occurrence",
+        .data$table %in% .env$atc ~ "drug_exposure",
+        .default = .data$table
+      )
     )
-  ) |>
-    dplyr::bind_rows() |>
-    tidyr::drop_na()
 }
 getInitialTable <- function(cohort, tablePrefix, indexDate, censorDate) {
   x <- cohort |>
@@ -311,11 +276,7 @@ getInitialTable <- function(cohort, tablePrefix, indexDate, censorDate) {
     dbplyr::window_order(.data$subject_id, .data$cohort_start_date) |>
     dplyr::mutate(obs_id = dplyr::row_number()) |>
     dbplyr::window_order() |>
-    dplyr::compute(
-      name = paste0(tablePrefix, "individuals"),
-      temporary = FALSE,
-      overwrite = TRUE
-    )
+    dplyr::compute(name = paste0(tablePrefix, "individuals"))
   return(x)
 }
 getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix) {
@@ -355,11 +316,9 @@ getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix) {
   }
   table <- table |>
     dplyr::select(-"start_obs", -"end_obs") |>
-    dplyr::compute(
-      name = paste0(tablePrefix, "table"),
-      temporary = FALSE,
-      overwrite = TRUE
-    )
+    dplyr::compute(name = paste0(tablePrefix, "table"))
+
+  return(table)
 }
 summariseConcept <- function(cohort, tableWindow, strata, tablePrefix) {
   result <- NULL
@@ -375,7 +334,8 @@ summariseConcept <- function(cohort, tableWindow, strata, tablePrefix) {
         by = c("subject_id", "cohort_start_date")
       ) |>
       dplyr::select(
-        "obs_id", "concept", dplyr::all_of(unique(unlist(strata)))
+        "obs_id", dplyr::any_of(c("concept", "source")),
+        dplyr::all_of(unique(unlist(strata)))
       ) |>
       dplyr::compute(
         name = paste0(tablePrefix, "table_window_cohort"),
@@ -385,7 +345,7 @@ summariseConcept <- function(cohort, tableWindow, strata, tablePrefix) {
     result <- result |>
       dplyr::bind_rows(
         tableWindowCohort |>
-          dplyr::group_by(.data$concept) |>
+          dplyr::group_by(dplyr::across(dplyr::any_of(c("concept", "source")))) |>
           dplyr::summarise(count = as.numeric(dplyr::n()), .groups = "drop") |>
           dplyr::collect() |>
           dplyr::mutate(strata_name = "overall", strata_level = "overall") |>
@@ -401,11 +361,13 @@ summariseStrataCounts <- function(tableWindowCohort, strata) {
     result <- result |>
       dplyr::union_all(
         tableWindowCohort |>
-          dplyr::group_by(dplyr::pick(c("concept", strata[[k]]))) |>
+          dplyr::group_by(dplyr::across(dplyr::any_of(c(
+            "concept", "source", strata[[k]]
+          )))) |>
           dplyr::summarise(count = as.numeric(dplyr::n()), .groups = "drop") |>
           dplyr::collect() |>
           dplyr::filter(!is.na(!!as.symbol(strata[[k]]))) |>
-          visOmopResults::uniteStrata(cols = strata[[k]])
+          omopgenerics::uniteStrata(cols = strata[[k]])
       )
   }
   return(result)
@@ -425,22 +387,23 @@ denominatorCounts <- function(cohort, x, strata, window, tablePrefix) {
   }
   return(den)
 }
-formatLscResult <- function(lsc, den, cdm, minimumFrequency, excludedCodes) {
-  lsc <- lsc |>
+addPercentages <- function(lsc, den) {
+  lsc |>
     dplyr::inner_join(
       den |>
         dplyr::rename("denominator" = "count") |>
-        dplyr::select(-"concept"),
+        dplyr::select(!"concept"),
       by = c(
         "strata_name", "strata_level", "group_name", "group_level",
         "window_name"
       )
-    )
-
+    ) |>
+    dplyr::mutate(percentage = sprintf("%.2f", 100 * .data$count / .data$denominator)) |>
+    dplyr::select(!"denominator")
+}
+trimFrequency <- function(lsc, minimumFrequency) {
   start_rows <- nrow(lsc)
   lsc <- lsc |>
-    dplyr::mutate(percentage = round(100 * .data$count / .data$denominator, 2)) |>
-    dplyr::select(-"denominator") |>
     dplyr::filter(.data$percentage >= 100 * .env$minimumFrequency)
   end_rows <- nrow(lsc)
 
@@ -448,7 +411,87 @@ formatLscResult <- function(lsc, den, cdm, minimumFrequency, excludedCodes) {
     "{start_rows - end_rows} estimate{?s} dropped as frequency less than {paste0(minimumFrequency*100)}%" |>
       cli::cli_inform()
   }
+  return(lsc)
+}
+excludeLscCodes <- function(lsc, excludedCodes) {
+  n_start <- nrow(lsc)
+  if ("source" %in% colnames(lsc)) {
+    lsc <- lsc |>
+      dplyr::filter(
+        !.data$concept %in% .env$excludedCodes |
+          !.data$source %in% .env$excludedCodes
+      )
+  } else if ("concept" %in% colnames(lsc)) {
+    lsc <- lsc |>
+      dplyr::filter(!.data$concept %in% .env$excludedCodes)
+  }
+  n_end <- nrow(lsc)
 
+  if (n_end < n_start) {
+    "{n_start - n_end} estimate{?s} dropped as contain `excludedCodes`." |>
+      cli::cli_inform()
+  }
+
+  return(lsc)
+}
+addConceptNames <- function(lsc, cdm) {
+  concepts <- suppressWarnings(unique(c(lsc$concept, lsc$source)))
+  concepts <- dplyr::tibble(concept_id = concepts)
+
+  nm <- omopgenerics::uniqueTableName(omopgenerics::tmpPrefix())
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = nm, table = concepts)
+
+  conceptNames <- cdm[["concept"]] |>
+    dplyr::select("concept_id", "concept_name") |>
+    dplyr::inner_join(cdm[[nm]], by = "concept_id") |>
+    dplyr::collect()
+
+  omopgenerics::dropSourceTable(cdm = cdm, name = nm)
+
+  lsc <- lsc |>
+    dplyr::mutate(variable_name = NA_character_, concept_id = NA_integer_)
+  if ("concept" %in% colnames(lsc)) {
+    lsc <- lsc |>
+      dplyr::left_join(
+        conceptNames |>
+          dplyr::rename(new_name = "concept_name",
+                        concept = "concept_id"),
+        by = "concept"
+      ) |>
+      dplyr::mutate(
+        variable_name = dplyr::coalesce(.data$variable_name, .data$new_name),
+        concept_id = dplyr::coalesce(.data$concept_id, .data$concept),
+        variable_name = dplyr::if_else(
+          !is.na(.data$concept_id),
+          dplyr::coalesce(.data$variable_name, "UNKNOWN CONCEPT"),
+          .data$variable_name
+        )
+      ) |>
+      dplyr::select(!c("concept", "new_name"))
+  }
+  if ("source" %in% colnames(lsc)) {
+    lsc <- lsc |>
+      dplyr::rename(source_concept_id = "source") |>
+      dplyr::left_join(
+        conceptNames |>
+          dplyr::rename(
+            source_concept_id = "concept_id",
+            source_concept_name = "concept_name"
+          ),
+        by = "source_concept_id"
+      ) |>
+      dplyr::mutate(
+        source_concept_name = dplyr::if_else(
+          !is.na(.data$source_concept_id),
+          dplyr::coalesce(.data$source_concept_name, "UNKNOWN CONCEPT"),
+          .data$source_concept_name
+        )
+      )
+  }
+
+  return(lsc)
+}
+formatLscResult <- function(lsc, den, cdm, minimumFrequency, excludedCodes) {
   lsc <- lsc |>
     dplyr::filter(!.data$concept %in% .env$excludedCodes) |>
     tidyr::pivot_longer(
@@ -496,20 +539,19 @@ addConceptName <- function(lsc, cdm) {
 
   return(conceptNames)
 }
-getTableAnalysis <- function(table, type, analysis, tablePrefix) {
-  if (type == "event") {
+getTableAnalysis <- function(table, analyses, tablePrefix) {
+  if (analyses$type == "event") {
     table <- table |>
       dplyr::mutate("end_diff" = .data$start_diff)
   }
-  if (analysis %in% c("standard", "source")) {
+  table <- table |>
+    dplyr::rename(concept = "standard")
+  if (analyses$analysis != "standard-source") {
     table <- table |>
-      dplyr::rename("concept" = dplyr::all_of(analysis)) |>
-      dplyr::select(-dplyr::any_of(c("standard", "source")))
-  } else {
-    table <- table |>
-      dplyr::rename("concept" = "standard") |>
-      dplyr::select(-dplyr::any_of("source"))
-    table <- getCodesGroup(table, analysis, tablePrefix)
+      dplyr::select(!dplyr::any_of("source"))
+    if (analyses$analysis != "standard") {
+      table <- getCodesGroup(table, analyses$analysis, tablePrefix)
+    }
   }
   return(table)
 }
@@ -569,7 +611,8 @@ getTableWindow <- function(table, window, tablePrefix) {
     }
   }
   tableWindow <- tableWindow |>
-    dplyr::select("subject_id", "cohort_start_date", "obs_id", "concept") |>
+    dplyr::select("subject_id", "cohort_start_date", "obs_id", "concept",
+                  dplyr::any_of("source")) |>
     dplyr::distinct() |>
     dplyr::compute(
       name = paste0(tablePrefix, "table_window"),
@@ -577,29 +620,4 @@ getTableWindow <- function(table, window, tablePrefix) {
       overwrite = TRUE
     )
   return(tableWindow)
-}
-trimCounts <- function(lsc, tableWindow, minimumCount, tablePrefix, winName) {
-  x <- tableWindow |>
-    dplyr::inner_join(
-      tableWindow |>
-        dplyr::group_by(.data$concept) |>
-        dplyr::summarise(count = dplyr::n(), .groups = "drop") |>
-        dplyr::filter(.data$count >= .env$minimumCount) |>
-        dplyr::select("concept"),
-      by = "concept"
-    ) |>
-    dplyr::mutate("window_name" = .env$winName)
-  if (is.null(lsc)) {
-    lsc <- x |>
-      dplyr::compute(
-        name = paste0(tablePrefix, "lsc"), temporary = FALSE, overwrite = TRUE
-      )
-  } else {
-    lsc <- lsc |>
-      dplyr::union_all(x) |>
-      dplyr::compute(
-        name = paste0(tablePrefix, "lsc"), temporary = FALSE, overwrite = TRUE
-      )
-  }
-  return(lsc)
 }

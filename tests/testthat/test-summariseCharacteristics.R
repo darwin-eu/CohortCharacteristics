@@ -230,34 +230,42 @@ test_that("test summariseCharacteristics", {
   ) |>
     suppress(minCellCount = 1))
   expect_true(inherits(result, "summarised_result"))
+
+
+  expect_identical(
+    colnames(result |>
+               dplyr::select(
+                 -c("additional_name", "additional_level")
+               )),
+    colnames(result |>
+               omopgenerics::splitAdditional())
+  )
+
+
   expect_true(
-    result |>
-      visOmopResults::splitAdditional() |>
-      dplyr::filter(window == "short") |>
+  result |>
+  dplyr::filter(variable_name == "Medications short") |>
       dplyr::tally() |>
       dplyr::pull() ==
       omopgenerics::settings(cdm$medication) |> nrow() * 4 # 2 group_level 4 estimate type
   )
   expect_true(
     result |>
-      visOmopResults::splitAdditional() |>
-      dplyr::filter(window == "long") |>
+      dplyr::filter(variable_name == "Medications long") |>
       dplyr::tally() |>
       dplyr::pull() ==
       omopgenerics::settings(cdm$medication) |> nrow() * 4 # 2 group_level 4 estimate type
   )
   expect_true(
     result |>
-      visOmopResults::splitAdditional() |>
-      dplyr::filter(table == "medication") |>
+      dplyr::filter(variable_name %in% c("Medications short", "Medications long")) |>
       dplyr::tally() |>
       dplyr::pull() ==
       omopgenerics::settings(cdm$medication) |> nrow() * 8 # 2 group_level 4 estimate type 2 window
   )
   expect_true(
     result |>
-      visOmopResults::splitAdditional() |>
-      dplyr::filter(table == "comorbidities") |>
+      dplyr::filter(variable_name %in% c("Comorbidities")) |>
       dplyr::tally() |>
       dplyr::pull() ==
       omopgenerics::settings(cdm$comorbidities) |> nrow() * 4 # 2 group_level 4 estimate type
