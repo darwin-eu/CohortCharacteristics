@@ -56,7 +56,8 @@ tableCohortTiming <- function(result,
                               type = "gt",
                               header = strataColumns(result),
                               groupColumn = c("cdm_name"),
-                              hide = c("variable_level", settingsColumns(result))) {
+                              hide = c("variable_level", settingsColumns(result)),
+                              .options = list()) {
   omopgenerics::assertChoice(timeScale, c("days", "years"), length = 1)
   omopgenerics::assertLogical(uniqueCombinations, length = 1)
   result |>
@@ -83,6 +84,7 @@ tableCohortTiming <- function(result,
         "Median [Q25 - Q75]" = "<median> [<q25> - <q75>]",
         "Range" = "<min> to <max>"
       ),
-      type = type
+      type = type,
+      .options = .options
     )
 }

@@ -100,7 +100,7 @@ test_that("test plot", {
     colour = c("variable_name", "variable_level")
   )
 
-  expect_true(ggplot2::is.ggplot(plot))
+  expect_true(ggplot2::is_ggplot(plot))
 
   # boxplot
   plot2 <- plotCharacteristics(
@@ -111,7 +111,7 @@ test_that("test plot", {
     colour = c("cohort_name")
   )
 
-  expect_true(ggplot2::is.ggplot(plot2))
+  expect_true(ggplot2::is_ggplot(plot2))
 
   expect_no_error(plotCharacteristics(
     result = test_data |>
@@ -128,8 +128,23 @@ test_that("test plot", {
   expect_no_error(plotCharacteristics(
     result = test_data |>
       dplyr::filter(variable_name == "Age"),
-    plotType = "barplot"
+    plotType = "scatterplot"
   ))
+
+  #densityplot
+  test_data <- summariseCharacteristics(
+    cdm$dus_cohort,
+    estimates = list(age = c("density"))
+  )
+
+  expect_no_error(
+    test_data |> dplyr::filter(variable_name %in%  c("Age")) |>
+      plotCharacteristics(plotType = "densityplot")
+  )
+
+  expect_true(ggplot2::is.ggplot(test_data |> dplyr::filter(variable_name %in%  c("Age")) |>
+                                       plotCharacteristics(plotType = "densityplot")))
+
 })
 
 test_that("plotCharacteristics", {
@@ -180,7 +195,7 @@ test_that("plotCharacteristics", {
   gg1 <- plotCharacteristics(result1 |>
     dplyr::filter(variable_name ==
       "Prior observation"))
-  expect_true(ggplot2::is.ggplot(gg1))
+  expect_true(ggplot2::is_ggplot(gg1))
 
   gg2 <- plotCharacteristics(
     result1 |>
@@ -189,7 +204,7 @@ test_that("plotCharacteristics", {
     plotType = "boxplot",
     colour = "variable_name"
   )
-  expect_true(ggplot2::is.ggplot(gg2))
+  expect_true(ggplot2::is_ggplot(gg2))
 
   mockDisconnect(cdm)
 })

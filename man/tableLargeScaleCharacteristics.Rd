@@ -2,60 +2,66 @@
 % Please edit documentation in R/tableLargeScaleCharacteristics.R
 \name{tableLargeScaleCharacteristics}
 \alias{tableLargeScaleCharacteristics}
-\title{Format a summarise_large_scale_characteristics object into a visual table.}
+\title{Explore and compare the large scale characteristics of cohorts}
 \usage{
 tableLargeScaleCharacteristics(
   result,
-  topConcepts = NULL,
-  type = "gt",
-  header = c("cdm_name", "cohort_name", strataColumns(result), "variable_level"),
-  groupColumn = c("table_name", "type", "analysis"),
-  hide = character()
+  compareBy = NULL,
+  hide = c("type"),
+  smdReference = NULL,
+  type = "reactable"
 )
 }
 \arguments{
 \item{result}{A summarised_result object.}
 
-\item{topConcepts}{Number of concepts to restrict the table.}
+\item{compareBy}{A column to compare by it can be a choice between
+"cdm_name", "cohort_name", strata columns, "variable_level" (window) and
+"type". It can be left NULL for no comparison.}
 
-\item{type}{Type of table. Check supported types with
-\code{visOmopResults::tableType()}.}
+\item{hide}{Columns to hide.}
 
-\item{header}{Columns to use as header. See options with
-\code{availableTableColumns(result)}.}
+\item{smdReference}{Level of reference for the Standardised Mean Differences
+(SMD), it has to be one of the values of \code{compareBy} column. If NULL no SMDs
+are displayed.}
 
-\item{groupColumn}{Columns to group by. See options with
-\code{availableTableColumns(result)}.}
-
-\item{hide}{Columns to hide from the visualisation. See options with
-\code{availableTableColumns(result)}.}
+\item{type}{Type of table to generate, it can be either \code{DT} or \code{reactable}.}
 }
 \value{
-A formatted table.
+A visual table.
 }
 \description{
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Explore and compare the large scale characteristics of cohorts
 }
 \examples{
 \dontrun{
+library(CohortCharacteristics)
 library(duckdb)
 library(CDMConnector)
+library(dplyr, warn.conflicts = FALSE)
 
 con <- dbConnect(duckdb(), eunomiaDir())
 cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
 cdm <- generateConceptCohortSet(
   cdm = cdm,
-  conceptSet = list("viral_pharyngitis" = 4112343),
+  conceptSet = list(viral_pharyngitis = 4112343),
   name = "my_cohort"
 )
 
 result <- summariseLargeScaleCharacteristics(
   cohort = cdm$my_cohort,
-  eventInWindow = "condition_occurrence",
+  window = list(c(-Inf, -1), c(0, 0), c(1, Inf)),
   episodeInWindow = "drug_exposure"
 )
 
 tableLargeScaleCharacteristics(result)
+
+tableLargeScaleCharacteristics(result,
+                               compareBy = "variable_level")
+
+tableLargeScaleCharacteristics(result,
+                               compareBy = "variable_level",
+                               smdReference = "-inf to -1")
 
 cdmDisconnect(cdm)
 }

@@ -9,7 +9,8 @@ tableCharacteristics(
   type = "gt",
   header = c("cdm_name", "cohort_name"),
   groupColumn = character(),
-  hide = c(additionalColumns(result), settingsColumns(result))
+  hide = c(additionalColumns(result), settingsColumns(result)),
+  .options = list()
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ tableCharacteristics(
 
 \item{hide}{Columns to hide from the visualisation. See options with
 \code{availableTableColumns(result)}.}
+
+\item{.options}{A named list with additional formatting options.
+\code{visOmopResults::tableOptions()} shows allowed arguments and their default values.}
 }
 \value{
 A formatted table.

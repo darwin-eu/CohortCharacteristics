@@ -3,7 +3,7 @@ test_that("getUniqueCombinationsSr", {
     cohort_name_reference = c("b", "y", "k"),
     cohort_name_comparator = c("a", "x", "z")
   ) |>
-    visOmopResults::uniteGroup(
+    omopgenerics::uniteGroup(
       cols = c("cohort_name_reference", "cohort_name_comparator")
     )
 
@@ -15,12 +15,12 @@ test_that("getUniqueCombinationsSr", {
     cohort_name_reference = c("b", "y", "a"),
     cohort_name_comparator = c("a", "x", "b")
   ) |>
-    visOmopResults::uniteGroup(
+    omopgenerics::uniteGroup(
       cols = c("cohort_name_reference", "cohort_name_comparator")
     )
   expect_identical(
     x |>
-      visOmopResults::filterGroup(.data$cohort_name_reference != "a"),
+      omopgenerics::filterGroup(.data$cohort_name_reference != "a"),
     getUniqueCombinationsSr(x)
   )
 })

@@ -20,14 +20,14 @@ individuals within the cohort.
     #>   Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M
     #>   (????). _CohortCharacteristics: Summarise and Visualise
     #>   Characteristics of Patients in the OMOP CDM_. R package version
-    #>   0.3.1, <https://darwin-eu.github.io/CohortCharacteristics/>.
+    #>   0.5.1, <https://darwin-eu.github.io/CohortCharacteristics/>.
     #> 
     #> A BibTeX entry for LaTeX users is
     #> 
     #>   @Manual{,
     #>     title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},
     #>     author = {Marti Catala and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},
-    #>     note = {R package version 0.3.1},
+    #>     note = {R package version 0.5.1},
     #>     url = {https://darwin-eu.github.io/CohortCharacteristics/},
     #>   }
 
@@ -107,16 +107,16 @@ result |>
 #> Rows: 4
 #> Columns: 13
 #> $ result_id        <int> 1, 1, 1, 1
-#> $ cdm_name         <chr> "Synthea synthetic health database", "Synthea synthet…
+#> $ cdm_name         <chr> "Synthea", "Synthea", "Synthea", "Synthea"
 #> $ group_name       <chr> "cohort_name", "cohort_name", "cohort_name", "cohort_…
-#> $ group_level      <chr> "11289_warfarin", "11289_warfarin", "161_acetaminophe…
+#> $ group_level      <chr> "acetaminophen", "acetaminophen", "warfarin", "warfar…
 #> $ strata_name      <chr> "overall", "overall", "overall", "overall"
 #> $ strata_level     <chr> "overall", "overall", "overall", "overall"
 #> $ variable_name    <chr> "Number records", "Number subjects", "Number records"…
 #> $ variable_level   <chr> NA, NA, NA, NA
 #> $ estimate_name    <chr> "count", "count", "count", "count"
 #> $ estimate_type    <chr> "integer", "integer", "integer", "integer"
-#> $ estimate_value   <chr> "137", "137", "13907", "2679"
+#> $ estimate_value   <chr> "13907", "2679", "137", "137"
 #> $ additional_name  <chr> "overall", "overall", "overall", "overall"
 #> $ additional_level <chr> "overall", "overall", "overall", "overall"
 ```
@@ -249,14 +249,14 @@ result <- cdm$my_cohort |>
 ```
 
 ``` r
-tableLargeScaleCharacteristics(result, type = "flextable")
+tableTopLargeScaleCharacteristics(result, type = "flextable")
 ```
 
 <img src="man/figures/README-unnamed-chunk-26-1.png" width="100%" />
 
 ``` r
 result |>
-  filter(group_level == "161_acetaminophen") |>
+  omopgenerics::filterGroup(cohort_name == "acetaminophen") |>
   plotLargeScaleCharacteristics()
 ```
 
@@ -264,9 +264,9 @@ result |>
 
 ``` r
 result |>
-  filter(group_level == "161_acetaminophen", variable_level != "0 to 0") |>
+  omopgenerics::filterGroup(cohort_name == "acetaminophen") |>
   plotComparedLargeScaleCharacteristics(
-    reference = c(variable_level = "-90 to -1"), colour = "variable_name"
+    reference = "-90 to -1", colour = "variable_level"
   )
 ```
 

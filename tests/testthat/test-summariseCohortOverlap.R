@@ -80,7 +80,7 @@ test_that("summariseCohortOverlap", {
           dplyr::pull() |>
           as.character()
         y <- overlap1 |>
-          visOmopResults::filterGroup(
+          omopgenerics::filterGroup(
             cohort_name_reference == !!set$cohort_name[set$cohort_definition_id == i],
             cohort_name_comparator == !!set$cohort_name[set$cohort_definition_id == j]
           ) |>
@@ -90,7 +90,7 @@ test_that("summariseCohortOverlap", {
       }
     }
     count1 <- overlap1 |>
-      visOmopResults::filterGroup(
+      omopgenerics::filterGroup(
         cohort_name_reference == !!set$cohort_name[set$cohort_definition_id == i]
       ) |>
       dplyr::filter(estimate_type == "integer" & .data$variable_name != "Only in comparator cohort") |>
@@ -104,7 +104,7 @@ test_that("summariseCohortOverlap", {
       dplyr::pull("number_subjects") |>
       as.integer()
     count3 <- overlap1 |>
-      visOmopResults::filterGroup(
+      omopgenerics::filterGroup(
         cohort_name_comparator == !!set$cohort_name[set$cohort_definition_id == i]
       ) |>
       dplyr::filter(estimate_type == "integer" & .data$variable_name != "Only in reference cohort") |>

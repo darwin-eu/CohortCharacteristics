@@ -1,4 +1,11 @@
 test_that("tableCohortAttrition", {
-  # we need to add tests here
-  expect_true(TRUE)
+  skip_on_cran()
+  cdm <- mockCohortCharacteristics()
+
+  result <- summariseCohortAttrition(cdm$cohort2)
+
+  expect_no_error(tbl <- tableCohortAttrition(result))
+  expect_true(inherits(tbl, "gt_tbl"))
+
+  mockDisconnect(cdm)
 })

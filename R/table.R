@@ -66,6 +66,7 @@ tableCohortCharacteristics <- function(result,
                                        modifyResults,
                                        estimateName,
                                        type,
+                                       .options = list(),
                                        call = parent.frame()) {
   rlang::check_installed("visOmopResults")
 
@@ -74,7 +75,7 @@ tableCohortCharacteristics <- function(result,
 
   # subset to rows of interest
   result <- result |>
-    visOmopResults::filterSettings(.data$result_type == .env$resultType)
+    omopgenerics::filterSettings(.data$result_type == .env$resultType)
   if (nrow(result) == 0) {
     cli::cli_warn("There are no results with `result_type = {resultType}`")
     return(emptyTable(type))
@@ -110,15 +111,16 @@ tableCohortCharacteristics <- function(result,
       paste0("<", as.character(.data$min_cell_count)),
       .data$estimate_value
     )) |>
-    dplyr::select(!c("result_id", "min_cell_count")) |>
     omopgenerics::splitAll() |>
+    dplyr::select(!c("result_id", "min_cell_count")) |>
     visOmopResults::visTable(
       estimateName = estimateName,
       header = header,
       rename = rename,
       type = type,
       hide = c("estimate_type", hide),
-      groupColumn = groupColumn
+      groupColumn = groupColumn,
+      .options = .options
     )
 }
 emptyTable <- function(type) {

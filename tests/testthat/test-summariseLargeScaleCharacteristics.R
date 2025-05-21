@@ -89,7 +89,7 @@ test_that("basic functionality summarise large scale characteristics", {
         minimumFrequency = 0
       )
   )
-  result <- result |> visOmopResults::splitAdditional()
+  result <- result |> omopgenerics::splitAdditional()
   conceptId <- c(317009, 317009, 378253, 378253, 4266367, 4266367)
   windowName <- rep(c("0 to 0", "-inf to -366"), 3)
   cohortName <- rep(c("cohort_1"), 6)
@@ -119,7 +119,7 @@ test_that("basic functionality summarise large scale characteristics", {
         minimumFrequency = 0
       )
   )
-  result <- result |> visOmopResults::splitAdditional()
+  result <- result |> omopgenerics::splitAdditional()
   conceptId <- c(317009, 317009, 378253, 378253, 4266367, 4266367)
   windowName <- rep(c("0 to 0", "-inf to -366"), 3)
   cohortName <- rep(c("cohort_1"), 6)
@@ -161,13 +161,13 @@ test_that("basic functionality summarise large scale characteristics", {
   ) %in% result$strata_level))
   result <- result |>
     dplyr::filter(strata_level == "0 to 24 &&& Female")
-  result <- result |> visOmopResults::splitAdditional()
+  result <- result |> omopgenerics::splitAdditional()
   conceptId <- c(317009, 317009, 378253, 378253, 4266367, 4266367)
   windowName <- rep(c("0 to 0", "-inf to -366"), 3)
   cohortName <- rep(c("cohort_1"), 6)
   count <- c(NA, 1, 1, NA, NA, NA)
   den <- c(1, 1, 1, 1, 1, 1)
-  percentage <- as.character(round(100 * count / den, 2))
+  percentage <- sprintf("%.2f", 100 * count / den)
   for (k in seq_along(conceptId)) {
     r <- result |>
       dplyr::filter(
@@ -193,8 +193,7 @@ test_that("basic functionality summarise large scale characteristics", {
         minimumFrequency = 0, excludedCodes = 317009
       )
   )
-  expect_false(any(grepl("317009", result$variable_name)))
-
+  expect_false(any(grepl("317009", result$additional_level)))
 
   # check strata
   # all missing values
@@ -265,4 +264,131 @@ test_that("basic functionality summarise large scale characteristics", {
       episodeInWindow = c("visit_occurrence"),
       minimumFrequency = 0
     ))
+
+  # create eunomia reference
+  dbName <- "GiBleed"
+  CDMConnector::requireEunomia(datasetName = dbName)
+  con <- duckdb::dbConnect(drv = duckdb::duckdb(dbdir = CDMConnector::eunomiaDir(datasetName = dbName)))
+  cdm <- CDMConnector::cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+
+  cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
+                                                conceptSet = list(avp = 4112343),
+                                                name = "my_cohort")
+
+  # include source table
+  expect_no_error(
+    result1 <- cdm$my_cohort |>
+      summariseLargeScaleCharacteristics(
+        window = list(c(-Inf, -1), c(1, Inf)),
+        eventInWindow = "condition_occurrence",
+        includeSource = FALSE
+      )
+  )
+  expect_true("concept_id" %in% colnames(tidy(result1)))
+  expect_no_error(
+    result2 <- cdm$my_cohort |>
+      summariseLargeScaleCharacteristics(
+        window = list(c(-Inf, -1), c(1, Inf)),
+        eventInWindow = "condition_occurrence",
+        includeSource = TRUE
+      )
+  )
+  result2 <- tidy(result2)
+  expect_true(all(c("concept_id", "source_concept_id", "source_concept_name") %in% colnames(result2)))
+  expect_true(
+    result2 |>
+      dplyr::filter(.data$concept_id != .data$source_concept_id) |>
+      dplyr::filter(.data$variable_name != .data$source_concept_name) |>
+      nrow() > 0
+  )
+  expect_identical(
+    result2$source_concept_name[result2$source_concept_id == "4166590"],
+    "UNKNOWN CONCEPT"
+  )
+
+  # atc 3rd
+  expect_no_error(
+    result1 <- cdm$my_cohort |>
+      PatientProfiles::addSex() |>
+      summariseLargeScaleCharacteristics(
+        strata = list("sex"), window = list(c(-Inf, -1), c(1, Inf)),
+        eventInWindow = "condition_occurrence",
+        episodeInWindow = c("ATC 3rd", "drug_exposure"),
+        includeSource = FALSE
+      )
+  )
+  result1 <- tidy(result1)
+  expect_true("concept_id" %in% colnames(result1))
+  expect_false("source_concept_id" %in% colnames(result1))
+  expect_false("source_concept_name" %in% colnames(result1))
+
+  expect_no_error(
+    result2 <- cdm$my_cohort |>
+      PatientProfiles::addSex() |>
+      summariseLargeScaleCharacteristics(
+        strata = list("sex"), window = list(c(-Inf, -1), c(1, Inf)),
+        eventInWindow = "condition_occurrence",
+        episodeInWindow = c("ATC 3rd", "drug_exposure"),
+        includeSource = TRUE
+      )
+  )
+  result2 <- tidy(result2)
+  expect_true("concept_id" %in% colnames(result2))
+  expect_true("source_concept_id" %in% colnames(result2))
+  expect_true("source_concept_name" %in% colnames(result2))
+
+  # explore atc
+  dbName <- "synthea-covid19-10k"
+  CDMConnector::requireEunomia(datasetName = dbName)
+  cdm <- dbName |>
+    CDMConnector::eunomiaDir() |>
+    duckdb::duckdb() |>
+    duckdb::dbConnect() |>
+    CDMConnector::cdmFromCon(cdmSchema = "main", writeSchema = "main") |>
+    CDMConnector::generateConceptCohortSet(conceptSet = list(cva = 381316),
+                                           name = "my_cohort")
+  # atc 3rd
+  expect_no_error(
+    result1 <- cdm$my_cohort |>
+      PatientProfiles::addSex() |>
+      summariseLargeScaleCharacteristics(
+        strata = list("sex"), window = list(c(-Inf, -1), c(1, Inf)),
+        eventInWindow = "condition_occurrence",
+        episodeInWindow = c("ATC 3rd", "drug_exposure"),
+        includeSource = FALSE
+      )
+  )
+  result1 <- tidy(result1)
+  expect_true("concept_id" %in% colnames(result1))
+  expect_false("source_concept_id" %in% colnames(result1))
+  expect_false("source_concept_name" %in% colnames(result1))
+  expect_true(all(c("standard", "ATC 3rd") %in% unique(result1$analysis)))
+
+  expect_no_error(
+    result2 <- cdm$my_cohort |>
+      PatientProfiles::addSex() |>
+      summariseLargeScaleCharacteristics(
+        strata = list("sex"), window = list(c(-Inf, -1), c(1, Inf)),
+        eventInWindow = "condition_occurrence",
+        episodeInWindow = c("ATC 3rd", "drug_exposure"),
+        includeSource = TRUE
+      )
+  )
+  result2 <- tidy(result2)
+  expect_true("concept_id" %in% colnames(result2))
+  expect_true("source_concept_id" %in% colnames(result2))
+  expect_true("source_concept_name" %in% colnames(result2))
+  expect_true(all(c("standard-source", "ATC 3rd") %in% unique(result2$analysis)))
+  expect_true(unique(result2$source_concept_id[result2$analysis == "ATC 3rd"]) == "overall")
+  expect_true(unique(result2$source_concept_name[result2$analysis == "ATC 3rd"]) == "overall")
+
+  atc_result1 <- result1 |>
+    dplyr::filter(.data$analysis == "ATC 3rd") |>
+    dplyr::arrange(dplyr::across(dplyr::everything()))
+  atc_result2 <- result2 |>
+    dplyr::filter(.data$analysis == "ATC 3rd") |>
+    dplyr::arrange(dplyr::across(dplyr::everything())) |>
+    dplyr::select(!c("source_concept_id", "source_concept_name"))
+  expect_identical(atc_result1, atc_result2)
+
 })

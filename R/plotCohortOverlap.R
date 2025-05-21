@@ -19,8 +19,6 @@
 #'
 #' @inheritParams resultDoc
 #' @inheritParams uniqueCombinationsDoc
-#' @param y Variables to use in y axis, if NULL all variables not present in
-#' facet are used.
 #' @inheritParams plotDoc
 #' @param .options deprecated.
 #'
@@ -42,10 +40,10 @@
 #'
 plotCohortOverlap <- function(result,
                               uniqueCombinations = TRUE,
-                              y = NULL,
                               facet = c("cdm_name", "cohort_name_reference"),
                               colour = "variable_name",
                               .options = lifecycle::deprecated()) {
+  rlang::check_installed("visOmopResults")
   if (lifecycle::is_present(.options)) {
     lifecycle::deprecate_warn(when = "0.3.0", what = "plotCohortOverlap(.options= )")
   }
@@ -71,18 +69,29 @@ plotCohortOverlap <- function(result,
 
   notUnique <- notUniqueColumns(result)
   x <- notUnique[!notUnique %in% c(colour, asCharacterFacet(facet))]
-  if (length(x) == 0) {
-    result <- omopgenerics::tidy(result)
-    x <- omopgenerics::uniqueId(exclude = colnames(result))
-    result <- dplyr::mutate(result, !!x := "")
+
+  #give correct x when comparator or reference cohort only contain 1 group
+  if (length(notUnique) == 1) {
+    xColumns <- c("cohort_name_reference", "cohort_name_comparator")
+    if (notUnique %in% xColumns & length(x) == 0) {
+      xValues <- dplyr::intersect(notUnique, xColumns)
+      x <- dplyr::setdiff(xColumns, notUnique)
+    }
   }
+
   group <- notUnique
   if (length(group) == 0) {
     group <- NULL
   }
 
+  result <- omopgenerics::tidy(result)
+
+  if (length(x) == 0) {
+    x <- omopgenerics::uniqueId(exclude = colnames(result))
+    result <- dplyr::mutate(result, !!x := "")
+  }
+
   result <- result |>
-    omopgenerics::tidy() |>
     dplyr::mutate(variable_name = factor(
       .data$variable_name,
       levels = c(
