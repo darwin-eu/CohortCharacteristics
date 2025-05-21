@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Summarise cohort overlap</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/v0.5.1/vignettes/summarise_cohort_overlap.Rmd" class="external-link"><code>vignettes/summarise_cohort_overlap.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/vignettes/summarise_cohort_overlap.Rmd" class="external-link"><code>vignettes/summarise_cohort_overlap.Rmd</code></a></small>
       <div class="d-none name"><code>summarise_cohort_overlap.Rmd</code></div>
     </div>
 
@@ -147,7 +147,10 @@ them.</p>
 <span><span class="co">#&gt; $ estimate_value   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "1"<span style="color: #949494;">, </span>"136"<span style="color: #949494;">, </span>"2543"<span style="color: #949494;">, </span>"131"<span style="color: #949494;">, </span>"6"<span style="color: #949494;">, </span>"29"<span style="color: #949494;">, </span>"2543"<span style="color: #949494;">, </span>"136"<span style="color: #949494;">, </span>…</span></span>
 <span><span class="co">#&gt; $ additional_name  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"…</span></span>
 <span><span class="co">#&gt; $ additional_level <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"…</span></span></code></pre></div>
-<p>We have table and plotting functions to help view our results.</p>
+<p>We have table and plotting functions to help view our results. The
+<code>uniqueCombinations</code> can be use to include/exclude non unique
+combinations between the comparator and reference cohorts for the
+overlap.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tableCohortOverlap.html">tableCohortOverlap</a></span><span class="op">(</span><span class="va">medsOverlap</span>, uniqueCombinations <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div id="ijbfglzvne" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
@@ -1400,7 +1403,6 @@ to view our stratified results.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotCohortOverlap.html">plotCohortOverlap</a></span><span class="op">(</span></span>
 <span>  <span class="va">medsOverlap</span>,</span>
-<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cohort_name_reference"</span>, <span class="st">"cohort_name_comparator"</span><span class="op">)</span>,</span>
 <span>  facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age_group"</span><span class="op">)</span>,</span>
 <span>  uniqueCombinations <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>

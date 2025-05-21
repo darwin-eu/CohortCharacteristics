@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Summarise patient characteristics</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/v0.5.1/vignettes/summarise_characteristics.Rmd" class="external-link"><code>vignettes/summarise_characteristics.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/vignettes/summarise_characteristics.Rmd" class="external-link"><code>vignettes/summarise_characteristics.Rmd</code></a></small>
       <div class="d-none name"><code>summarise_characteristics.Rmd</code></div>
     </div>
 
@@ -78,8 +78,10 @@
 </h2>
 <p>In this example we’re going to summarise the characteristics of
 individuals with an ankle sprain, ankle fracture, forearm fracture, or a
-hip fracture using the Eunomia synthetic data.</p>
-<p>We’ll begin by creating our study cohorts.</p>
+hip fracture using the Eunomia synthetic database.</p>
+<p>We’ll begin by creating our condition study cohorts with the
+<code>generateConceptCohortSet</code> function from
+<code>CDMConnector</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.duckdb.org/" class="external-link">duckdb</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CDMConnector/" class="external-link">CDMConnector</a></span><span class="op">)</span></span>
@@ -128,7 +130,8 @@ hip fracture using the Eunomia synthetic data.</p>
 <h2 id="summarising-study-cohorts">Summarising study cohorts<a class="anchor" aria-label="anchor" href="#summarising-study-cohorts"></a>
 </h2>
 <p>Now we’ve created our cohorts, we can obtain a summary of the
-characteristics in the patients included in these cohorts.</p>
+characteristics in the patients included in these cohorts. We’ll create
+two different age group in below example: under 50 and 50+.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chars</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">injuries</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/summariseCharacteristics.html">summariseCharacteristics</a></span><span class="op">(</span>ageGroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">49</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="cn">Inf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -149,8 +152,9 @@ characteristics in the patients included in these cohorts.</p>
 <span><span class="co">#&gt; $ estimate_value   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "1915"<span style="color: #949494;">, </span>"1357"<span style="color: #949494;">, </span>"1912-02-25"<span style="color: #949494;">, </span>"1968-06-15"<span style="color: #949494;">, </span>"1982-11-…</span></span>
 <span><span class="co">#&gt; $ additional_name  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"…</span></span>
 <span><span class="co">#&gt; $ additional_level <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"…</span></span></code></pre></div>
-<p>Now we have these results, we can create a table with an overall
-summary of the people in each cohort.</p>
+<p>Now we have generated the results, we can create a nice table in gt
+format to display the results using <code>tableCharacteristics</code>
+function.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tableCharacteristics.html">tableCharacteristics</a></span><span class="op">(</span><span class="va">chars</span><span class="op">)</span></span></code></pre></div>
 <div id="eqmfaamrew" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
@@ -1103,6 +1107,10 @@ summary of the people in each cohort.</p>
 </tbody>
 </table>
 </div>
+<p>We can also use the <code>plotCharacteristics</code> function to
+display the results in a plot. The <code>plotCharacteristics</code>
+function can only take in one variable. So you will need to filter the
+results to the variable you want to create a plot for beforehand.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chars</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">variable_name</span> <span class="op">==</span> <span class="st">"Age"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1117,8 +1125,9 @@ summary of the people in each cohort.</p>
 <h2 id="stratified-summaries">Stratified summaries<a class="anchor" aria-label="anchor" href="#stratified-summaries"></a>
 </h2>
 <p>We can also generate summaries that are stratified by some variable
-of interest. In this case we add an age group variable to our cohort
-table and then stratify our results by age group.</p>
+of interest. In this example we added an age group variable to our
+cohort table and then created the stratification for age group in our
+results.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chars</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">injuries</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://darwin-eu.github.io/PatientProfiles/reference/addAge.html" class="external-link">addAge</a></span><span class="op">(</span>ageGroup <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -1126,6 +1135,8 @@ table and then stratify our results by age group.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="cn">Inf</span><span class="op">)</span></span>
 <span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/summariseCharacteristics.html">summariseCharacteristics</a></span><span class="op">(</span>strata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"age_group"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Again we used the <code>tableCharacteristics</code> function to
+display the results in gt table format.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tableCharacteristics.html">tableCharacteristics</a></span><span class="op">(</span><span class="va">chars</span>,</span>
 <span>  groupColumn <span class="op">=</span> <span class="st">"age_group"</span></span>
@@ -2887,6 +2898,7 @@ table and then stratify our results by age group.</p>
 </tbody>
 </table>
 </div>
+<p>Then plotted age stratified prior observation time.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chars</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">variable_name</span> <span class="op">==</span> <span class="st">"Prior observation"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -2901,6 +2913,8 @@ table and then stratify our results by age group.</p>
 <div class="section level2">
 <h2 id="summaries-including-presence-in-other-cohorts">Summaries including presence in other cohorts<a class="anchor" aria-label="anchor" href="#summaries-including-presence-in-other-cohorts"></a>
 </h2>
+<p>We explored whether patients had any exposure to a list of selected
+medications (acetaminophen, morphine, warfarin)</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">medsCs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CodelistGenerator/reference/getDrugIngredientCodes.html" class="external-link">getDrugIngredientCodes</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -2914,6 +2928,8 @@ table and then stratify our results by age group.</p>
 <span>  limit <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>We can use the <code>intersects</code> arguement inside the function
+to get this information.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">chars</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">injuries</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/summariseCharacteristics.html">summariseCharacteristics</a></span><span class="op">(</span>cohortIntersectFlag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -2926,8 +2942,7 @@ table and then stratify our results by age group.</p>
 <span>      window <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>These results will automatically be included when we create our table
-with patient characteristics.</p>
+<p>To view the summary table</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tableCharacteristics.html">tableCharacteristics</a></span><span class="op">(</span><span class="va">chars</span><span class="op">)</span></span></code></pre></div>
 <div id="zxcqaipjjk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
@@ -3964,8 +3979,7 @@ with patient characteristics.</p>
 </tbody>
 </table>
 </div>
-<p>We can now also plot our results for these medication cohorts of
-interest.</p>
+<p>To visualise the exposure of these drugs in a bar plot.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="va">chars</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
@@ -3985,7 +3999,7 @@ interest.</p>
 <p><img src="summarise_characteristics_files/figure-html/unnamed-chunk-12-1.png" width="672"></p>
 </div>
 <div class="section level2">
-<h2 id="summaries-using-concept-sets">Summaries using concept sets<a class="anchor" aria-label="anchor" href="#summaries-using-concept-sets"></a>
+<h2 id="summaries-using-concept-sets-directly">Summaries Using Concept Sets Directly<a class="anchor" aria-label="anchor" href="#summaries-using-concept-sets-directly"></a>
 </h2>
 <p>Instead of creating cohorts, we could have directly used our concept
 sets for medications when characterising our study cohorts.</p>
@@ -4917,24 +4931,24 @@ sets we will instead be working directly with record-level data.</p>
 </tr>
 <tr>
 <td headers="Variable name" class="gt_row gt_left" style="text-align: left;">Medications prior to index date</td>
-<td headers="Variable level" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">11289 warfarin</td>
+<td headers="Variable level" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">7052 morphine</td>
 <td headers="Estimate name" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">N (%)</td>
 <td headers="[header_name]CDM name
 [header_level]Eunomia
 [header_name]Cohort name
-[header_level]ankle_sprain" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">12 (0.63%)</td>
+[header_level]ankle_sprain" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">15 (0.78%)</td>
 <td headers="[header_name]CDM name
 [header_level]Eunomia
 [header_name]Cohort name
-[header_level]ankle_fracture" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">8 (1.72%)</td>
+[header_level]ankle_fracture" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">1 (0.22%)</td>
 <td headers="[header_name]CDM name
 [header_level]Eunomia
 [header_name]Cohort name
-[header_level]forearm_fracture" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">11 (1.93%)</td>
+[header_level]forearm_fracture" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">2 (0.35%)</td>
 <td headers="[header_name]CDM name
 [header_level]Eunomia
 [header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">4 (2.90%)</td>
+[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">2 (1.45%)</td>
 </tr>
 <tr>
 <td headers="Variable name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
@@ -4959,24 +4973,24 @@ sets we will instead be working directly with record-level data.</p>
 </tr>
 <tr>
 <td headers="Variable name" class="gt_row gt_left" style="text-align: left; border-top-width: 1px; border-top-style: hidden; border-top-color: #000000;"></td>
-<td headers="Variable level" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">7052 morphine</td>
+<td headers="Variable level" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">11289 warfarin</td>
 <td headers="Estimate name" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">N (%)</td>
 <td headers="[header_name]CDM name
 [header_level]Eunomia
 [header_name]Cohort name
-[header_level]ankle_sprain" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">15 (0.78%)</td>
+[header_level]ankle_sprain" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">12 (0.63%)</td>
 <td headers="[header_name]CDM name
 [header_level]Eunomia
 [header_name]Cohort name
-[header_level]ankle_fracture" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">1 (0.22%)</td>
+[header_level]ankle_fracture" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">8 (1.72%)</td>
 <td headers="[header_name]CDM name
 [header_level]Eunomia
 [header_name]Cohort name
-[header_level]forearm_fracture" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">2 (0.35%)</td>
+[header_level]forearm_fracture" class="gt_row gt_left" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">11 (1.93%)</td>
 <td headers="[header_name]CDM name
 [header_level]Eunomia
 [header_name]Cohort name
-[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">2 (1.45%)</td>
+[header_level]hip_fracture" class="gt_row gt_left" style="text-align: right;">4 (2.90%)</td>
 </tr>
 <tr>
 <td headers="Variable name" class="gt_row gt_left" style="text-align: left;">Medications on index date</td>
@@ -6086,11 +6100,6 @@ add a count of visit occurrences</p>
 </tbody>
 </table>
 </div>
-</div>
-<div class="section level2">
-<h2 id="summaries-including-additional-variables">Summaries including additional variables<a class="anchor" aria-label="anchor" href="#summaries-including-additional-variables"></a>
-</h2>
-<p>TO ADD</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
