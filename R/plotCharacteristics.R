@@ -80,7 +80,7 @@ plotCharacteristics <- function(result,
   # check input
   result <- omopgenerics::validateResultArgument(result)
   omopgenerics::assertChoice(
-    plotType, choices = c("barplot", "scatterplot", "boxplot"), length = 1
+    plotType, choices = c("barplot", "scatterplot", "boxplot", "densityplot"), length = 1
   )
 
   # deprecation
@@ -100,7 +100,7 @@ plotCharacteristics <- function(result,
   x <- x[!x %in% asCharacterFacet(facet)]
 
   # check only one estimate
-  if (plotType != "boxplot") {
+  if (!plotType %in% c("boxplot","densityplot")) {
     estimate <- unique(result$estimate_name)
     if (length(estimate) > 1) {
       return(emptyPlot(
@@ -113,21 +113,43 @@ plotCharacteristics <- function(result,
     estimate <- NULL
   }
 
-  # internal functions
-  p <- plotInternal(
-    result = result,
-    resultType = "summarise_characteristics",
-    plotType = plotType,
-    facet = facet,
-    colour = colour,
-    uniqueCombinations = FALSE,
-    x = x,
-    y = estimate,
-    oneVariable = TRUE,
-    toYears = FALSE
-  ) +
-    ggplot2::ylab(lab) +
-    ggplot2::theme(legend.position = "top")
+  if (!plotType == "densityplot") {
+    # internal functions
+    p <- plotInternal(
+      result = result,
+      resultType = "summarise_characteristics",
+      plotType = plotType,
+      facet = facet,
+      colour = colour,
+      uniqueCombinations = FALSE,
+      x = x,
+      y = estimate,
+      oneVariable = TRUE,
+      toYears = FALSE
+    ) +
+      ggplot2::ylab(lab)
+  } else {
+    # internal functions
+    p <- plotInternal(
+      result = result,
+      resultType = "summarise_characteristics",
+      plotType = plotType,
+      facet = facet,
+      colour = colour,
+      uniqueCombinations = FALSE,
+      oneVariable = TRUE,
+      toYears = FALSE,
+      excludeGroup = "variable_level"
+    ) +
+      ggplot2::labs(
+        title = ggplot2::element_blank(),
+        x = lab,
+        y = ggplot2::element_blank()
+      )
+
+  }
+
+  p <- p + ggplot2::theme(legend.position = "top")
 
   if (length(x) == 0) {
     p <- p +

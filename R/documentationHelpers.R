@@ -17,6 +17,8 @@ NULL
 #' `availableTableColumns(result)`.
 #' @param hide Columns to hide from the visualisation. See options with
 #' `availableTableColumns(result)`.
+#' @param .options A named list with additional formatting options.
+#' `visOmopResults::tableOptions()` shows allowed arguments and their default values.
 #'
 #' @name tableDoc
 #' @keywords internal

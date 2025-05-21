@@ -6,26 +6,27 @@
 \usage{
 plotComparedLargeScaleCharacteristics(
   result,
-  reference,
-  missings = 0,
+  colour,
+  reference = NULL,
   facet = NULL,
-  colour = NULL
+  missings = 0
 )
 }
 \arguments{
 \item{result}{A summarised_result object.}
 
-\item{reference}{A named character to set up the reference.}
+\item{colour}{Columns to color by. See options with
+\code{availablePlotColumns(result)}.}
 
-\item{missings}{Value to replace the missing value with. If NULL missing
-values will be eliminated.}
+\item{reference}{A named character to set up the reference. It must be one of
+the levels of reference.}
 
 \item{facet}{Columns to facet by. See options with
 \code{availablePlotColumns(result)}. Formula is also allowed to specify rows and
 columns.}
 
-\item{colour}{Columns to color by. See options with
-\code{availablePlotColumns(result)}.}
+\item{missings}{Value to replace the missing value with. If NULL missing
+values will be eliminated.}
 }
 \value{
 A ggplot.
@@ -56,8 +57,8 @@ resultsLsc <- cdm$my_cohort |>
 
 resultsLsc |>
   plotComparedLargeScaleCharacteristics(
-    reference = c(variable_level = "-365 to -1"),
-    colour = "variable_name",
+    colour = "variable_level",
+    reference = "-365 to -1",
     missings = NULL
   ) |>
   ggplotly()

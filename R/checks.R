@@ -15,70 +15,6 @@
 # limitations under the License.
 
 #' @noRd
-checkX <- function(x) {
-  if (!isTRUE(inherits(x, "tbl_dbi"))) {
-    cli::cli_abort("x is not a valid table")
-  }
-  if ("person_id" %in% colnames(x) && "subject_id" %in% colnames(x)) {
-    cli::cli_abort(paste0(
-      "x can only contain an individual identifier, please remove 'person_id'",
-      " or 'subject_id'"
-    ))
-  }
-  if (!("person_id" %in% colnames(x)) && !("subject_id" %in% colnames(x))) {
-    cli::cli_abort(paste0(
-      "x must contain an individual identifier ('person_id'",
-      " or 'subject_id')"
-    ))
-  }
-  personVariable <- dplyr::if_else(
-    "person_id" %in% colnames(x), "person_id", "subject_id"
-  )
-  invisible(personVariable)
-}
-
-#' @noRd
-getWindowNames <- function(window) {
-  getname <- function(element) {
-    element <- tolower(as.character(element))
-    element <- gsub("-", "m", element)
-    invisible(paste0(element[1], "_to_", element[2]))
-  }
-  windowNames <- names(window)
-  if (is.null(windowNames)) {
-    windowNames <- lapply(window, getname)
-  } else {
-    windowNames[windowNames == ""] <- lapply(window[windowNames == ""], getname)
-  }
-  invisible(windowNames)
-}
-
-#' @noRd
-checkStrata <- function(strata, table, type = "strata") {
-  errorMessage <- paste0(type, " should be a list that point to columns in table")
-  if (!is.list(strata)) {
-    strata <- list(strata)
-  }
-  if (length(strata) > 0) {
-    if (!is.character(unlist(strata))) {
-      cli::cli_abort(errorMessage)
-    }
-    if (!all(unlist(strata) %in% colnames(table))) {
-      notPresent <- strata |>
-        unlist() |>
-        unique()
-      notPresent <- notPresent[!notPresent %in% colnames(table)]
-      cli::cli_abort(paste0(
-        errorMessage,
-        ". The following columns were not found in the data: ",
-        paste0(notPresent, collapse = ", ")
-      ))
-    }
-  }
-  return(invisible(strata))
-}
-
-#' @noRd
 checkOtherVariables <- function(otherVariables, cohort, call = rlang::env_parent()) {
   omopgenerics::assertCharacter(otherVariables, call = call, unique = TRUE)
   if (!all(unlist(otherVariables) %in% colnames(cohort))) {
@@ -146,6 +82,10 @@ assertIntersect <- function(intersect) {
       cli::cli_abort("{name}: please provide window argument.")
     }
 
+    if ("conceptSet" %in% nams) {
+      intersect[[k]]$conceptSet <- omopgenerics::validateConceptSetArgument(intersect[[k]]$conceptSet)
+    }
+
     # add names if missing
     if (namesIntersect[k] == "") {
       if ("tableName" %in% nams) {
@@ -167,7 +107,20 @@ assertIntersect <- function(intersect) {
 
   return(invisible(intersect))
 }
-
+getWindowNames <- function(window) {
+  getname <- function(element) {
+    element <- tolower(as.character(element))
+    element <- gsub("-", "m", element)
+    invisible(paste0(element[1], "_to_", element[2]))
+  }
+  windowNames <- names(window)
+  if (is.null(windowNames)) {
+    windowNames <- lapply(window, getname)
+  } else {
+    windowNames[windowNames == ""] <- lapply(window[windowNames == ""], getname)
+  }
+  invisible(windowNames)
+}
 getWindowName <- function(win) {
   paste0(win[[1]][1], " to ", win[[1]][2])
 }

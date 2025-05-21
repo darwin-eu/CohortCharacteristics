@@ -44,7 +44,8 @@ tableCohortOverlap <- function(result,
                                type = "gt",
                                header = c("variable_name"),
                                groupColumn = c("cdm_name"),
-                               hide = c("variable_level", settingsColumns(result))) {
+                               hide = c("variable_level", settingsColumns(result)),
+                               .options = list()) {
   omopgenerics::assertLogical(uniqueCombinations, length = 1)
   result |>
     tableCohortCharacteristics(
@@ -60,6 +61,7 @@ tableCohortOverlap <- function(result,
         return(x)
       },
       estimateName = c("N (%)" = "<count> (<percentage>%)"),
-      type = type
+      type = type,
+      .options = .options
     )
 }

@@ -119,11 +119,11 @@ summariseCharacteristics <- function(cohort,
                                      otherVariablesEstimates = lifecycle::deprecated()) {
   # check initial tables
   cdm <- omopgenerics::cdmReference(cohort)
-  checkX(cohort)
+  cohort <- omopgenerics::validateCohortArgument(cohort)
   cohortId <- omopgenerics::validateCohortIdArgument({{cohortId}}, cohort)
   omopgenerics::assertLogical(demographics, length = 1)
   cdm <- omopgenerics::validateCdmArgument(cdm)
-  strata <- checkStrata(strata, cohort)
+  strata <- omopgenerics::validateStrataArgument(strata = strata, table = cohort)
   ageGroup <- omopgenerics::validateAgeGroupArgument(ageGroup)
   omopgenerics::assertLogical(counts)
   tableIntersectFlag <- assertIntersect(tableIntersectFlag)
@@ -484,10 +484,8 @@ summariseCharacteristics <- function(cohort,
       c("variable_name", "variable_level"),
       ~ stringr::str_to_sentence(gsub("_", " ", .x))
     )) |>
-    visOmopResults::uniteAdditional(cols = c("table", "window", "value")) |>
-    dplyr::as_tibble()
-
-  results <- results |>
+    omopgenerics::uniteAdditional() |>
+    dplyr::select(!c("table", "window", "value")) |>
     dplyr::mutate("result_id" = 1L) |>
     omopgenerics::newSummarisedResult(settings = srSet)
 

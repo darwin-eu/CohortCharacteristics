@@ -1,3 +1,23 @@
+# CohortCharacteristics 1.0.0
+
+* Stable release of the package
+
+## New features
+* includeSource -> pair standard and source concepts in LSC by @catalamarti in #329
+* new function tableTopLargeScaleCharacteristics by @catalamarti in #335
+* refactor function tableLargeScaleCharacteristics by @catalamarti in #335
+* summariseCohortCodelist by @catalamarti in #333
+
+## Minor fixes
+* fixes filter group by @ilovemane in #313
+* fixes tableintersect suppression problem by @ilovemane in #311
+* add .options for table functions by @ilovemane in #319
+* density plot for plotCharacteristics by @ilovemane in #320
+* use og functions instead of vor by @catalamarti in #332
+* improvement on vignettes. by @ilovemane in #327
+* Require-minimum-count-for-plot-timing by @ilovemane in #318
+* Fix suppressed count print by @catalamarti in #334
+
 # CohortCharacteristics 0.5.1
 
 * Fix bug in plotCohortAttrition to not display NAs by @martaalcalde

@@ -82,7 +82,7 @@ plotCohortAttrition <- function(result,
     }
     result <- omopgenerics::validateResultArgument(result)
     result <- result |>
-      visOmopResults::filterSettings(
+      omopgenerics::filterSettings(
         .data$result_type == "summarise_cohort_attrition"
       )
     if (nrow(result) == 0) {
@@ -126,7 +126,7 @@ emptyDiagram <- function(message) {
     )
 }
 limitMessage <- function(x) {
-  ncharlim <- 39
+  ncharlim <- 30
   purrr::map_chr(x, \(xx) {
     xx <- purrr::flatten_chr(strsplit(xx, split = " "))
     nc <- nchar(xx)
@@ -162,11 +162,7 @@ prepareData <- function(result, show) {
     ) |>
     dplyr::mutate(dplyr::across(
       dplyr::any_of(c("number_records", "number_subjects", "excluded_records", "excluded_subjects")),
-      ~ dplyr::if_else(
-        . == "-",
-        paste0("<", .data$min_cell_count),
-        prettyNum(suppressWarnings(as.numeric(.)), big.mark = ",")
-      )
+      \(x) dplyr::if_else(is.na(x), paste0("<", .data$min_cell_count), prettyNum(x, big.mark = ","))
     )) |>
     dplyr::select(!c("variable_level", "min_cell_count", "result_id")) |>
     dplyr::group_by(.data$cdm_name, .data$cohort_name) |>

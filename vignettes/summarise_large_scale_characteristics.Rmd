@@ -76,9 +76,8 @@ tableLargeScaleCharacteristics(lsc)
 As we can see we have identified numerous concepts for which at least 10% of our study population had a record. Often with larger cohorts and real patient-level data we will obtain many times more results when running large scale characterisation. One option we have to help summarise our results is to pick out the most frequent concepts. Here, for example, we select the top 5 concepts.
 
 ```{r}
-tableLargeScaleCharacteristics(lsc,
-  topConcepts = 5
-)
+tableTopLargeScaleCharacteristics(lsc,
+                                  topConcepts = 5)
 ```
 
 ## Stratified large scale characteristics
@@ -95,5 +94,24 @@ lsc <- cdm$ankle_sprain |>
     minimumFrequency = 0.1
   )
 
-tableLargeScaleCharacteristics(lsc)
+tableTopLargeScaleCharacteristics(lsc)
+```
+
+## Plot large scale characteristics
+
+`plotLargeScaleCharacteristics` and `plotComparedLargeScaleCharacteristics` can be use to generate plot for visualising the large scale characteristics
+
+```{r}
+plotLargeScaleCharacteristics(lsc)
+```
+
+`plotComparedLargeScaleCharacteristics` allows you to compare the difference in prevalence of the large scale covariates between two window. The reference cohort and time window are set using the `reference` arguement inside the function.
+
+```{r}
+plotComparedLargeScaleCharacteristics(
+  result = lsc,
+  colour = "sex",
+  reference = 'overall',
+  facet = cohort_name ~ variable_level
+)
 ```

@@ -59,7 +59,7 @@ summariseCohortTiming <- function(cohort,
   cohort <- omopgenerics::validateCohortArgument(cohort)
   cohortId <- omopgenerics::validateCohortIdArgument(cohortId, cohort)
   omopgenerics::assertNumeric(cohortId, null = TRUE)
-  checkStrata(strata, cohort)
+  strata <- omopgenerics::validateStrataArgument(strata = strata, table = cohort)
   omopgenerics::assertTrue(all(c("cohort_definition_id", "subject_id", "cohort_start_date", "cohort_end_date") %in% colnames(cohort)))
   omopgenerics::assertLogical(restrictToFirstEntry, length = 1)
   omopgenerics::assertCharacter(estimates)
@@ -181,7 +181,7 @@ getCohortComp <- function(cohortNames) {
     cohort_name_reference = cohortNames, cohort_name_comparator = cohortNames
   ) |>
     dplyr::filter(.data$cohort_name_reference != .data$cohort_name_comparator) |>
-    visOmopResults::uniteGroup(
+    omopgenerics::uniteGroup(
       cols = c("cohort_name_reference", "cohort_name_comparator")
     )
 }
@@ -192,7 +192,7 @@ getStratas <- function(data, strata) {
       dplyr::distinct() |>
       dplyr::collect() |>
       dplyr::arrange(dplyr::across(dplyr::everything())) |>
-      visOmopResults::uniteStrata(cols = x)
+      omopgenerics::uniteStrata(cols = x)
   }) |>
     dplyr::bind_rows()
   dplyr::tibble(strata_name = "overall", strata_level = "overall") |>

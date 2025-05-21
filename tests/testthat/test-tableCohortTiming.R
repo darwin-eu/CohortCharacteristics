@@ -49,7 +49,7 @@ test_that("tableCohortTiming", {
   tibble1 <- tableCohortTiming(
     timing1,
     type = "tibble",
-    header = visOmopResults::strataColumns(timing1)
+    header = omopgenerics::strataColumns(timing1)
   )
   expect_true(all(c(
     "CDM name", "Cohort name reference", "Cohort name comparator",

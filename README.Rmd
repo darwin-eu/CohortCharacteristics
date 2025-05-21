@@ -195,20 +195,20 @@ result <- cdm$my_cohort |>
 ```
 
 ```{r}
-tableLargeScaleCharacteristics(result, type = "flextable")
+tableTopLargeScaleCharacteristics(result, type = "flextable")
 ```
 
 ```{r}
 result |>
-  filter(group_level == "161_acetaminophen") |>
+  omopgenerics::filterGroup(cohort_name == "acetaminophen") |>
   plotLargeScaleCharacteristics()
 ```
 
 ```{r}
 result |>
-  filter(group_level == "161_acetaminophen", variable_level != "0 to 0") |>
+  omopgenerics::filterGroup(cohort_name == "acetaminophen") |>
   plotComparedLargeScaleCharacteristics(
-    reference = c(variable_level = "-90 to -1"), colour = "variable_name"
+    reference = "-90 to -1", colour = "variable_level"
   )
 ```
 
@@ -237,4 +237,3 @@ x <- summariseCharacteristics(cdm$my_cohort)
 
 tableCharacteristics(x)
 ```
-

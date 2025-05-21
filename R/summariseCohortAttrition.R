@@ -87,9 +87,9 @@ summariseAttrition <- function(att,
       "estimate_type" = "integer",
       "cdm_name" = cname
     ) |>
-    visOmopResults::uniteGroup("cohort_name") |>
-    visOmopResults::uniteStrata("reason") |>
-    visOmopResults::uniteAdditional("reason_id") |>
+    omopgenerics::uniteGroup("cohort_name") |>
+    omopgenerics::uniteStrata("reason") |>
+    omopgenerics::uniteAdditional("reason_id") |>
     orderSummaryAttrition() |>
     omopgenerics::newSummarisedResult(
       settings = set |>

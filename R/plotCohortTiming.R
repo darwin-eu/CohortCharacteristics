@@ -79,6 +79,52 @@ plotCohortTiming <- function(result,
 
   # pre process
   result <- result |>
+    omopgenerics::filterSettings(.data$result_type == "summarise_cohort_timing")
+
+  # warn if number records < 10
+  resultCount <- result |>
+    dplyr::filter(.data$variable_name == "number records") |>
+    dplyr::filter(as.numeric(.data$estimate_value) < 10)
+  if (nrow(resultCount) > 0) {
+    if (uniqueCombinations) {
+      resultCount <- getUniqueCombinationsSr(resultCount)
+    }
+    resultCount <- resultCount |>
+      dplyr::select(
+        "result_id", "group_name", "group_level", "strata_name", "strata_level"
+      ) |>
+      omopgenerics::splitGroup() |>
+      omopgenerics::splitStrata() |>
+      dplyr::select(!"result_id") |>
+      dplyr::distinct()
+    strataCols <- colnames(resultCount)
+    strataCols <- strataCols[!strataCols %in% c("cohort_name_reference", "cohort_name_comparator")]
+    q <- 'paste0("{.pkg ", .data$cohort_name_reference, "} to {.pkg ", .data$cohort_name_comparator, "}"'
+    if (length(strataCols) > 0) {
+      q <- paste0(q, ', " ("')
+      for (k in seq_along(strataCols)) {
+        if (k > 1) {
+          q <- paste0(q, ', "; ')
+        } else {
+          q <- paste0(q, ', "')
+        }
+        q <- paste0(q, '`', strataCols[k], '` = `", .data[["', strataCols[k], '"]], "`"')
+      }
+      q <- paste0(q, ', ")"')
+    }
+    q <- paste0(q, ")") |>
+      rlang::set_names("message") |>
+      rlang::parse_exprs()
+    formatted <- resultCount |>
+      dplyr::mutate(!!!q) |>
+      dplyr::pull("message")
+    names(formatted) <- rep("*", length(formatted))
+    c("!" = "The following cohort comparisons have count < 10, the result might not be informative:", formatted) |>
+      cli::cli_warn()
+  }
+
+  # pre process
+  result <- result |>
     dplyr::filter(.data$variable_name == "days_between_cohort_entries")
 
   # internal functions

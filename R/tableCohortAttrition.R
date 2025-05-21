@@ -42,7 +42,8 @@ tableCohortAttrition <- function(result,
                                  type = "gt",
                                  header = "variable_name",
                                  groupColumn = c("cdm_name", "cohort_name"),
-                                 hide = c("variable_level", "reason_id", "estimate_name", settingsColumns(result))) {
+                                 hide = c("variable_level", "reason_id", "estimate_name", settingsColumns(result)),
+                                 .options = list()) {
   result |>
     tableCohortCharacteristics(
       resultType = "summarise_cohort_attrition",
@@ -52,6 +53,7 @@ tableCohortAttrition <- function(result,
       rename = c("CDM name" = "cdm_name"),
       modifyResults = NULL,
       estimateName = c("N" = "<count>"),
-      type = type
+      type = type,
+      .options = .options
     )
 }

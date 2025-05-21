@@ -79,7 +79,7 @@ test_that("basic functionality summarise large scale characteristics", {
       minimumFrequency = 0
     )
 
-  expect_no_error(tableLargeScaleCharacteristics(result))
+  expect_no_error(tableTopLargeScaleCharacteristics(result))
 })
 
 test_that("topConcepts working", {
@@ -106,9 +106,93 @@ test_that("topConcepts working", {
       minimumFrequency = 0.1
     )
 
-  x <- tableLargeScaleCharacteristics(lsc, topConcepts = 1, type = "tibble")
-
+  expect_no_error(
+    x <- tableTopLargeScaleCharacteristics(lsc, topConcepts = 1, type = "tibble")
+  )
   expect_true(nrow(x) == 1)
+
+  expect_no_error(tableTopLargeScaleCharacteristics(lsc, topConcepts = 1, type = "gt"))
+
+  expect_no_error(tab1 <- tableLargeScaleCharacteristics(lsc))
+
+  expect_no_error(tab2 <- tableLargeScaleCharacteristics(lsc,
+                                                         compareBy = "variable_level"))
+
+  expect_no_error(tab3 <- tableLargeScaleCharacteristics(lsc,
+                                                         compareBy = "variable_level",
+                                                         smdReference = "-inf to -1"))
+
+  # strata
+  lsc2 <- cdm$ankle_sprain |>
+    PatientProfiles::addSex() |>
+    PatientProfiles::addAge(ageGroup = list(c(0, 19), c(20, Inf))) |>
+    summariseLargeScaleCharacteristics(
+      strata = list("sex", "age_group", c("sex", "age_group")),
+      window = list(c(-Inf, -1), c(0, 0)),
+      eventInWindow = c("condition_occurrence", "procedure_occurrence"),
+      episodeInWindow = "drug_exposure",
+      minimumFrequency = 0.1
+    )
+
+  expect_no_error(tableLargeScaleCharacteristics(lsc2))
+  expect_no_error(tableLargeScaleCharacteristics(lsc2,
+                                                 compareBy = "variable_level",
+                                                 smdReference = "-inf to -1"))
+  expect_no_error(tableLargeScaleCharacteristics(lsc2,
+                                                 compareBy = "age_group"))
+  expect_no_error(tableLargeScaleCharacteristics(lsc2,
+                                                 compareBy = "age_group",
+                                                 smdReference = "overall"))
+
+  # include source
+  lsc3 <- cdm$ankle_sprain |>
+    summariseLargeScaleCharacteristics(
+      window = list(c(-Inf, -1), c(0, 0)),
+      eventInWindow = c("condition_occurrence", "procedure_occurrence"),
+      episodeInWindow = "drug_exposure",
+      includeSource = TRUE,
+      minimumFrequency = 0.1
+    )
+
+  expect_no_error(tableLargeScaleCharacteristics(lsc3))
+  expect_no_error(tableLargeScaleCharacteristics(lsc3,
+                                                 compareBy = "variable_level"))
+  expect_no_error(tableLargeScaleCharacteristics(lsc3,
+                                                 compareBy = "variable_level",
+                                                 smdReference = "-inf to -1"))
+
+  # strata and include source
+  lsc4 <- cdm$ankle_sprain |>
+    PatientProfiles::addSex() |>
+    PatientProfiles::addAge(ageGroup = list(c(0, 19), c(20, Inf))) |>
+    summariseLargeScaleCharacteristics(
+      strata = list("sex", "age_group", c("sex", "age_group")),
+      window = list(c(-Inf, -1), c(0, 0)),
+      eventInWindow = c("condition_occurrence", "procedure_occurrence"),
+      episodeInWindow = "drug_exposure",
+      includeSource = TRUE,
+      minimumFrequency = 0.1
+    )
+
+  expect_no_error(tableLargeScaleCharacteristics(lsc4))
+  expect_no_error(tableLargeScaleCharacteristics(lsc4,
+                                                 compareBy = "variable_level",
+                                                 smdReference = "-inf to -1"))
+  expect_no_error(tableLargeScaleCharacteristics(lsc4,
+                                                 compareBy = "age_group"))
+  expect_no_error(tableLargeScaleCharacteristics(lsc4,
+                                                 compareBy = "age_group",
+                                                 smdReference = "overall"))
+
+  expect_error(tableLargeScaleCharacteristics(lsc4,
+                                              compareBy = c("age_group", "sex")))
+
+  expect_no_error(
+    x <- lsc4 |>
+      omopgenerics::filterSettings(.data$table_name == "drug_exposure") |>
+      omopgenerics::filterStrata(.data$sex == "overall") |>
+      tableTopLargeScaleCharacteristics(topConcepts = 5, type = "gt")
+  )
 
   CDMConnector::cdmDisconnect(cdm)
 })

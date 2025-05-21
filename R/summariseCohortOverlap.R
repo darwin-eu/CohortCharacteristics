@@ -49,7 +49,7 @@ summariseCohortOverlap <- function(cohort,
   if (length(overlapBy) == 0) {
     cli::cli_abort("{.var overlapBy} can not be empty.")
   }
-  checkStrata(strata, cohort)
+  strata <- omopgenerics::validateStrataArgument(strata = strata, table = cohort)
 
   # permanent table
   name <- omopgenerics::tableName(cohort)
@@ -160,9 +160,9 @@ summariseCohortOverlap <- function(cohort,
         )) |>
         getOverlapEstimates() |>
         dplyr::mutate(variable_level = .env$var) |>
-        visOmopResults::uniteGroup(cols = c("cohort_name_reference", "cohort_name_comparator")) |>
-        visOmopResults::uniteStrata(cols = strataCols) |>
-        visOmopResults::uniteAdditional(cols = character()) |>
+        omopgenerics::uniteGroup(cols = c("cohort_name_reference", "cohort_name_comparator")) |>
+        omopgenerics::uniteStrata(cols = strataCols) |>
+        omopgenerics::uniteAdditional(cols = character()) |>
         dplyr::mutate(result_id = 1L, cdm_name = omopgenerics::cdmName(cohort))
     }) |>
     dplyr::bind_rows() |>
