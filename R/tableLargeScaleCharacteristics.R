@@ -28,12 +28,12 @@
 #' @examples
 #' \dontrun{
 #' library(CohortCharacteristics)
-#' library(duckdb)
-#' library(CDMConnector)
+#' library(omock)
+#' libarry(CDMConnector)
 #' library(dplyr, warn.conflicts = FALSE)
 #'
-#' con <- dbConnect(duckdb(), eunomiaDir())
-#' cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+#' cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+#'
 #' cdm <- generateConceptCohortSet(
 #'   cdm = cdm,
 #'   conceptSet = list(viral_pharyngitis = 4112343),
@@ -145,12 +145,12 @@ tableTopLargeScaleCharacteristics <- function(result,
 #' @examples
 #' \dontrun{
 #' library(CohortCharacteristics)
-#' library(duckdb)
+#' library(omock)
 #' library(CDMConnector)
 #' library(dplyr, warn.conflicts = FALSE)
 #'
-#' con <- dbConnect(duckdb(), eunomiaDir())
-#' cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+#' cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+#'
 #' cdm <- generateConceptCohortSet(
 #'   cdm = cdm,
 #'   conceptSet = list(viral_pharyngitis = 4112343),

@@ -47,7 +47,6 @@ result <- summariseCohortCount(cdm$cohort1)
 
 tableCohortCount(result)
 
-mockDisconnect(cdm = cdm)
 }
 
 }

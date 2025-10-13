@@ -132,6 +132,5 @@ cdm$cohort1 |>
   ) |>
   glimpse()
 
-mockDisconnect(cdm)
 }
 }

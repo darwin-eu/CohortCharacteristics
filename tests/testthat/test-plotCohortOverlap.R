@@ -38,9 +38,10 @@ test_that("plotCohortOverlap", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(), person = person,
+    person = person,
     observation_period = obs, table = table
-  )
+  ) |>
+    copyCdm()
 
   overlap <- summariseCohortOverlap(cdm$table)
 
@@ -102,5 +103,5 @@ test_that("plotCohortOverlap", {
     overlap3, facet = "cdm_name", uniqueCombinations = FALSE
   )
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

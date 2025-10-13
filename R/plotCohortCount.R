@@ -45,7 +45,6 @@
 #'     colour = "sex"
 #'   )
 #'
-#' mockDisconnect(cdm)
 #' }
 #'
 plotCohortCount <- function(result,

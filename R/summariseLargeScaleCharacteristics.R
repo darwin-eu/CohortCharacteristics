@@ -41,13 +41,11 @@
 #' @examples
 #' \dontrun{
 #' library(CohortCharacteristics)
-#' library(duckdb)
-#' library(CDMConnector)
 #' library(DrugUtilisation)
 #' library(dplyr, warn.conflicts = FALSE)
+#' library(omock)
 #'
-#' con <- dbConnect(duckdb(), eunomiaDir())
-#' cdm <- cdmFromCon(con, cdmSchem = "main", writeSchema = "main")
+#' cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 #'
 #' cdm <- generateIngredientCohortSet(
 #'   cdm = cdm, name = "my_cohort", ingredient = "acetaminophen"
@@ -258,13 +256,19 @@ getInitialTable <- function(cohort, tablePrefix, indexDate, censorDate) {
     ) |>
     dplyr::mutate(start_obs = -.data$start_obs)
   if (!is.null(censorDate)) {
-    x <- x %>% # to be removed
-      dplyr::mutate("censor_obs" = !!CDMConnector::datediff(indexDate, censorDate)) |>
-      dplyr::mutate("end_obs" = dplyr::if_else(
-        is.na(.data$censor_obs) | .data$censor_obs > .data$end_obs,
-        .data$end_obs,
-        .data$censor_obs
-      ))
+    x <- x |>
+      dplyr::mutate(
+        "censor_obs" = clock::date_count_between(
+          start = .data[[indexDate]],
+          end = .data[[censorDate]],
+          precision = "day"
+        ),
+        "end_obs" = dplyr::if_else(
+          is.na(.data$censor_obs) | .data$censor_obs > .data$end_obs,
+          .data$end_obs,
+          .data$censor_obs
+        )
+      )
   }
   x <- x |>
     dplyr::select(
@@ -295,14 +299,19 @@ getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix) {
   table <- cdm[[tab]] |>
     dplyr::select(dplyr::all_of(toSelect)) |>
     dplyr::inner_join(x, by = "subject_id") |>
-    dplyr::mutate(end_diff = dplyr::coalesce(.data$end_diff, .data$start_diff)
-    ) %>% # to be removed
-    dplyr::mutate(start_diff = !!CDMConnector::datediff(
-      "cohort_start_date", "start_diff"
-    )) %>% # to be removed
-    dplyr::mutate(end_diff = !!CDMConnector::datediff(
-      "cohort_start_date", "end_diff"
-    )) |>
+    dplyr::mutate(
+      end_diff = dplyr::coalesce(.data$end_diff, .data$start_diff),
+      start_diff = clock::date_count_between(
+        start = .data$cohort_start_date,
+        end = .data$start_diff,
+        precision = "day"
+      ),
+      end_diff = clock::date_count_between(
+        start = .data$cohort_start_date,
+        end = .data$end_diff,
+        precision = "day"
+      )
+    ) |>
     dplyr::filter(
       .data$end_diff >= .data$start_obs & .data$start_diff <= .data$end_obs
     )

@@ -39,9 +39,9 @@ test_that("summariseCohortOverlap", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
     person = person, observation_period = obs, table = table
-  )
+  ) |>
+    copyCdm()
 
   overlap1 <- summariseCohortOverlap(cdm$table)
   expect_equal(
@@ -149,13 +149,14 @@ test_that("summariseCohortOverlap", {
     unique(overlap3$strata_name)))
   expect_true(nrow(overlap3) == 2 * 6 + 2 * 6 * s1 + 2 * 6 * s2)
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 
   # use pipe
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
     person = person, observation_period = obs, table = table
-  )
+  ) |>
+    copyCdm()
+
   overlap4 <- cdm$table |>
     PatientProfiles::addAge(ageGroup = list(c(0, 40), c(41, 100))) |>
     PatientProfiles::addSex(name = "table") |>
@@ -166,7 +167,7 @@ test_that("summariseCohortOverlap", {
 
   expect_identical(overlap3, overlap4)
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("expect result is deterministic", {
@@ -185,9 +186,8 @@ test_that("expect result is deterministic", {
   aG <- list("<=20" = c(0, 20), ">20" = c(21, Inf))
   st <- list("sex", "idep", "age_group", c("age_group", "sex"))
 
-  cdm1 <- CDMConnector::copyCdmTo(
-    con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main"
-  )
+  cdm1 <- copyCdm(cdm = cdm)
+
   cdm1$cohort <- cdm1$cohort |>
     PatientProfiles::addDemographics(
       age = FALSE, priorObservation = FALSE, futureObservation = FALSE,
@@ -195,9 +195,7 @@ test_that("expect result is deterministic", {
     ) |>
     omopgenerics::newCohortTable()
 
-  cdm2 <- CDMConnector::copyCdmTo(
-    con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main"
-  )
+  cdm2 <- copyCdm(cdm = cdm)
   cdm2$cohort <- cdm2$cohort |>
     PatientProfiles::addDemographics(
       age = FALSE, priorObservation = FALSE, futureObservation = FALSE,
@@ -213,8 +211,8 @@ test_that("expect result is deterministic", {
 
   expect_identical(result1, result2)
 
-  CDMConnector::cdmDisconnect(cdm1)
-  CDMConnector::cdmDisconnect(cdm2)
+  dropCreatedTables(cdm = cdm1)
+  dropCreatedTables(cdm = cdm2)
 })
 
 test_that("test countBy", {
@@ -230,8 +228,8 @@ test_that("test countBy", {
   cohort <- dplyr::tibble(
     cohort_definition_id = c(1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L),
     subject_id = c(1L, 2L, 3L, 4L, 1L, 1L, 1L, 2L, 4L),
-    cohort_start_date = as.Date("2020-01-01"),
-    cohort_end_date = as.Date("2020-12-31"),
+    cohort_start_date = as.Date(c(rep("2020-01-01", 4), "2021-01-01", "2022-01-01", rep("2020-01-01", 3))),
+    cohort_end_date = as.Date(c(rep("2020-12-31", 4), "2021-12-31", "2022-12-31", rep("2020-12-31", 3))),
     variable1 = c("A", "A", "A", "A", "A", "A", "B", "B", "A"),
     variable2 = c("x", "y", "y", "y", "x", "y", "z", "z", "y")
   )
@@ -244,9 +242,9 @@ test_that("test countBy", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
     person = person, observation_period = obs, cohort = cohort
-  )
+  ) |>
+    copyCdm()
 
   filterOverlap <- function(x) {
     x |>
@@ -288,5 +286,5 @@ test_that("test countBy", {
     filterOverlap() |>
     expect_identical(c(1, 1, 0))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

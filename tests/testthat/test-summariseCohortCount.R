@@ -10,13 +10,9 @@ test_that("multiplication works", {
       numberCohorts = 3, cohortName = c("covid", "tb", "asthma")
     )
 
-  cdm1 <- CDMConnector::copyCdmTo(
-    con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main"
-  )
+  cdm1 <- copyCdm(cdm = cdm)
 
-  cdm2 <- CDMConnector::copyCdmTo(
-    con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main"
-  )
+  cdm2 <- cdm
 
   result1 <- cdm1$cohort |>
     summariseCohortCount()
@@ -26,5 +22,5 @@ test_that("multiplication works", {
 
   expect_identical(result1, result2)
 
-  PatientProfiles::mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm1)
 })

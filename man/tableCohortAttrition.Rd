@@ -47,7 +47,6 @@ result <- summariseCohortAttrition(cdm$cohort2)
 
 tableCohortAttrition(result)
 
-mockDisconnect(cdm)
 }
 
 }

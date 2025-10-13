@@ -53,11 +53,13 @@ test_that("test summariseCharacteristics", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
-    dus_cohort = dus_cohort, person = person,
-    comorbidities = comorbidities, medication = medication,
+    dus_cohort = dus_cohort,
+    person = person,
+    comorbidities = comorbidities,
+    medication = medication,
     observation_period = observation_period
-  )
+  ) |>
+    copyCdm()
 
   cdm$dus_cohort <- omopgenerics::newCohortTable(
     table = cdm$dus_cohort, cohortSetRef = dplyr::tibble(
@@ -413,12 +415,13 @@ test_that("test summariseCharacteristics", {
   expect_true(all(c("Blood type", "Number visits") %in% result$variable_name))
   expect_true("mean" == unique(result$estimate_name[result$variable_name == "Number visits"]))
   expect_true("count" == unique(result$estimate_name[result$variable_name == "Blood type"]))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test empty cohort", {
-  cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(), numberIndividuals = 100
-  )
+  cdm <- mockCohortCharacteristics(numberIndividuals = 100) |>
+    copyCdm()
 
   expect_no_error(
     cdm$cohort1 |> dplyr::filter(cohort_definition_id == 0) |>
@@ -472,6 +475,8 @@ test_that("test empty cohort", {
   #       window = c(-Inf, Inf)
   #     )))
   # )
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test cohort id", {
@@ -527,11 +532,13 @@ test_that("test cohort id", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
-    dus_cohort = dus_cohort, person = person,
-    comorbidities = comorbidities, medication = medication,
+    dus_cohort = dus_cohort,
+    person = person,
+    comorbidities = comorbidities,
+    medication = medication,
     observation_period = observation_period
-  )
+  ) |>
+    copyCdm()
 
   cdm$dus_cohort <- omopgenerics::newCohortTable(
     table = cdm$dus_cohort, cohortSetRef = dplyr::tibble(
@@ -617,6 +624,8 @@ test_that("test cohort id", {
       )
     )
   )
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("arguments tableIntersect", {
@@ -664,17 +673,17 @@ test_that("arguments tableIntersect", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
-    dus_cohort = dus_cohort, person = person,
+    dus_cohort = dus_cohort,
+    person = person,
     observation_period = observation_period,
     visit_occurrence = visit_occurrence
-  )
+  ) |>
+    copyCdm()
 
-  cdm$dus_cohort <- omopgenerics::newCohortTable(
-    table = cdm$dus_cohort, cohortSetRef = dplyr::tibble(
-      cohort_definition_id = c(1L, 2L), cohort_name = c("exposed", "unexposed")
+  cdm$dus_cohort <- cdm$dus_cohort |>
+    omopgenerics::newCohortTable(
+      cohortSetRef = dplyr::tibble(cohort_definition_id = c(1L, 2L), cohort_name = c("exposed", "unexposed"))
     )
-  )
 
   expect_no_error(
     results <- summariseCharacteristics(
@@ -958,7 +967,7 @@ test_that("arguments tableIntersect", {
     as.numeric(as.Date("2011-11-11") - as.Date("2009-09-09"))
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("arguments cohortIntersect", {
@@ -997,12 +1006,12 @@ test_that("arguments cohortIntersect", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
     dus_cohort = dus_cohort,
     cohort1 = cohort1,
     cohort2 = cohort1,
     observation_period = observation_period
-  )
+  ) |>
+    copyCdm()
 
   ### intersect count
   expect_no_error(
@@ -1164,13 +1173,14 @@ test_that("arguments cohortIntersect", {
     as.numeric(as.Date("1999-05-26") - as.Date("1990-04-19"))
   )
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("arguments conceptIntersect", {
   skip_on_cran()
-  con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+
+  cdm <- omock::mockCdmFromDataset(datasetName = "GiBleed", source = "local") |>
+    copyCdm()
 
   # create a cohort
   cdm <- CDMConnector::generateConceptCohortSet(
@@ -1365,13 +1375,13 @@ test_that("arguments conceptIntersect", {
       as.numeric() < 0
   ))
 
-  mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("empty input cohort contains name issue #170", {
-  cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(), numberIndividuals = 10
-  )
+  cdm <- mockCohortCharacteristics(numberIndividuals = 10) |>
+    copyCdm()
+
   cdm <- omopgenerics::emptyCohortTable(cdm = cdm, name = "cohort1")
   cdm$cohort1 <- cdm$cohort1 |>
     omopgenerics::newCohortTable(
@@ -1394,27 +1404,24 @@ test_that("empty input cohort contains name issue #170", {
     )
   )
 
-  PatientProfiles::mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("output is always the same", {
   skip_on_cran()
   set.seed(123456)
-  cdm <- omock::mockCdmReference() |>
+  cdm1 <- omock::mockCdmReference() |>
     omock::mockPerson(nPerson = 100) |>
     omock::mockObservationPeriod() |>
     omock::mockConditionOccurrence(recordPerson = 3) |>
     omock::mockDrugExposure(recordPerson = 4.5) |>
     omock::mockCohort(
       numberCohorts = 3, cohortName = c("covid", "tb", "asthma")
-    )
-
-  cdm1 <- CDMConnector::copyCdmTo(
-    con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main"
-  )
+    ) |>
+    copyCdm()
 
   cdm2 <- CDMConnector::copyCdmTo(
-    con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main"
+    con = duckdb::dbConnect(drv = duckdb::duckdb()), cdm = cdm1, schema = "main"
   )
 
   result1 <- summariseCharacteristics(cdm1$cohort) |>
@@ -1433,8 +1440,8 @@ test_that("output is always the same", {
 
   expect_identical(result1, result2)
 
-  PatientProfiles::mockDisconnect(cdm = cdm1)
-  PatientProfiles::mockDisconnect(cdm = cdm2)
+  dropCreatedTables(cdm = cdm1)
+  dropCreatedTables(cdm = cdm2)
 })
 
 test_that("arrange ageGroup", {
@@ -1462,12 +1469,11 @@ test_that("arrange ageGroup", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(),
-    writeSchema = writeSchema(),
     person = person,
     my_cohort = my_cohort,
     observation_period = observation_period
-  )
+  ) |>
+    copyCdm()
 
   # ascendant order
   ageGroup <- list("0 to 49" = c(0, 49), "50 or older" = c(50, Inf))
@@ -1510,14 +1516,13 @@ test_that("arrange ageGroup", {
     ignore_attr = TRUE
   )
 
-  PatientProfiles::mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("test estimates", {
   skip_on_cran()
-  cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema()
-  )
+  cdm <- mockCohortCharacteristics() |>
+    copyCdm()
 
   # age_group density
   result <- cdm$cohort1 |>
@@ -1550,6 +1555,8 @@ test_that("test estimates", {
   expect_warning(
     summariseCharacteristics(cdm$cohort1, estimates = list(not_present = "min"))
   )
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("weights in summariseCharacteristics", {
@@ -1598,10 +1605,12 @@ test_that("weights in summariseCharacteristics", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
-    dus_cohort = dus_cohort, person = person,
-    medication = medication, observation_period = observation_period
-  )
+    dus_cohort = dus_cohort,
+    person = person,
+    medication = medication,
+    observation_period = observation_period
+  ) |>
+    copyCdm()
 
   expect_no_error(
     result <- cdm$dus_cohort |>
@@ -1659,5 +1668,5 @@ test_that("weights in summariseCharacteristics", {
     round(resultW$percentage[resultW$cohort_name == "cohort_1" & resultW$variable_name == "Sex" & resultW$variable_level == "Female"], 3)
   )
 
-  omopgenerics::cdmDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

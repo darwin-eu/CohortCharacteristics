@@ -22,14 +22,11 @@ information.
 \examples{
 \donttest{
 library(CohortCharacteristics)
-library(CDMConnector)
-library(duckdb)
 library(dplyr, warn.conflicts = FALSE)
+library(omock)
+library(CDMConnector)
 
-dbName <- "GiBleed"
-requireEunomia(datasetName = dbName)
-con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = dbName)))
-cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 
 cdm <- generateConceptCohortSet(cdm = cdm,
                                 conceptSet = list(pharyngitis = 4112343L),

@@ -76,6 +76,5 @@ results |>
     colour = "cohort_name"
   )
 
-mockDisconnect(cdm)
 }
 }

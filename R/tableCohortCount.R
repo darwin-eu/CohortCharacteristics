@@ -35,7 +35,6 @@
 #'
 #' tableCohortCount(result)
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 tableCohortCount <- function(result,

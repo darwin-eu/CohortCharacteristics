@@ -51,7 +51,6 @@ overlap <- summariseCohortOverlap(cdm$cohort2)
 
 tableCohortOverlap(overlap)
 
-mockDisconnect(cdm = cdm)
 }
 
 }

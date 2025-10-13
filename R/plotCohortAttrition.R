@@ -34,13 +34,14 @@
 #' library(CohortCharacteristics)
 #' library(omopgenerics)
 #' library(dplyr, warn.conflicts = FALSE)
+#' library(clock)
 #'
 #' cdm <- mockCohortCharacteristics(numberIndividuals = 1000)
 #'
 #' cdm[["cohort1"]] <- cdm[["cohort1"]] |>
-#'   filter(year(cohort_start_date) >= 2000) |>
+#'   filter(get_year(cohort_start_date) >= 2000) |>
 #'   recordCohortAttrition("Restrict to cohort_start_date >= 2000") |>
-#'   filter(year(cohort_end_date) < 2020) |>
+#'   filter(get_year(cohort_end_date) < 2020) |>
 #'   recordCohortAttrition("Restrict to cohort_end_date < 2020") |>
 #'   compute(temporary = FALSE, name = "cohort1")
 #'
@@ -50,7 +51,6 @@
 #'   filter(group_level == "cohort_2") |>
 #'   plotCohortAttrition()
 #'
-#' mockDisconnect(cdm)
 #' }
 #'
 plotCohortAttrition <- function(result,

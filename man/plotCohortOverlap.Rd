@@ -43,7 +43,6 @@ overlap <- summariseCohortOverlap(cdm$cohort2)
 
 plotCohortOverlap(overlap, uniqueCombinations = FALSE)
 
-mockDisconnect(cdm)
 }
 
 }

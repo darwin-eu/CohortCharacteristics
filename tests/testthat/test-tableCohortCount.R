@@ -1,6 +1,7 @@
 test_that("tableCohortCount", {
   skip_on_cran()
-  cdm <- mockCohortCharacteristics(numberIndividuals = 100)
+  cdm <- mockCohortCharacteristics(numberIndividuals = 100) |>
+    copyCdm()
 
   counts <- cdm$cohort2 |>
     PatientProfiles::addSex() |>
@@ -11,5 +12,5 @@ test_that("tableCohortCount", {
   expect_no_error(tbl <- tableCohortCount(counts))
   expect_true(inherits(tbl, "gt_tbl"))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

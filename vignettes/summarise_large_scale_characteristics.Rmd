@@ -20,8 +20,6 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE
 )
-
-CDMConnector::requireEunomia()
 ```
 
 ## Introduction
@@ -31,16 +29,13 @@ In the previous vignette we have seen how we can use the CohortCharacteristics p
 To show how large scale characterisation can work we'll first create a first-ever ankle sprain study cohort using the Eunomia synthetic data.
 
 ```{r}
-library(duckdb)
+library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
 library(PatientProfiles)
 library(CohortCharacteristics)
 
-con <- dbConnect(duckdb(), dbdir = eunomiaDir())
-cdm <- cdmFromCon(
-  con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
-)
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 
 cdm <- generateConceptCohortSet(
   cdm = cdm,

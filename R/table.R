@@ -13,7 +13,6 @@
 #'
 #' availablePlotColumns(result)
 #'
-#' mockDisconnect(cdm)
 #' }
 availablePlotColumns <- function(result) {
   # initial checks
@@ -43,7 +42,6 @@ availablePlotColumns <- function(result) {
 #'
 #' availableTableColumns(result)
 #'
-#' mockDisconnect(cdm)
 #' }
 availableTableColumns <- function(result) {
   # initial checks

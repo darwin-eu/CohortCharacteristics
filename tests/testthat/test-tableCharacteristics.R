@@ -52,11 +52,13 @@ test_that("tableCharacteristics", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
-    dus_cohort = dus_cohort, person = person,
-    comorbidities = comorbidities, medication = medication,
+    dus_cohort = dus_cohort,
+    person = person,
+    comorbidities = comorbidities,
+    medication = medication,
     observation_period = observation_period
-  )
+  ) |>
+    copyCdm()
 
   cdm$dus_cohort <- omopgenerics::newCohortTable(
     table = cdm$dus_cohort, cohortSetRef = dplyr::tibble(
@@ -114,6 +116,8 @@ test_that("tableCharacteristics", {
         dplyr::mutate(package_version = "0.0.0")
     )
   expect_message(tableCharacteristics(result1))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("tableCharacteristics, empty output warning message", {

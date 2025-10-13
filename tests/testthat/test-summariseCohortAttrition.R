@@ -1,5 +1,6 @@
 test_that("check summariseCohortAttrition is deterministic", {
-  cdm <- mockCohortCharacteristics(numberIndividuals = 1000)
+  cdm <- mockCohortCharacteristics(numberIndividuals = 1000) |>
+    copyCdm()
 
   cdm$cohort1 <- cdm$cohort1 |>
     dplyr::filter(cohort_start_date >= as.Date("2000-01-01")) |>
@@ -25,5 +26,5 @@ test_that("check summariseCohortAttrition is deterministic", {
   expect_identical(x1, x3)
   expect_identical(x1, x4)
 
-  PatientProfiles::mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

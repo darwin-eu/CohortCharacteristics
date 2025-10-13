@@ -1,5 +1,6 @@
 test_that("plot cohort attrition", {
-  cdm <- mockCohortCharacteristics(numberIndividuals = 1000)
+  cdm <- mockCohortCharacteristics(numberIndividuals = 1000) |>
+    copyCdm()
 
   cdm[["cohort1"]] <- cdm[["cohort1"]] |>
     dplyr::filter(cohort_start_date >= as.Date("2000-01-01")) |>
@@ -36,5 +37,5 @@ test_that("plot cohort attrition", {
   # test cohort object (to consider if this is needed)
   expect_error(plotCohortAttrition(cdm$cohort1))
 
-  PatientProfiles::mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

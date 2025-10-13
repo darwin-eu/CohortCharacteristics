@@ -47,12 +47,10 @@ A formatted table.
 \examples{
 \dontrun{
 library(CohortCharacteristics)
-library(duckdb)
-library(CDMConnector)
+library(omock)
 library(DrugUtilisation)
 
-con <- dbConnect(duckdb(), eunomiaDir())
-cdm <- cdmFromCon(con, cdmSchem = "main", writeSchema = "main")
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 
 cdm <- generateIngredientCohortSet(
   cdm = cdm,

@@ -14,8 +14,6 @@ knitr::opts_chunk$set(
   comment = "#>", message = FALSE, warning = FALSE,
   fig.width = 7
 )
-
-CDMConnector::requireEunomia()
 ```
 
 ## Introduction
@@ -24,7 +22,7 @@ In this example we're going to summarise the characteristics of individuals with
 We'll begin by creating our condition study cohorts with the `generateConceptCohortSet` function from `CDMConnector`. 
 
 ```{r}
-library(duckdb)
+library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
@@ -32,10 +30,7 @@ library(CodelistGenerator)
 library(PatientProfiles)
 library(CohortCharacteristics)
 
-con <- dbConnect(duckdb(), dbdir = eunomiaDir())
-cdm <- cdmFromCon(
-  con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
-)
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 
 cdm <- generateConceptCohortSet(
   cdm = cdm,

@@ -19,8 +19,6 @@ knitr::opts_chunk$set(
   comment = "#>", message = FALSE, warning = FALSE,
   fig.width = 7
 )
-
-CDMConnector::requireEunomia()
 ```
 
 ## Introduction
@@ -29,16 +27,14 @@ In this example we're going to summarise the characteristics of individuals with
 We'll begin by creating our study cohorts.
 
 ```{r}
-library(duckdb)
+library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
 library(PatientProfiles)
 library(CohortCharacteristics)
+library(clock)
 
-con <- dbConnect(duckdb(), dbdir = eunomiaDir())
-cdm <- cdmFromCon(
-  con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
-)
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 
 cdm <- generateConceptCohortSet(
   cdm = cdm,
@@ -95,7 +91,7 @@ cdm <- generateConceptCohortSet(
 )
 
 cdm$ankle_sprain <- cdm$ankle_sprain |>
-  filter(year(cohort_start_date) >= 2000) |>
+  filter(get_year(cohort_start_date) >= 2000) |>
   compute(temporary = FALSE, name = "ankle_sprain") |>
   recordCohortAttrition("Restrict to cohort_start_date >= 2000")
 
@@ -134,7 +130,7 @@ cdm$ankle_sprain <- cdm$ankle_sprain |>
   recordCohortAttrition("Restrict to age >= 18")
 
 cdm$ankle_sprain <- cdm$ankle_sprain |>
-  filter(year(cohort_start_date) >= 2000) |>
+  filter(get_year(cohort_start_date) >= 2000) |>
   compute(temporary = FALSE, name = "ankle_sprain") |>
   recordCohortAttrition("Restrict to cohort_start_date >= 2000")
 

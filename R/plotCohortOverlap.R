@@ -35,7 +35,6 @@
 #'
 #' plotCohortOverlap(overlap, uniqueCombinations = FALSE)
 #'
-#' mockDisconnect(cdm)
 #' }
 #'
 plotCohortOverlap <- function(result,

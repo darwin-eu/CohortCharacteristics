@@ -36,7 +36,6 @@
 #'
 #' tableCohortOverlap(overlap)
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 tableCohortOverlap <- function(result,

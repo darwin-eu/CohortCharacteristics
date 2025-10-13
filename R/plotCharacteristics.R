@@ -70,7 +70,6 @@
 #'     colour = "cohort_name"
 #'   )
 #'
-#' mockDisconnect(cdm)
 #' }
 plotCharacteristics <- function(result,
                                 plotType = "barplot",

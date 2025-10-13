@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 
 # CohortCharacteristics <a href="https://darwin-eu.github.io/CohortCharacteristics/"><img src="man/figures/logo.png" align="right" height="130"/></a>
 
-[![CRAN status](https://www.r-pkg.org/badges/version/CohortCharacteristics)](https://CRAN.R-project.org/package=CohortCharacteristics) [![codecov.io](https://codecov.io/github/darwin-eu/CohortCharacteristics/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CohortCharacteristics?branch=main) [![R-CMD-check](https://github.com/darwin-eu/CohortCharacteristics/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CohortCharacteristics/actions) [![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/CohortCharacteristics)](https://CRAN.R-project.org/package=CohortCharacteristics) [![codecov.io](https://codecov.io/github/darwin-eu/CohortCharacteristics/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CohortCharacteristics?branch=main) [![R-CMD-check](https://github.com/darwin-eu/CohortCharacteristics/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CohortCharacteristics/actions) [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 
 ## Package overview
 
@@ -56,26 +56,26 @@ The package contain three types of functions:
 
 ### Mock data
 
-Although the package provides some simple mock data for testing (`mockCohortCharacteristics()`), for these examples we will use the GiBleed dataset that can be downloaded using the CDMConnector package that will give us some more real results.
+Although the package provides some simple mock data for testing (`mockCohortCharacteristics()`), for these examples we will use the GiBleed dataset that can be downloaded using the omock package that will give us some synthetic data results.
 
 ```{r}
-library(CDMConnector)
-library(duckdb)
+library(omock)
 library(dplyr, warn.conflicts = FALSE)
-requireEunomia()
-con <- dbConnect(duckdb(), eunomiaDir())
-cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+library(DrugUtilisation)
+
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 ```
 
 Let's create a simple cohort:
+
 ```{r, warning=FALSE}
-library(DrugUtilisation)
 cdm <- generateIngredientCohortSet(cdm = cdm, name = "my_cohort", ingredient = c("warfarin", "acetaminophen"))
 ```
 
 ### Cohort counts
 
 We can get counts using the function `summariseCohortCount()`:
+
 ```{r}
 result <- summariseCohortCount(cdm$my_cohort)
 result |>
@@ -83,11 +83,13 @@ result |>
 ```
 
 You can easily create a table using the associated table function, `tableCohortCount()`:
+
 ```{r}
 tableCohortCount(result, type = "flextable")
 ```
 
 We could create a simple plot with `plotCohortCount()`:
+
 ```{r}
 result |>
   filter(variable_name == "Number subjects") |>
@@ -111,6 +113,7 @@ result |>
   filter(group_level == "161_acetaminophen") |>
   plotCohortAttrition()
 ```
+
 ```{r, echo = FALSE, results='asis'}
 fil <- 'man/figures/attrition.svg'
 file <- file.path(getwd(), fil)
@@ -212,19 +215,12 @@ result |>
   )
 ```
 
-### Disconnect
-
-Disconnect from your database using `CDMConnector::cdmDisconnect()` to close the connection or with `mockDisconnect()` to close connection and delete the created mock data:
-
-```{r}
-mockDisconnect(cdm)
-```
-
 ### Recommendations
 
 Although it is technically possible, we do not recommend to pipe table or plot functions with the summarise ones. The main reason is that summarise functions take some time to run, a large scale characterisation in a big cdm object can take a few hours. If we pipe the output to a table/plot function we loose the summarise result object. In fact, some times we would send code around to be ran in others database and what we want to export is the summarised_result objects and not the table or plot which we would like to build after compiling results from different cdm objects.
 
 **Not recommended**:
+
 ```{r, eval = FALSE}
 cdm$my_cohort |>
   summariseCharacteristics() |>
@@ -232,6 +228,7 @@ cdm$my_cohort |>
 ```
 
 **Recommended**:
+
 ```{r, eval = FALSE}
 x <- summariseCharacteristics(cdm$my_cohort)
 

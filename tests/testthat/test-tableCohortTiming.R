@@ -39,9 +39,9 @@ test_that("tableCohortTiming", {
   )
 
   cdm <- mockCohortCharacteristics(
-    person = person, observation_period = obs, table = table,
-    con = connection(), writeSchema = writeSchema()
-  )
+    person = person, observation_period = obs, table = table
+  ) |>
+    copyCdm()
 
   timing1 <- summariseCohortTiming(cdm$table,
     restrictToFirstEntry = TRUE
@@ -108,5 +108,6 @@ test_that("tableCohortTiming", {
     groupColumn = character()
   )
   expect_true("gt_tbl" %in% class(gt3))
-  mockDisconnect(cdm)
+
+  dropCreatedTables(cdm = cdm)
 })

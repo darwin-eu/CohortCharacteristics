@@ -39,7 +39,6 @@
 #' summariseCohortTiming(cdm$cohort2) |>
 #'   glimpse()
 #'
-#' mockDisconnect(cdm)
 #' }
 #'
 summariseCohortTiming <- function(cohort,
@@ -105,10 +104,10 @@ summariseCohortTiming <- function(cohort,
       by = c("subject_id", strataCols)
     ) |>
     dplyr::filter(.data$cohort_name_reference != .data$cohort_name_comparator) %>% # to be removed
-    dplyr::mutate(days_between_cohort_entries = as.integer(!!CDMConnector::datediff(
-      "cohort_start_date",
-      "cohort_start_date_comparator",
-      interval = "day"
+    dplyr::mutate(days_between_cohort_entries = as.integer(clock::date_count_between(
+      start = .data$cohort_start_date,
+      end = .data$cohort_start_date_comparator,
+      precision = "day"
     ))) |>
     dplyr::select(!c(
       "cohort_start_date", "cohort_end_date", "cohort_start_date_comparator",

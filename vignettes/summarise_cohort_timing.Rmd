@@ -18,24 +18,19 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>", message = FALSE, warning = FALSE
 )
-
-CDMConnector::requireEunomia()
 ```
 
 We saw in the previous vignette how we can summarise the overlap between cohorts. In addition to this, we might also be interested in timings between cohorts. That is, the time between an individual entering one cohort and another. For this we can use the `summariseCohortTiming()`. In this example we'll look at the time between entering cohorts for acetaminophen, morphine, and oxycodone using the Eunomia data.
 
 ```{r}
-library(duckdb)
+library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
 library(CodelistGenerator)
 library(PatientProfiles)
 library(CohortCharacteristics)
 
-con <- dbConnect(duckdb(), dbdir = eunomiaDir())
-cdm <- cdmFromCon(
-  con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
-)
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 
 medsCs <- getDrugIngredientCodes(
   cdm = cdm,

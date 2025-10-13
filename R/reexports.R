@@ -56,14 +56,14 @@ omopgenerics::settingsColumns
 
 #' It creates a mock database for testing CohortCharacteristics package
 #'
-#' @param con A DBI connection to create the cdm mock object.
-#' @param writeSchema Name of an schema on the same connection with writing
-#' permissions.
 #' @param numberIndividuals Number of individuals to create in the cdm
 #' reference.
 #' @param ... User self defined tables to put in cdm, it can input as many
 #' as the user want.
-#' @param seed A number to set the seed. If NULL seed is not used.
+#' @param source Source for the mock cdm, it can either be 'local' or 'duckdb'.
+#' @param con deprecated.
+#' @param writeSchema deprecated.
+#' @param seed deprecated.
 #'
 #' @return A mock cdm_reference object created following user's specifications.
 #'
@@ -72,15 +72,9 @@ omopgenerics::settingsColumns
 #' @examples
 #' \donttest{
 #' library(CohortCharacteristics)
-#' library(CDMConnector)
 #'
 #' cdm <- mockCohortCharacteristics()
 #'
-#' mockDisconnect(cdm = cdm)
 #' }
 #'
 mockCohortCharacteristics <- PatientProfiles::mockPatientProfiles
-
-#' @importFrom PatientProfiles mockDisconnect
-#' @export
-PatientProfiles::mockDisconnect
