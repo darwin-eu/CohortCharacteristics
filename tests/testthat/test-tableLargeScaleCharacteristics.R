@@ -41,16 +41,15 @@ test_that("basic functionality summarise large scale characteristics", {
     condition_end_date = as.Date(c("2010-10-01", "2010-10-01")),
     condition_type_concept_id = 32020L
   )
-  con <- connection()
   cdm <- mockCohortCharacteristics(
-    con = con,
-    writeSchema = writeSchema(),
     person = person,
     observation_period = observation_period,
     cohort_interest = cohort_interest,
     drug_exposure = drug_exposure,
     condition_occurrence = condition_occurrence
-  )
+  ) |>
+    copyCdm()
+
   concept <- dplyr::tibble(
     concept_id = as.integer(c(
       1125315, 1503328, 1516978, 317009, 378253, 4266367
@@ -63,14 +62,7 @@ test_that("basic functionality summarise large scale characteristics", {
     valid_end_date = as.Date("2099-01-01")
   ) |>
     dplyr::mutate(concept_name = paste0("concept: ", .data$concept_id))
-  name <- CDMConnector::inSchema(schema = "main", table = "concept")
-  DBI::dbWriteTable(
-    conn = con,
-    name = name,
-    value = concept,
-    overwrite = TRUE
-  )
-  cdm$concept <- dplyr::tbl(con, name)
+  cdm <- omopgenerics::insertTable(cdm = cdm, name = "concept", table = concept)
 
   result <- cdm$cohort_interest |>
     summariseLargeScaleCharacteristics(
@@ -80,14 +72,14 @@ test_that("basic functionality summarise large scale characteristics", {
     )
 
   expect_no_error(tableTopLargeScaleCharacteristics(result))
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("topConcepts working", {
   skip_on_cran()
-  con <- duckdb::dbConnect(duckdb::duckdb(), dbdir = CDMConnector::eunomiaDir())
-  cdm <- CDMConnector::cdmFromCon(
-    con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
-  )
+  cdm <- omock::mockCdmFromDataset(datasetName = "GiBleed", source = "local") |>
+    copyCdm()
 
   cdm <- CDMConnector::generateConceptCohortSet(
     cdm = cdm,
@@ -194,5 +186,5 @@ test_that("topConcepts working", {
       tableTopLargeScaleCharacteristics(topConcepts = 5, type = "gt")
   )
 
-  CDMConnector::cdmDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

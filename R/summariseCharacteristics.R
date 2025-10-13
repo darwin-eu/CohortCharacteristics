@@ -93,7 +93,6 @@
 #'   ) |>
 #'   glimpse()
 #'
-#' mockDisconnect(cdm)
 #' }
 summariseCharacteristics <- function(cohort,
                                      cohortId = NULL,
@@ -203,7 +202,7 @@ summariseCharacteristics <- function(cohort,
     ) |>
       dplyr::mutate(
         "result_id" = as.integer(1),
-        "cdm_name" = CDMConnector::cdmName(cdm),
+        "cdm_name" = omopgenerics::cdmName(cdm),
         "group_name" = "cohort_name",
         "strata_name" = "overall",
         "strata_level" = "overall",
@@ -293,10 +292,11 @@ summariseCharacteristics <- function(cohort,
         futureObservation = demographics,
         futureObservationName = futureObservation
       ) %>%
-      dplyr::mutate(!!duration := as.integer(
-        !!CDMConnector::datediff("cohort_start_date", "cohort_end_date") + 1
-      ))
-
+      dplyr::mutate(!!duration := as.integer(clock::date_count_between(
+        start = .data$cohort_start_date,
+        end = .data$cohort_end_date,
+        precision = "day"
+      )) + 1L)
   }
 
   # intersects

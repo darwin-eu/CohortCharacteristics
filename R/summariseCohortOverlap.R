@@ -35,7 +35,6 @@
 #' summariseCohortOverlap(cdm$cohort2) |>
 #'   glimpse()
 #'
-#' mockDisconnect(cdm)
 #' }
 summariseCohortOverlap <- function(cohort,
                                    cohortId = NULL,

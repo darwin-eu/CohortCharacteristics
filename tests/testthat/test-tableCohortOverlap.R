@@ -40,9 +40,10 @@ test_that("tableCohortOverlap", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(), person = person,
+    person = person,
     observation_period = obs, table = table
-  )
+  ) |>
+    copyCdm()
 
   overlap <- summariseCohortOverlap(cdm$table)
 
@@ -71,5 +72,5 @@ test_that("tableCohortOverlap", {
   gtResult2 <- tableCohortOverlap(overlap3, type = "gt")
   expect_true("gt_tbl" %in% class(gtResult2))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

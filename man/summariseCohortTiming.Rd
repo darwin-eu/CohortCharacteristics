@@ -46,7 +46,6 @@ cdm <- mockCohortCharacteristics(numberIndividuals = 100)
 summariseCohortTiming(cdm$cohort2) |>
   glimpse()
 
-mockDisconnect(cdm)
 }
 
 }

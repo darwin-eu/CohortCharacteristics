@@ -5,7 +5,8 @@
 status](https://www.r-pkg.org/badges/version/CohortCharacteristics)](https://CRAN.R-project.org/package=CohortCharacteristics)
 [![codecov.io](https://codecov.io/github/darwin-eu/CohortCharacteristics/coverage.svg?branch=main)](https://app.codecov.io/github/darwin-eu/CohortCharacteristics?branch=main)
 [![R-CMD-check](https://github.com/darwin-eu/CohortCharacteristics/workflows/R-CMD-check/badge.svg)](https://github.com/darwin-eu/CohortCharacteristics/actions)
-[![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 
 ## Package overview
 
@@ -20,14 +21,14 @@ individuals within the cohort.
     #>   Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M
     #>   (????). _CohortCharacteristics: Summarise and Visualise
     #>   Characteristics of Patients in the OMOP CDM_. R package version
-    #>   0.5.1, <https://darwin-eu.github.io/CohortCharacteristics/>.
+    #>   1.0.1, <https://darwin-eu.github.io/CohortCharacteristics/>.
     #> 
     #> A BibTeX entry for LaTeX users is
     #> 
     #>   @Manual{,
     #>     title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},
     #>     author = {Marti Catala and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},
-    #>     note = {R package version 0.5.1},
+    #>     note = {R package version 1.0.1},
     #>     url = {https://darwin-eu.github.io/CohortCharacteristics/},
     #>   }
 

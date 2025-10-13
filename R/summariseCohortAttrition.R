@@ -33,7 +33,6 @@
 #' summariseCohortAttrition(cohort = cdm$cohort1) |>
 #'   glimpse()
 #'
-#' mockDisconnect(cdm)
 #' }
 summariseCohortAttrition <- function(cohort,
                                      cohortId = NULL) {

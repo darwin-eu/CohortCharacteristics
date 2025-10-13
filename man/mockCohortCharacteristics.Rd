@@ -5,26 +5,28 @@
 \title{It creates a mock database for testing CohortCharacteristics package}
 \usage{
 mockCohortCharacteristics(
-  con = NULL,
-  writeSchema = NULL,
   numberIndividuals = 10,
   ...,
-  seed = NULL
+  source = "local",
+  con = lifecycle::deprecated(),
+  writeSchema = lifecycle::deprecated(),
+  seed = lifecycle::deprecated()
 )
 }
 \arguments{
-\item{con}{A DBI connection to create the cdm mock object.}
-
-\item{writeSchema}{Name of an schema on the same connection with writing
-permissions.}
-
 \item{numberIndividuals}{Number of individuals to create in the cdm
 reference.}
 
 \item{...}{User self defined tables to put in cdm, it can input as many
 as the user want.}
 
-\item{seed}{A number to set the seed. If NULL seed is not used.}
+\item{source}{Source for the mock cdm, it can either be 'local' or 'duckdb'.}
+
+\item{con}{deprecated.}
+
+\item{writeSchema}{deprecated.}
+
+\item{seed}{deprecated.}
 }
 \value{
 A mock cdm_reference object created following user's specifications.
@@ -35,11 +37,9 @@ It creates a mock database for testing CohortCharacteristics package
 \examples{
 \donttest{
 library(CohortCharacteristics)
-library(CDMConnector)
 
 cdm <- mockCohortCharacteristics()
 
-mockDisconnect(cdm = cdm)
 }
 
 }

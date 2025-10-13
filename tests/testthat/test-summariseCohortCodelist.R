@@ -1,8 +1,8 @@
 test_that("test summarise cohortCodelist attribute", {
   # no attribute
-  cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema()
-  )
+  cdm <- mockCohortCharacteristics() |>
+    copyCdm()
+
   expect_no_error(res <- summariseCohortCodelist(cohort = cdm$cohort1))
   expect_true(inherits(res, "summarised_result"))
   expect_true(nrow(res) == 0)
@@ -16,9 +16,9 @@ test_that("test summarise cohortCodelist attribute", {
     cohort_start_date = as.Date("2020-01-01"),
     cohort_end_date = as.Date("2020-01-01")
   )
-  cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(), my_cohort = my_cohort
-  )
+  cdm <- mockCohortCharacteristics(my_cohort = my_cohort) |>
+    copyCdm()
+
   cdm$my_cohort <- cdm$my_cohort |>
     omopgenerics::newCohortTable(cohortCodelistRef = dplyr::tibble(
       cohort_definition_id = 1L,
@@ -59,5 +59,6 @@ test_that("test summarise cohortCodelist attribute", {
   expect_true(inherits(tableCohortCodelist(res, type = "flextable"), "flextable"))
   expect_true(inherits(tableCohortCodelist(res, type = "datatable"), "datatables"))
   expect_true(inherits(tableCohortCodelist(res, type = "reactable"), "reactable"))
-  omopgenerics::cdmDisconnect(cdm = cdm)
+
+  dropCreatedTables(cdm = cdm)
 })

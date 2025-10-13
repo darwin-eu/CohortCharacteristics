@@ -25,6 +25,5 @@ result <- summariseCharacteristics(cdm$cohort1)
 
 availableTableColumns(result)
 
-mockDisconnect(cdm)
 }
 }

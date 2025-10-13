@@ -1,6 +1,7 @@
 test_that("test plotCohortCount", {
   skip_on_cran()
-  cdm <- mockCohortCharacteristics(numberIndividuals = 100)
+  cdm <- mockCohortCharacteristics(numberIndividuals = 100) |>
+    copyCdm()
 
   counts <- cdm$cohort2 |>
     PatientProfiles::addSex() |>
@@ -20,5 +21,5 @@ test_that("test plotCohortCount", {
   )
   expect_true(inherits(p, "ggplot"))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

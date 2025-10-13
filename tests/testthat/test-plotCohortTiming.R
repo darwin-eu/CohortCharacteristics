@@ -39,9 +39,9 @@ test_that("plotCohortTiming, boxplot", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
     person = person, observation_period = obs, table = table
-  )
+  ) |>
+    copyCdm()
 
   timing1 <- summariseCohortTiming(cdm$table,
     restrictToFirstEntry = TRUE
@@ -93,7 +93,7 @@ test_that("plotCohortTiming, boxplot", {
   # expect_true(boxplot3$labels$fill == "group")
   # expect_true(all(c("overall", "0 to 40", "0 to 40 &&& Female", "41 to 150", "41 to 150 &&& Female") %in% unique(boxplot3$data$color_combined)))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("plotCohortTiming, density", {
@@ -137,9 +137,9 @@ test_that("plotCohortTiming, density", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
     person = person, observation_period = obs, table = table
-  )
+  ) |>
+    copyCdm()
 
   timing1 <- summariseCohortTiming(cdm$table, restrictToFirstEntry = FALSE)
   expect_warning(density1 <- plotCohortTiming(timing1,
@@ -196,7 +196,8 @@ test_that("plotCohortTiming, density", {
   #                                                        "41 to 150", "41 to 150 and female", "41 to 150 and male",
   #                                                        "0 to 40 and male")))
   # not sure why 41 to 150 does not have density
-  mockDisconnect(cdm)
+
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("plotCohortTiming, density x axis", {
@@ -228,9 +229,8 @@ test_that("plotCohortTiming, density x axis", {
       )),
       cohort_end_date = cohort_start_date
     ))
-  )
-  cdm <- CDMConnector::copyCdmTo(
-    con = duckdb::dbConnect(duckdb::duckdb()), cdm = cdm, schema = "main")
+  ) |>
+    copyCdm()
 
   # first
   timing <- summariseCohortTiming(cdm$cohort)
@@ -250,5 +250,5 @@ test_that("plotCohortTiming, density x axis", {
   xLimits <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range
   expect_true(xLimits[2] - xLimits[1] >= 5/365)
 
-  PatientProfiles::mockDisconnect(cdm = cdm)
+  dropCreatedTables(cdm = cdm)
 })

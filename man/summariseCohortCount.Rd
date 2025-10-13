@@ -31,6 +31,5 @@ cdm <- mockCohortCharacteristics()
 summariseCohortCount(cohort = cdm$cohort1) |>
   glimpse()
 
-mockDisconnect(cdm)
 }
 }

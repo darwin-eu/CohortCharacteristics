@@ -38,6 +38,5 @@ cdm <- mockCohortCharacteristics()
 summariseCohortOverlap(cdm$cohort2) |>
   glimpse()
 
-mockDisconnect(cdm)
 }
 }

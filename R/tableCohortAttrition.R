@@ -35,7 +35,6 @@
 #'
 #' tableCohortAttrition(result)
 #'
-#' mockDisconnect(cdm)
 #' }
 #'
 tableCohortAttrition <- function(result,

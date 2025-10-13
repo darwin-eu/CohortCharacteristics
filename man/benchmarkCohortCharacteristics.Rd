@@ -25,13 +25,13 @@ Benchmark the main functions of CohortCharacteristics package.
 }
 \examples{
 \dontrun{
-CDMConnector::requireEunomia()
-con <- duckdb::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir())
-cdm <- CDMConnector::cdmFromCon(
-  con = con, cdmSchema = "main", writeSchema = "main"
-)
+library(CohortCharacteristics)
+library(omock)
+library(CDMConnector)
 
-cdm <- CDMConnector::generateConceptCohortSet(
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+
+cdm <- generateConceptCohortSet(
   cdm = cdm,
   conceptSet = list(sinusitis = 40481087, pharyngitis = 4112343),
   name = "my_cohort"

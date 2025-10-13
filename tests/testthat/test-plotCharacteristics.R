@@ -52,11 +52,13 @@ test_that("test plot", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
-    dus_cohort = dus_cohort, person = person,
-    comorbidities = comorbidities, medication = medication,
+    dus_cohort = dus_cohort,
+    person = person,
+    comorbidities = comorbidities,
+    medication = medication,
     observation_period = observation_period
-  )
+  ) |>
+    copyCdm()
 
   cdm$dus_cohort <- omopgenerics::newCohortTable(
     table = cdm$dus_cohort, cohortSetRef = dplyr::tibble(
@@ -142,9 +144,10 @@ test_that("test plot", {
       plotCharacteristics(plotType = "densityplot")
   )
 
-  expect_true(ggplot2::is.ggplot(test_data |> dplyr::filter(variable_name %in%  c("Age")) |>
+  expect_true(ggplot2::is_ggplot(test_data |> dplyr::filter(variable_name %in%  c("Age")) |>
                                        plotCharacteristics(plotType = "densityplot")))
 
+  dropCreatedTables(cdm = cdm)
 })
 
 test_that("plotCharacteristics", {
@@ -181,10 +184,11 @@ test_that("plotCharacteristics", {
   )
 
   cdm <- mockCohortCharacteristics(
-    con = connection(), writeSchema = writeSchema(),
-    dus_cohort = dus_cohort, person = person,
+    dus_cohort = dus_cohort,
+    person = person,
     observation_period = observation_period
-  )
+  ) |>
+    copyCdm()
 
   result1 <- summariseCharacteristics(
     cdm$dus_cohort,
@@ -206,5 +210,5 @@ test_that("plotCharacteristics", {
   )
   expect_true(ggplot2::is_ggplot(gg2))
 
-  mockDisconnect(cdm)
+  dropCreatedTables(cdm = cdm)
 })

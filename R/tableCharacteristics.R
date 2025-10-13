@@ -35,7 +35,6 @@
 #'
 #' tableCharacteristics(result)
 #'
-#' mockDisconnect(cdm)
 #' }
 #'
 tableCharacteristics <- function(result,

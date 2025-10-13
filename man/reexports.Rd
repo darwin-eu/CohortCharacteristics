@@ -13,7 +13,6 @@
 \alias{strataColumns}
 \alias{additionalColumns}
 \alias{settingsColumns}
-\alias{mockDisconnect}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -22,7 +21,5 @@ below to see their documentation.
 
 \describe{
   \item{omopgenerics}{\code{\link[omopgenerics]{additionalColumns}}, \code{\link[omopgenerics]{bind}}, \code{\link[omopgenerics]{exportSummarisedResult}}, \code{\link[omopgenerics]{groupColumns}}, \code{\link[omopgenerics]{importSummarisedResult}}, \code{\link[omopgenerics]{settings}}, \code{\link[omopgenerics]{settingsColumns}}, \code{\link[omopgenerics]{strataColumns}}, \code{\link[omopgenerics]{suppress}}, \code{\link[omopgenerics:reexports]{tidy}}}
-
-  \item{PatientProfiles}{\code{\link[PatientProfiles]{mockDisconnect}}}
 }}
 

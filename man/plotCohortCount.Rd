@@ -45,7 +45,6 @@ counts |>
     colour = "sex"
   )
 
-mockDisconnect(cdm)
 }
 
 }
