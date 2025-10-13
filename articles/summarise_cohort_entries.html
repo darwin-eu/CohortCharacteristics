@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Summarise cohort entries</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/v1.0.0/vignettes/articles/summarise_cohort_entries.Rmd" class="external-link"><code>vignettes/articles/summarise_cohort_entries.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/vignettes/articles/summarise_cohort_entries.Rmd" class="external-link"><code>vignettes/articles/summarise_cohort_entries.Rmd</code></a></small>
       <div class="d-none name"><code>summarise_cohort_entries.Rmd</code></div>
     </div>
 
@@ -82,16 +82,14 @@ individuals with an ankle sprain, ankle fracture, forearm fracture, or a
 hip fracture using the Eunomia synthetic data.</p>
 <p>We’ll begin by creating our study cohorts.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.duckdb.org/" class="external-link">duckdb</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/omock/" class="external-link">omock</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CDMConnector/" class="external-link">CDMConnector</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/PatientProfiles/" class="external-link">PatientProfiles</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CohortCharacteristics/">CohortCharacteristics</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://clock.r-lib.org" class="external-link">clock</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span></span>
-<span>  con <span class="op">=</span> <span class="va">con</span>, cdmSchem <span class="op">=</span> <span class="st">"main"</span>, writeSchema <span class="op">=</span> <span class="st">"main"</span>, cdmName <span class="op">=</span> <span class="st">"Eunomia"</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ohdsi.github.io/omock/reference/mockCdmFromDataset.html" class="external-link">mockCdmFromDataset</a></span><span class="op">(</span>datasetName <span class="op">=</span> <span class="st">"GiBleed"</span>, source <span class="op">=</span> <span class="st">"duckdb"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/generateConceptCohortSet.html" class="external-link">generateConceptCohortSet</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -114,23 +112,23 @@ cohorts.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cohortCounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summariseCohortCount.html">summariseCohortCount</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">$</span><span class="va">injuries</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/tableCohortCount.html">tableCohortCount</a></span><span class="op">(</span><span class="va">cohortCounts</span><span class="op">)</span></span></code></pre></div>
-<div id="lqeqmfaamr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#lqeqmfaamr table {
+<div id="yvzqnitvfq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yvzqnitvfq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#lqeqmfaamr thead, #lqeqmfaamr tbody, #lqeqmfaamr tfoot, #lqeqmfaamr tr, #lqeqmfaamr td, #lqeqmfaamr th {
+#yvzqnitvfq thead, #yvzqnitvfq tbody, #yvzqnitvfq tfoot, #yvzqnitvfq tr, #yvzqnitvfq td, #yvzqnitvfq th {
   border-style: none;
 }
 
-#lqeqmfaamr p {
+#yvzqnitvfq p {
   margin: 0;
   padding: 0;
 }
 
-#lqeqmfaamr .gt_table {
+#yvzqnitvfq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -143,25 +141,25 @@ cohorts.</p>
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: #D9D9D9;
   border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
+  border-bottom-width: 3px;
+  border-bottom-color: #D9D9D9;
+  border-left-style: solid;
+  border-left-width: 3px;
+  border-left-color: #D9D9D9;
 }
 
-#lqeqmfaamr .gt_caption {
+#yvzqnitvfq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#lqeqmfaamr .gt_title {
+#yvzqnitvfq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -173,7 +171,7 @@ cohorts.</p>
   border-bottom-width: 0;
 }
 
-#lqeqmfaamr .gt_subtitle {
+#yvzqnitvfq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -185,7 +183,7 @@ cohorts.</p>
   border-top-width: 0;
 }
 
-#lqeqmfaamr .gt_heading {
+#yvzqnitvfq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -197,13 +195,13 @@ cohorts.</p>
   border-right-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_bottom_border {
+#yvzqnitvfq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_col_headings {
+#yvzqnitvfq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -218,7 +216,7 @@ cohorts.</p>
   border-right-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_col_heading {
+#yvzqnitvfq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -238,7 +236,7 @@ cohorts.</p>
   overflow-x: hidden;
 }
 
-#lqeqmfaamr .gt_column_spanner_outer {
+#yvzqnitvfq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -250,15 +248,15 @@ cohorts.</p>
   padding-right: 4px;
 }
 
-#lqeqmfaamr .gt_column_spanner_outer:first-child {
+#yvzqnitvfq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#lqeqmfaamr .gt_column_spanner_outer:last-child {
+#yvzqnitvfq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#lqeqmfaamr .gt_column_spanner {
+#yvzqnitvfq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -270,11 +268,11 @@ cohorts.</p>
   width: 100%;
 }
 
-#lqeqmfaamr .gt_spanner_row {
+#yvzqnitvfq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#lqeqmfaamr .gt_group_heading {
+#yvzqnitvfq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -300,7 +298,7 @@ cohorts.</p>
   text-align: left;
 }
 
-#lqeqmfaamr .gt_empty_group_heading {
+#yvzqnitvfq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -315,15 +313,15 @@ cohorts.</p>
   vertical-align: middle;
 }
 
-#lqeqmfaamr .gt_from_md > :first-child {
+#yvzqnitvfq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#lqeqmfaamr .gt_from_md > :last-child {
+#yvzqnitvfq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#lqeqmfaamr .gt_row {
+#yvzqnitvfq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -342,7 +340,7 @@ cohorts.</p>
   overflow-x: hidden;
 }
 
-#lqeqmfaamr .gt_stub {
+#yvzqnitvfq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -355,7 +353,7 @@ cohorts.</p>
   padding-right: 5px;
 }
 
-#lqeqmfaamr .gt_stub_row_group {
+#yvzqnitvfq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -369,15 +367,15 @@ cohorts.</p>
   vertical-align: top;
 }
 
-#lqeqmfaamr .gt_row_group_first td {
+#yvzqnitvfq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#lqeqmfaamr .gt_row_group_first th {
+#yvzqnitvfq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#lqeqmfaamr .gt_summary_row {
+#yvzqnitvfq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -387,16 +385,16 @@ cohorts.</p>
   padding-right: 5px;
 }
 
-#lqeqmfaamr .gt_first_summary_row {
+#yvzqnitvfq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_first_summary_row.thick {
+#yvzqnitvfq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#lqeqmfaamr .gt_last_summary_row {
+#yvzqnitvfq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -406,7 +404,7 @@ cohorts.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_grand_summary_row {
+#yvzqnitvfq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -416,7 +414,7 @@ cohorts.</p>
   padding-right: 5px;
 }
 
-#lqeqmfaamr .gt_first_grand_summary_row {
+#yvzqnitvfq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -426,7 +424,7 @@ cohorts.</p>
   border-top-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_last_grand_summary_row_top {
+#yvzqnitvfq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -436,20 +434,20 @@ cohorts.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_striped {
+#yvzqnitvfq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#lqeqmfaamr .gt_table_body {
+#yvzqnitvfq .gt_table_body {
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_footnotes {
+#yvzqnitvfq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -463,7 +461,7 @@ cohorts.</p>
   border-right-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_footnote {
+#yvzqnitvfq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -472,7 +470,7 @@ cohorts.</p>
   padding-right: 5px;
 }
 
-#lqeqmfaamr .gt_sourcenotes {
+#yvzqnitvfq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -486,7 +484,7 @@ cohorts.</p>
   border-right-color: #D3D3D3;
 }
 
-#lqeqmfaamr .gt_sourcenote {
+#yvzqnitvfq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -494,72 +492,72 @@ cohorts.</p>
   padding-right: 5px;
 }
 
-#lqeqmfaamr .gt_left {
+#yvzqnitvfq .gt_left {
   text-align: left;
 }
 
-#lqeqmfaamr .gt_center {
+#yvzqnitvfq .gt_center {
   text-align: center;
 }
 
-#lqeqmfaamr .gt_right {
+#yvzqnitvfq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#lqeqmfaamr .gt_font_normal {
+#yvzqnitvfq .gt_font_normal {
   font-weight: normal;
 }
 
-#lqeqmfaamr .gt_font_bold {
+#yvzqnitvfq .gt_font_bold {
   font-weight: bold;
 }
 
-#lqeqmfaamr .gt_font_italic {
+#yvzqnitvfq .gt_font_italic {
   font-style: italic;
 }
 
-#lqeqmfaamr .gt_super {
+#yvzqnitvfq .gt_super {
   font-size: 65%;
 }
 
-#lqeqmfaamr .gt_footnote_marks {
+#yvzqnitvfq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#lqeqmfaamr .gt_asterisk {
+#yvzqnitvfq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#lqeqmfaamr .gt_indent_1 {
+#yvzqnitvfq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#lqeqmfaamr .gt_indent_2 {
+#yvzqnitvfq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#lqeqmfaamr .gt_indent_3 {
+#yvzqnitvfq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#lqeqmfaamr .gt_indent_4 {
+#yvzqnitvfq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#lqeqmfaamr .gt_indent_5 {
+#yvzqnitvfq .gt_indent_5 {
   text-indent: 25px;
 }
 
-#lqeqmfaamr .katex-display {
+#yvzqnitvfq .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#lqeqmfaamr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#yvzqnitvfq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -583,7 +581,7 @@ cohorts.</p>
 </thead>
 <tbody class="gt_table_body">
 <tr>
-<td headers="CDM name" class="gt_row gt_left" style="text-align: left;">Eunomia</td>
+<td headers="CDM name" class="gt_row gt_left" style="text-align: left;">GiBleed</td>
 <td headers="Variable name" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Number records</td>
 <td headers="Estimate name" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">N</td>
 <td headers="[header_name]Cohort name
@@ -623,23 +621,23 @@ overall counts of our cohorts.</p>
 <span></span>
 <span><span class="va">cohortCounts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/summariseCohortCount.html">summariseCohortCount</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">[[</span><span class="st">"injuries"</span><span class="op">]</span><span class="op">]</span>, strata <span class="op">=</span> <span class="st">"age_group"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/tableCohortCount.html">tableCohortCount</a></span><span class="op">(</span><span class="va">cohortCounts</span><span class="op">)</span></span></code></pre></div>
-<div id="kjhvqltorl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kjhvqltorl table {
+<div id="thyrdehmul" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#thyrdehmul table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#kjhvqltorl thead, #kjhvqltorl tbody, #kjhvqltorl tfoot, #kjhvqltorl tr, #kjhvqltorl td, #kjhvqltorl th {
+#thyrdehmul thead, #thyrdehmul tbody, #thyrdehmul tfoot, #thyrdehmul tr, #thyrdehmul td, #thyrdehmul th {
   border-style: none;
 }
 
-#kjhvqltorl p {
+#thyrdehmul p {
   margin: 0;
   padding: 0;
 }
 
-#kjhvqltorl .gt_table {
+#thyrdehmul .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -652,25 +650,25 @@ overall counts of our cohorts.</p>
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: #D9D9D9;
   border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
+  border-bottom-width: 3px;
+  border-bottom-color: #D9D9D9;
+  border-left-style: solid;
+  border-left-width: 3px;
+  border-left-color: #D9D9D9;
 }
 
-#kjhvqltorl .gt_caption {
+#thyrdehmul .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#kjhvqltorl .gt_title {
+#thyrdehmul .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -682,7 +680,7 @@ overall counts of our cohorts.</p>
   border-bottom-width: 0;
 }
 
-#kjhvqltorl .gt_subtitle {
+#thyrdehmul .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -694,7 +692,7 @@ overall counts of our cohorts.</p>
   border-top-width: 0;
 }
 
-#kjhvqltorl .gt_heading {
+#thyrdehmul .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -706,13 +704,13 @@ overall counts of our cohorts.</p>
   border-right-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_bottom_border {
+#thyrdehmul .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_col_headings {
+#thyrdehmul .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -727,7 +725,7 @@ overall counts of our cohorts.</p>
   border-right-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_col_heading {
+#thyrdehmul .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -747,7 +745,7 @@ overall counts of our cohorts.</p>
   overflow-x: hidden;
 }
 
-#kjhvqltorl .gt_column_spanner_outer {
+#thyrdehmul .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -759,15 +757,15 @@ overall counts of our cohorts.</p>
   padding-right: 4px;
 }
 
-#kjhvqltorl .gt_column_spanner_outer:first-child {
+#thyrdehmul .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kjhvqltorl .gt_column_spanner_outer:last-child {
+#thyrdehmul .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kjhvqltorl .gt_column_spanner {
+#thyrdehmul .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -779,11 +777,11 @@ overall counts of our cohorts.</p>
   width: 100%;
 }
 
-#kjhvqltorl .gt_spanner_row {
+#thyrdehmul .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#kjhvqltorl .gt_group_heading {
+#thyrdehmul .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -809,7 +807,7 @@ overall counts of our cohorts.</p>
   text-align: left;
 }
 
-#kjhvqltorl .gt_empty_group_heading {
+#thyrdehmul .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -824,15 +822,15 @@ overall counts of our cohorts.</p>
   vertical-align: middle;
 }
 
-#kjhvqltorl .gt_from_md > :first-child {
+#thyrdehmul .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kjhvqltorl .gt_from_md > :last-child {
+#thyrdehmul .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kjhvqltorl .gt_row {
+#thyrdehmul .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -851,7 +849,7 @@ overall counts of our cohorts.</p>
   overflow-x: hidden;
 }
 
-#kjhvqltorl .gt_stub {
+#thyrdehmul .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -864,7 +862,7 @@ overall counts of our cohorts.</p>
   padding-right: 5px;
 }
 
-#kjhvqltorl .gt_stub_row_group {
+#thyrdehmul .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -878,15 +876,15 @@ overall counts of our cohorts.</p>
   vertical-align: top;
 }
 
-#kjhvqltorl .gt_row_group_first td {
+#thyrdehmul .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#kjhvqltorl .gt_row_group_first th {
+#thyrdehmul .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#kjhvqltorl .gt_summary_row {
+#thyrdehmul .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -896,16 +894,16 @@ overall counts of our cohorts.</p>
   padding-right: 5px;
 }
 
-#kjhvqltorl .gt_first_summary_row {
+#thyrdehmul .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_first_summary_row.thick {
+#thyrdehmul .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#kjhvqltorl .gt_last_summary_row {
+#thyrdehmul .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -915,7 +913,7 @@ overall counts of our cohorts.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_grand_summary_row {
+#thyrdehmul .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -925,7 +923,7 @@ overall counts of our cohorts.</p>
   padding-right: 5px;
 }
 
-#kjhvqltorl .gt_first_grand_summary_row {
+#thyrdehmul .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -935,7 +933,7 @@ overall counts of our cohorts.</p>
   border-top-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_last_grand_summary_row_top {
+#thyrdehmul .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -945,20 +943,20 @@ overall counts of our cohorts.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_striped {
+#thyrdehmul .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#kjhvqltorl .gt_table_body {
+#thyrdehmul .gt_table_body {
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_footnotes {
+#thyrdehmul .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -972,7 +970,7 @@ overall counts of our cohorts.</p>
   border-right-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_footnote {
+#thyrdehmul .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -981,7 +979,7 @@ overall counts of our cohorts.</p>
   padding-right: 5px;
 }
 
-#kjhvqltorl .gt_sourcenotes {
+#thyrdehmul .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -995,7 +993,7 @@ overall counts of our cohorts.</p>
   border-right-color: #D3D3D3;
 }
 
-#kjhvqltorl .gt_sourcenote {
+#thyrdehmul .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1003,72 +1001,72 @@ overall counts of our cohorts.</p>
   padding-right: 5px;
 }
 
-#kjhvqltorl .gt_left {
+#thyrdehmul .gt_left {
   text-align: left;
 }
 
-#kjhvqltorl .gt_center {
+#thyrdehmul .gt_center {
   text-align: center;
 }
 
-#kjhvqltorl .gt_right {
+#thyrdehmul .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kjhvqltorl .gt_font_normal {
+#thyrdehmul .gt_font_normal {
   font-weight: normal;
 }
 
-#kjhvqltorl .gt_font_bold {
+#thyrdehmul .gt_font_bold {
   font-weight: bold;
 }
 
-#kjhvqltorl .gt_font_italic {
+#thyrdehmul .gt_font_italic {
   font-style: italic;
 }
 
-#kjhvqltorl .gt_super {
+#thyrdehmul .gt_super {
   font-size: 65%;
 }
 
-#kjhvqltorl .gt_footnote_marks {
+#thyrdehmul .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#kjhvqltorl .gt_asterisk {
+#thyrdehmul .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#kjhvqltorl .gt_indent_1 {
+#thyrdehmul .gt_indent_1 {
   text-indent: 5px;
 }
 
-#kjhvqltorl .gt_indent_2 {
+#thyrdehmul .gt_indent_2 {
   text-indent: 10px;
 }
 
-#kjhvqltorl .gt_indent_3 {
+#thyrdehmul .gt_indent_3 {
   text-indent: 15px;
 }
 
-#kjhvqltorl .gt_indent_4 {
+#thyrdehmul .gt_indent_4 {
   text-indent: 20px;
 }
 
-#kjhvqltorl .gt_indent_5 {
+#thyrdehmul .gt_indent_5 {
   text-indent: 25px;
 }
 
-#kjhvqltorl .katex-display {
+#thyrdehmul .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#kjhvqltorl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#thyrdehmul div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1093,7 +1091,7 @@ overall counts of our cohorts.</p>
 </thead>
 <tbody class="gt_table_body">
 <tr>
-<td headers="CDM name" class="gt_row gt_left" style="text-align: left;">Eunomia</td>
+<td headers="CDM name" class="gt_row gt_left" style="text-align: left;">GiBleed</td>
 <td headers="Age group" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">overall</td>
 <td headers="Variable name" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Number records</td>
 <td headers="Estimate name" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">N</td>
@@ -1213,23 +1211,23 @@ counts. In this case we will obscure any counts below 10.</p>
 <code class="sourceCode R"><span><span class="va">cohortCounts</span> <span class="op">&lt;-</span> <span class="va">cohortCounts</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/suppress.html" class="external-link">suppress</a></span><span class="op">(</span>minCellCount <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/tableCohortCount.html">tableCohortCount</a></span><span class="op">(</span><span class="va">cohortCounts</span><span class="op">)</span></span></code></pre></div>
-<div id="vuzjcdmfnb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vuzjcdmfnb table {
+<div id="xtlvmdhovf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xtlvmdhovf table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vuzjcdmfnb thead, #vuzjcdmfnb tbody, #vuzjcdmfnb tfoot, #vuzjcdmfnb tr, #vuzjcdmfnb td, #vuzjcdmfnb th {
+#xtlvmdhovf thead, #xtlvmdhovf tbody, #xtlvmdhovf tfoot, #xtlvmdhovf tr, #xtlvmdhovf td, #xtlvmdhovf th {
   border-style: none;
 }
 
-#vuzjcdmfnb p {
+#xtlvmdhovf p {
   margin: 0;
   padding: 0;
 }
 
-#vuzjcdmfnb .gt_table {
+#xtlvmdhovf .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1242,25 +1240,25 @@ counts. In this case we will obscure any counts below 10.</p>
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: #D9D9D9;
   border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
+  border-bottom-width: 3px;
+  border-bottom-color: #D9D9D9;
+  border-left-style: solid;
+  border-left-width: 3px;
+  border-left-color: #D9D9D9;
 }
 
-#vuzjcdmfnb .gt_caption {
+#xtlvmdhovf .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vuzjcdmfnb .gt_title {
+#xtlvmdhovf .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1272,7 +1270,7 @@ counts. In this case we will obscure any counts below 10.</p>
   border-bottom-width: 0;
 }
 
-#vuzjcdmfnb .gt_subtitle {
+#xtlvmdhovf .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1284,7 +1282,7 @@ counts. In this case we will obscure any counts below 10.</p>
   border-top-width: 0;
 }
 
-#vuzjcdmfnb .gt_heading {
+#xtlvmdhovf .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1296,13 +1294,13 @@ counts. In this case we will obscure any counts below 10.</p>
   border-right-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_bottom_border {
+#xtlvmdhovf .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_col_headings {
+#xtlvmdhovf .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1317,7 +1315,7 @@ counts. In this case we will obscure any counts below 10.</p>
   border-right-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_col_heading {
+#xtlvmdhovf .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1337,7 +1335,7 @@ counts. In this case we will obscure any counts below 10.</p>
   overflow-x: hidden;
 }
 
-#vuzjcdmfnb .gt_column_spanner_outer {
+#xtlvmdhovf .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1349,15 +1347,15 @@ counts. In this case we will obscure any counts below 10.</p>
   padding-right: 4px;
 }
 
-#vuzjcdmfnb .gt_column_spanner_outer:first-child {
+#xtlvmdhovf .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vuzjcdmfnb .gt_column_spanner_outer:last-child {
+#xtlvmdhovf .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vuzjcdmfnb .gt_column_spanner {
+#xtlvmdhovf .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1369,11 +1367,11 @@ counts. In this case we will obscure any counts below 10.</p>
   width: 100%;
 }
 
-#vuzjcdmfnb .gt_spanner_row {
+#xtlvmdhovf .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vuzjcdmfnb .gt_group_heading {
+#xtlvmdhovf .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1399,7 +1397,7 @@ counts. In this case we will obscure any counts below 10.</p>
   text-align: left;
 }
 
-#vuzjcdmfnb .gt_empty_group_heading {
+#xtlvmdhovf .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1414,15 +1412,15 @@ counts. In this case we will obscure any counts below 10.</p>
   vertical-align: middle;
 }
 
-#vuzjcdmfnb .gt_from_md > :first-child {
+#xtlvmdhovf .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vuzjcdmfnb .gt_from_md > :last-child {
+#xtlvmdhovf .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vuzjcdmfnb .gt_row {
+#xtlvmdhovf .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1441,7 +1439,7 @@ counts. In this case we will obscure any counts below 10.</p>
   overflow-x: hidden;
 }
 
-#vuzjcdmfnb .gt_stub {
+#xtlvmdhovf .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1454,7 +1452,7 @@ counts. In this case we will obscure any counts below 10.</p>
   padding-right: 5px;
 }
 
-#vuzjcdmfnb .gt_stub_row_group {
+#xtlvmdhovf .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1468,15 +1466,15 @@ counts. In this case we will obscure any counts below 10.</p>
   vertical-align: top;
 }
 
-#vuzjcdmfnb .gt_row_group_first td {
+#xtlvmdhovf .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vuzjcdmfnb .gt_row_group_first th {
+#xtlvmdhovf .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vuzjcdmfnb .gt_summary_row {
+#xtlvmdhovf .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1486,16 +1484,16 @@ counts. In this case we will obscure any counts below 10.</p>
   padding-right: 5px;
 }
 
-#vuzjcdmfnb .gt_first_summary_row {
+#xtlvmdhovf .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_first_summary_row.thick {
+#xtlvmdhovf .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vuzjcdmfnb .gt_last_summary_row {
+#xtlvmdhovf .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1505,7 +1503,7 @@ counts. In this case we will obscure any counts below 10.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_grand_summary_row {
+#xtlvmdhovf .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1515,7 +1513,7 @@ counts. In this case we will obscure any counts below 10.</p>
   padding-right: 5px;
 }
 
-#vuzjcdmfnb .gt_first_grand_summary_row {
+#xtlvmdhovf .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1525,7 +1523,7 @@ counts. In this case we will obscure any counts below 10.</p>
   border-top-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_last_grand_summary_row_top {
+#xtlvmdhovf .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1535,20 +1533,20 @@ counts. In this case we will obscure any counts below 10.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_striped {
+#xtlvmdhovf .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vuzjcdmfnb .gt_table_body {
+#xtlvmdhovf .gt_table_body {
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_footnotes {
+#xtlvmdhovf .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1562,7 +1560,7 @@ counts. In this case we will obscure any counts below 10.</p>
   border-right-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_footnote {
+#xtlvmdhovf .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1571,7 +1569,7 @@ counts. In this case we will obscure any counts below 10.</p>
   padding-right: 5px;
 }
 
-#vuzjcdmfnb .gt_sourcenotes {
+#xtlvmdhovf .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1585,7 +1583,7 @@ counts. In this case we will obscure any counts below 10.</p>
   border-right-color: #D3D3D3;
 }
 
-#vuzjcdmfnb .gt_sourcenote {
+#xtlvmdhovf .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1593,72 +1591,72 @@ counts. In this case we will obscure any counts below 10.</p>
   padding-right: 5px;
 }
 
-#vuzjcdmfnb .gt_left {
+#xtlvmdhovf .gt_left {
   text-align: left;
 }
 
-#vuzjcdmfnb .gt_center {
+#xtlvmdhovf .gt_center {
   text-align: center;
 }
 
-#vuzjcdmfnb .gt_right {
+#xtlvmdhovf .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vuzjcdmfnb .gt_font_normal {
+#xtlvmdhovf .gt_font_normal {
   font-weight: normal;
 }
 
-#vuzjcdmfnb .gt_font_bold {
+#xtlvmdhovf .gt_font_bold {
   font-weight: bold;
 }
 
-#vuzjcdmfnb .gt_font_italic {
+#xtlvmdhovf .gt_font_italic {
   font-style: italic;
 }
 
-#vuzjcdmfnb .gt_super {
+#xtlvmdhovf .gt_super {
   font-size: 65%;
 }
 
-#vuzjcdmfnb .gt_footnote_marks {
+#xtlvmdhovf .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vuzjcdmfnb .gt_asterisk {
+#xtlvmdhovf .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vuzjcdmfnb .gt_indent_1 {
+#xtlvmdhovf .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vuzjcdmfnb .gt_indent_2 {
+#xtlvmdhovf .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vuzjcdmfnb .gt_indent_3 {
+#xtlvmdhovf .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vuzjcdmfnb .gt_indent_4 {
+#xtlvmdhovf .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vuzjcdmfnb .gt_indent_5 {
+#xtlvmdhovf .gt_indent_5 {
   text-indent: 25px;
 }
 
-#vuzjcdmfnb .katex-display {
+#xtlvmdhovf .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#vuzjcdmfnb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#xtlvmdhovf div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1683,7 +1681,7 @@ counts. In this case we will obscure any counts below 10.</p>
 </thead>
 <tbody class="gt_table_body">
 <tr>
-<td headers="CDM name" class="gt_row gt_left" style="text-align: left;">Eunomia</td>
+<td headers="CDM name" class="gt_row gt_left" style="text-align: left;">GiBleed</td>
 <td headers="Age group" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">overall</td>
 <td headers="Variable name" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Number records</td>
 <td headers="Estimate name" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">N</td>
@@ -1815,7 +1813,7 @@ cohort attrition.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">year</span><span class="op">(</span><span class="va">cohort_start_date</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">2000</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://clock.r-lib.org/reference/clock-getters.html" class="external-link">get_year</a></span><span class="op">(</span><span class="va">cohort_start_date</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">2000</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">compute</a></span><span class="op">(</span>temporary <span class="op">=</span> <span class="cn">FALSE</span>, name <span class="op">=</span> <span class="st">"ankle_sprain"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/recordCohortAttrition.html" class="external-link">recordCohortAttrition</a></span><span class="op">(</span><span class="st">"Restrict to cohort_start_date &gt;= 2000"</span><span class="op">)</span></span>
 <span></span>
@@ -1823,7 +1821,7 @@ cohort attrition.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/plotCohortAttrition.html">plotCohortAttrition</a></span><span class="op">(</span><span class="va">attritionSummary</span><span class="op">)</span></span></code></pre></div>
 <div class="grViz html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:672px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Database: Eunomia\nCohort name: ankle_sprain\", shape = \"box\", color = \"#FFFFFF\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"1\", pos = \"0,0!\"] \n  \"2\" [label = \"N subjects = 1,357\nN records = 1,915\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-0.885!\"] \n  \"3\" [label = \"N subjects = 422\nN records = 456\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-1.965!\"] \n  \"4\" [label = \"Initial qualifying events\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-0.41!\"] \n  \"5\" [label = \"Restrict to cohort_start_date >=\n2000\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"2\", pos = \"0,-1.425!\"] \n  \"6\" [label = \"N subjects = 935\nN records = 1,459\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-1.425!\"] \n\"2\"->\"3\" [color = \"#000000\"] \n\"5\"->\"6\" [color = \"#000000\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Database: GiBleed\nCohort name: ankle_sprain\", shape = \"box\", color = \"#FFFFFF\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"1\", pos = \"0,0!\"] \n  \"2\" [label = \"N subjects = 1,357\nN records = 1,915\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-0.885!\"] \n  \"3\" [label = \"N subjects = 422\nN records = 456\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-1.965!\"] \n  \"4\" [label = \"Initial qualifying events\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-0.41!\"] \n  \"5\" [label = \"Restrict to cohort_start_date >=\n2000\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"2\", pos = \"0,-1.425!\"] \n  \"6\" [label = \"N subjects = 935\nN records = 1,459\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-1.425!\"] \n\"2\"->\"3\" [color = \"#000000\"] \n\"5\"->\"6\" [color = \"#000000\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://darwin-eu.github.io/PatientProfiles/reference/addAge.html" class="external-link">addAge</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">age</span> <span class="op">&gt;=</span> <span class="fl">18</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -1834,7 +1832,7 @@ cohort attrition.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/plotCohortAttrition.html">plotCohortAttrition</a></span><span class="op">(</span><span class="va">attritionSummary</span><span class="op">)</span></span></code></pre></div>
 <div class="grViz html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:672px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Database: Eunomia\nCohort name: ankle_sprain\", shape = \"box\", color = \"#FFFFFF\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"1\", pos = \"0,0!\"] \n  \"2\" [label = \"N subjects = 1,357\nN records = 1,915\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-0.885!\"] \n  \"3\" [label = \"N subjects = 422\nN records = 456\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-1.965!\"] \n  \"4\" [label = \"N subjects = 420\nN records = 454\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-2.915!\"] \n  \"5\" [label = \"Initial qualifying events\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-0.41!\"] \n  \"6\" [label = \"Restrict to cohort_start_date >=\n2000\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"2\", pos = \"0,-1.425!\"] \n  \"7\" [label = \"N subjects = 935\nN records = 1,459\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-1.425!\"] \n  \"8\" [label = \"Restrict to age >= 18\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-2.44!\"] \n  \"9\" [label = \"N subjects = 2\nN records = 2\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-2.44!\"] \n\"2\"->\"3\" [color = \"#000000\"] \n\"3\"->\"4\" [color = \"#000000\"] \n\"6\"->\"7\" [color = \"#000000\"] \n\"8\"->\"9\" [color = \"#000000\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><p>We could, of course, have applied these requirements the other way
+<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Database: GiBleed\nCohort name: ankle_sprain\", shape = \"box\", color = \"#FFFFFF\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"1\", pos = \"0,0!\"] \n  \"2\" [label = \"N subjects = 1,357\nN records = 1,915\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-0.885!\"] \n  \"3\" [label = \"N subjects = 422\nN records = 456\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-1.965!\"] \n  \"4\" [label = \"N subjects = 420\nN records = 454\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-2.915!\"] \n  \"5\" [label = \"Initial qualifying events\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-0.41!\"] \n  \"6\" [label = \"Restrict to cohort_start_date >=\n2000\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"2\", pos = \"0,-1.425!\"] \n  \"7\" [label = \"N subjects = 935\nN records = 1,459\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-1.425!\"] \n  \"8\" [label = \"Restrict to age >= 18\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-2.44!\"] \n  \"9\" [label = \"N subjects = 2\nN records = 2\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-2.44!\"] \n\"2\"->\"3\" [color = \"#000000\"] \n\"3\"->\"4\" [color = \"#000000\"] \n\"6\"->\"7\" [color = \"#000000\"] \n\"8\"->\"9\" [color = \"#000000\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><p>We could, of course, have applied these requirements the other way
 around.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/generateConceptCohortSet.html" class="external-link">generateConceptCohortSet</a></span><span class="op">(</span></span>
@@ -1852,7 +1850,7 @@ around.</p>
 <span>  <span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/recordCohortAttrition.html" class="external-link">recordCohortAttrition</a></span><span class="op">(</span><span class="st">"Restrict to age &gt;= 18"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">&lt;-</span> <span class="va">cdm</span><span class="op">$</span><span class="va">ankle_sprain</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">year</span><span class="op">(</span><span class="va">cohort_start_date</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">2000</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://clock.r-lib.org/reference/clock-getters.html" class="external-link">get_year</a></span><span class="op">(</span><span class="va">cohort_start_date</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">2000</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">compute</a></span><span class="op">(</span>temporary <span class="op">=</span> <span class="cn">FALSE</span>, name <span class="op">=</span> <span class="st">"ankle_sprain"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/recordCohortAttrition.html" class="external-link">recordCohortAttrition</a></span><span class="op">(</span><span class="st">"Restrict to cohort_start_date &gt;= 2000"</span><span class="op">)</span></span>
 <span></span>
@@ -1860,27 +1858,27 @@ around.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/plotCohortAttrition.html">plotCohortAttrition</a></span><span class="op">(</span><span class="va">attritionSummary</span><span class="op">)</span></span></code></pre></div>
 <div class="grViz html-widget html-fill-item" id="htmlwidget-36aa3d2a04d42bbc2145" style="width:672px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Database: Eunomia\nCohort name: ankle_sprain\", shape = \"box\", color = \"#FFFFFF\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"1\", pos = \"0,0!\"] \n  \"2\" [label = \"N subjects = 1,357\nN records = 1,915\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-0.885!\"] \n  \"3\" [label = \"N subjects = 847\nN records = 1,047\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-1.835!\"] \n  \"4\" [label = \"N subjects = 420\nN records = 454\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-2.915!\"] \n  \"5\" [label = \"Initial qualifying events\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-0.41!\"] \n  \"6\" [label = \"Restrict to age >= 18\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-1.36!\"] \n  \"7\" [label = \"N subjects = 510\nN records = 868\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-1.36!\"] \n  \"8\" [label = \"Restrict to cohort_start_date >=\n2000\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"2\", pos = \"0,-2.375!\"] \n  \"9\" [label = \"N subjects = 427\nN records = 593\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-2.375!\"] \n\"2\"->\"3\" [color = \"#000000\"] \n\"3\"->\"4\" [color = \"#000000\"] \n\"6\"->\"7\" [color = \"#000000\"] \n\"8\"->\"9\" [color = \"#000000\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><p>As well as plotting cohort attrition, we can also create a table of
+<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"diagram":"digraph {\n\ngraph [layout = \"neato\",\n       outputorder = \"edgesfirst\",\n       bgcolor = \"white\"]\n\nnode [fontname = \"Helvetica\",\n      fontsize = \"10\",\n      shape = \"circle\",\n      fixedsize = \"true\",\n      width = \"0.5\",\n      style = \"filled\",\n      fillcolor = \"aliceblue\",\n      color = \"gray70\",\n      fontcolor = \"gray50\"]\n\nedge [fontname = \"Helvetica\",\n     fontsize = \"8\",\n     len = \"1.5\",\n     color = \"gray80\",\n     arrowsize = \"0.5\"]\n\n  \"1\" [label = \"Database: GiBleed\nCohort name: ankle_sprain\", shape = \"box\", color = \"#FFFFFF\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"1\", pos = \"0,0!\"] \n  \"2\" [label = \"N subjects = 1,357\nN records = 1,915\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-0.885!\"] \n  \"3\" [label = \"N subjects = 847\nN records = 1,047\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-1.835!\"] \n  \"4\" [label = \"N subjects = 420\nN records = 454\", shape = \"box\", color = \"#000000\", fillcolor = \"#FFFFFF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"0,-2.915!\"] \n  \"5\" [label = \"Initial qualifying events\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-0.41!\"] \n  \"6\" [label = \"Restrict to age >= 18\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.26\", width = \"2\", pos = \"0,-1.36!\"] \n  \"7\" [label = \"N subjects = 510\nN records = 868\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-1.36!\"] \n  \"8\" [label = \"Restrict to cohort_start_date >=\n2000\", shape = \"box\", color = \"#000000\", fillcolor = \"#F0F8FF\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"2\", pos = \"0,-2.375!\"] \n  \"9\" [label = \"N subjects = 427\nN records = 593\", shape = \"box\", color = \"#000000\", fillcolor = \"#F8F8F8\", fontname = \"Calibri\", fontsize = \"8\", fontcolor = \"#000000\", height = \"0.39\", width = \"1.2\", pos = \"1.95,-2.375!\"] \n\"2\"->\"3\" [color = \"#000000\"] \n\"3\"->\"4\" [color = \"#000000\"] \n\"6\"->\"7\" [color = \"#000000\"] \n\"8\"->\"9\" [color = \"#000000\"] \n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script><p>As well as plotting cohort attrition, we can also create a table of
 our results.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tableCohortAttrition.html">tableCohortAttrition</a></span><span class="op">(</span><span class="va">attritionSummary</span><span class="op">)</span></span></code></pre></div>
-<div id="djpgkpmyiq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#djpgkpmyiq table {
+<div id="aebiahsqzr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#aebiahsqzr table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#djpgkpmyiq thead, #djpgkpmyiq tbody, #djpgkpmyiq tfoot, #djpgkpmyiq tr, #djpgkpmyiq td, #djpgkpmyiq th {
+#aebiahsqzr thead, #aebiahsqzr tbody, #aebiahsqzr tfoot, #aebiahsqzr tr, #aebiahsqzr td, #aebiahsqzr th {
   border-style: none;
 }
 
-#djpgkpmyiq p {
+#aebiahsqzr p {
   margin: 0;
   padding: 0;
 }
 
-#djpgkpmyiq .gt_table {
+#aebiahsqzr .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1893,25 +1891,25 @@ our results.</p>
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: #D9D9D9;
   border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
+  border-bottom-width: 3px;
+  border-bottom-color: #D9D9D9;
+  border-left-style: solid;
+  border-left-width: 3px;
+  border-left-color: #D9D9D9;
 }
 
-#djpgkpmyiq .gt_caption {
+#aebiahsqzr .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#djpgkpmyiq .gt_title {
+#aebiahsqzr .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1923,7 +1921,7 @@ our results.</p>
   border-bottom-width: 0;
 }
 
-#djpgkpmyiq .gt_subtitle {
+#aebiahsqzr .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1935,7 +1933,7 @@ our results.</p>
   border-top-width: 0;
 }
 
-#djpgkpmyiq .gt_heading {
+#aebiahsqzr .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1947,13 +1945,13 @@ our results.</p>
   border-right-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_bottom_border {
+#aebiahsqzr .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_col_headings {
+#aebiahsqzr .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1968,7 +1966,7 @@ our results.</p>
   border-right-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_col_heading {
+#aebiahsqzr .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1988,7 +1986,7 @@ our results.</p>
   overflow-x: hidden;
 }
 
-#djpgkpmyiq .gt_column_spanner_outer {
+#aebiahsqzr .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2000,15 +1998,15 @@ our results.</p>
   padding-right: 4px;
 }
 
-#djpgkpmyiq .gt_column_spanner_outer:first-child {
+#aebiahsqzr .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#djpgkpmyiq .gt_column_spanner_outer:last-child {
+#aebiahsqzr .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#djpgkpmyiq .gt_column_spanner {
+#aebiahsqzr .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2020,11 +2018,11 @@ our results.</p>
   width: 100%;
 }
 
-#djpgkpmyiq .gt_spanner_row {
+#aebiahsqzr .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#djpgkpmyiq .gt_group_heading {
+#aebiahsqzr .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2050,7 +2048,7 @@ our results.</p>
   text-align: left;
 }
 
-#djpgkpmyiq .gt_empty_group_heading {
+#aebiahsqzr .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2065,15 +2063,15 @@ our results.</p>
   vertical-align: middle;
 }
 
-#djpgkpmyiq .gt_from_md > :first-child {
+#aebiahsqzr .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#djpgkpmyiq .gt_from_md > :last-child {
+#aebiahsqzr .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#djpgkpmyiq .gt_row {
+#aebiahsqzr .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2092,7 +2090,7 @@ our results.</p>
   overflow-x: hidden;
 }
 
-#djpgkpmyiq .gt_stub {
+#aebiahsqzr .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2105,7 +2103,7 @@ our results.</p>
   padding-right: 5px;
 }
 
-#djpgkpmyiq .gt_stub_row_group {
+#aebiahsqzr .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2119,15 +2117,15 @@ our results.</p>
   vertical-align: top;
 }
 
-#djpgkpmyiq .gt_row_group_first td {
+#aebiahsqzr .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#djpgkpmyiq .gt_row_group_first th {
+#aebiahsqzr .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#djpgkpmyiq .gt_summary_row {
+#aebiahsqzr .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2137,16 +2135,16 @@ our results.</p>
   padding-right: 5px;
 }
 
-#djpgkpmyiq .gt_first_summary_row {
+#aebiahsqzr .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_first_summary_row.thick {
+#aebiahsqzr .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#djpgkpmyiq .gt_last_summary_row {
+#aebiahsqzr .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2156,7 +2154,7 @@ our results.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_grand_summary_row {
+#aebiahsqzr .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2166,7 +2164,7 @@ our results.</p>
   padding-right: 5px;
 }
 
-#djpgkpmyiq .gt_first_grand_summary_row {
+#aebiahsqzr .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2176,7 +2174,7 @@ our results.</p>
   border-top-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_last_grand_summary_row_top {
+#aebiahsqzr .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2186,20 +2184,20 @@ our results.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_striped {
+#aebiahsqzr .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#djpgkpmyiq .gt_table_body {
+#aebiahsqzr .gt_table_body {
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_footnotes {
+#aebiahsqzr .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2213,7 +2211,7 @@ our results.</p>
   border-right-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_footnote {
+#aebiahsqzr .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2222,7 +2220,7 @@ our results.</p>
   padding-right: 5px;
 }
 
-#djpgkpmyiq .gt_sourcenotes {
+#aebiahsqzr .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2236,7 +2234,7 @@ our results.</p>
   border-right-color: #D3D3D3;
 }
 
-#djpgkpmyiq .gt_sourcenote {
+#aebiahsqzr .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2244,72 +2242,72 @@ our results.</p>
   padding-right: 5px;
 }
 
-#djpgkpmyiq .gt_left {
+#aebiahsqzr .gt_left {
   text-align: left;
 }
 
-#djpgkpmyiq .gt_center {
+#aebiahsqzr .gt_center {
   text-align: center;
 }
 
-#djpgkpmyiq .gt_right {
+#aebiahsqzr .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#djpgkpmyiq .gt_font_normal {
+#aebiahsqzr .gt_font_normal {
   font-weight: normal;
 }
 
-#djpgkpmyiq .gt_font_bold {
+#aebiahsqzr .gt_font_bold {
   font-weight: bold;
 }
 
-#djpgkpmyiq .gt_font_italic {
+#aebiahsqzr .gt_font_italic {
   font-style: italic;
 }
 
-#djpgkpmyiq .gt_super {
+#aebiahsqzr .gt_super {
   font-size: 65%;
 }
 
-#djpgkpmyiq .gt_footnote_marks {
+#aebiahsqzr .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#djpgkpmyiq .gt_asterisk {
+#aebiahsqzr .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#djpgkpmyiq .gt_indent_1 {
+#aebiahsqzr .gt_indent_1 {
   text-indent: 5px;
 }
 
-#djpgkpmyiq .gt_indent_2 {
+#aebiahsqzr .gt_indent_2 {
   text-indent: 10px;
 }
 
-#djpgkpmyiq .gt_indent_3 {
+#aebiahsqzr .gt_indent_3 {
   text-indent: 15px;
 }
 
-#djpgkpmyiq .gt_indent_4 {
+#aebiahsqzr .gt_indent_4 {
   text-indent: 20px;
 }
 
-#djpgkpmyiq .gt_indent_5 {
+#aebiahsqzr .gt_indent_5 {
   text-indent: 25px;
 }
 
-#djpgkpmyiq .katex-display {
+#aebiahsqzr .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#djpgkpmyiq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#aebiahsqzr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2331,39 +2329,39 @@ our results.</p>
 </thead>
 <tbody class="gt_table_body">
 <tr class="gt_group_heading_row">
-<th colspan="5" class="gt_group_heading" style="background-color: #E9E9E9; font-weight: bold;" scope="colgroup" id="Eunomia; ankle_sprain">Eunomia; ankle_sprain</th>
+<th colspan="5" class="gt_group_heading" style="background-color: #E9E9E9; font-weight: bold;" scope="colgroup" id="GiBleed; ankle_sprain">GiBleed; ankle_sprain</th>
     </tr>
 <tr class="gt_row_group_first">
-<td headers="Eunomia; ankle_sprain  Reason" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Initial qualifying events</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  Reason" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Initial qualifying events</td>
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]number_records" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">1,915</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]number_subjects" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">1,357</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]excluded_records" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">0</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]excluded_subjects" class="gt_row gt_right" style="text-align: right;">0</td>
 </tr>
 <tr>
-<td headers="Eunomia; ankle_sprain  Reason" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Restrict to age &gt;= 18</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  Reason" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Restrict to age &gt;= 18</td>
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]number_records" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">1,047</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]number_subjects" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">847</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]excluded_records" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">868</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]excluded_subjects" class="gt_row gt_right" style="text-align: right;">510</td>
 </tr>
 <tr>
-<td headers="Eunomia; ankle_sprain  Reason" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Restrict to cohort_start_date &gt;= 2000</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  Reason" class="gt_row gt_left" style="text-align: left; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">Restrict to cohort_start_date &gt;= 2000</td>
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]number_records" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">454</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]number_subjects" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">420</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]excluded_records" class="gt_row gt_right" style="text-align: right; border-left-width: 1px; border-left-style: solid; border-left-color: #D3D3D3; border-right-width: 1px; border-right-style: solid; border-right-color: #D3D3D3; border-top-width: 1px; border-top-style: solid; border-top-color: #D3D3D3; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #D3D3D3;">593</td>
-<td headers="Eunomia; ankle_sprain  [header_name]Variable name
+<td headers="GiBleed; ankle_sprain  [header_name]Variable name
 [header_level]excluded_subjects" class="gt_row gt_right" style="text-align: right;">427</td>
 </tr>
 </tbody>
@@ -2381,7 +2379,7 @@ our results.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

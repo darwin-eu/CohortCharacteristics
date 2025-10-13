@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.2
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   summarise_characteristics: summarise_characteristics.html
@@ -7,7 +7,7 @@ articles:
   summarise_cohort_overlap: summarise_cohort_overlap.html
   summarise_cohort_timing: summarise_cohort_timing.html
   summarise_large_scale_characteristics: summarise_large_scale_characteristics.html
-last_built: 2025-05-21T18:05Z
+last_built: 2025-10-13T23:06Z
 urls:
   reference: https://darwin-eu.github.io/CohortCharacteristics/reference
   article: https://darwin-eu.github.io/CohortCharacteristics/articles

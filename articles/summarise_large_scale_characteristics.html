@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Summarise large scale characteristics</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/v1.0.0/vignettes/summarise_large_scale_characteristics.Rmd" class="external-link"><code>vignettes/summarise_large_scale_characteristics.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/vignettes/summarise_large_scale_characteristics.Rmd" class="external-link"><code>vignettes/summarise_large_scale_characteristics.Rmd</code></a></small>
       <div class="d-none name"><code>summarise_large_scale_characteristics.Rmd</code></div>
     </div>
 
@@ -89,16 +89,13 @@ entry).</p>
 a first-ever ankle sprain study cohort using the Eunomia synthetic
 data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.duckdb.org/" class="external-link">duckdb</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/omock/" class="external-link">omock</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CDMConnector/" class="external-link">CDMConnector</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/PatientProfiles/" class="external-link">PatientProfiles</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CohortCharacteristics/">CohortCharacteristics</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, dbdir <span class="op">=</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span></span>
-<span>  con <span class="op">=</span> <span class="va">con</span>, cdmSchem <span class="op">=</span> <span class="st">"main"</span>, writeSchema <span class="op">=</span> <span class="st">"main"</span>, cdmName <span class="op">=</span> <span class="st">"Eunomia"</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ohdsi.github.io/omock/reference/mockCdmFromDataset.html" class="external-link">mockCdmFromDataset</a></span><span class="op">(</span>datasetName <span class="op">=</span> <span class="st">"GiBleed"</span>, source <span class="op">=</span> <span class="st">"duckdb"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/generateConceptCohortSet.html" class="external-link">generateConceptCohortSet</a></span><span class="op">(</span></span>
 <span>  cdm <span class="op">=</span> <span class="va">cdm</span>,</span>
@@ -137,7 +134,7 @@ record.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/tableLargeScaleCharacteristics.html">tableLargeScaleCharacteristics</a></span><span class="op">(</span><span class="va">lsc</span><span class="op">)</span></span></code></pre></div>
 <div class="reactable html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"cdm_name":["Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia","Eunomia"],"cohort_name":["ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain"],"window":["-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","0 to 0","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","0 to 0","0 to 0","0 to 0","0 to 0","0 to 0","0 to 0"],"concept_name":["Acute allergic reaction","Acute bacterial sinusitis","Acute bronchitis","Acute viral pharyngitis","Angiodysplasia of stomach","Appendicitis","Atopic dermatitis","Child attention deficit disorder","Childhood asthma","Chronic sinusitis","Concussion with loss of consciousness","Concussion with no loss of consciousness","Cystitis","Diverticular disease","Escherichia coli urinary tract infection","Esophagitis","Facial laceration","First degree burn","Fracture of ankle","Fracture of clavicle","Fracture of forearm","Fracture of rib","Fracture subluxation of wrist","Gastrointestinal hemorrhage","Injury of tendon of the rotator cuff of shoulder","Laceration of foot","Laceration of forearm","Laceration of hand","Laceration of thigh","Osteoarthritis","Otitis media","Peptic ulcer","Perennial allergic rhinitis","Perennial allergic rhinitis with seasonal variation","Polyp of colon","Second degree burn","Sinusitis","Sprain of wrist","Streptococcal sore throat","Ulcerative colitis","Viral sinusitis","Whiplash injury to neck","Sprain of ankle","Allergy screening test","Appendectomy","Asthma screening","Bone density scan","Bone immobilization","Cognitive and behavioral therapy","Injection of epinephrine","Injection of tetanus antitoxin","Nasal sinus endoscopy","Plain X-ray of clavicle","Plain chest X-ray","Radiography of ankle","Radiography of humerus","Radiography of wrist","Radiologic examination of knee","Sputum examination","Subcutaneous immunotherapy","Surgical manipulation of joint of knee","Suture open wound","120 ACTUAT Fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler","200 ACTUAT Albuterol 0.09 MG/ACTUAT Metered Dose Inhaler","Acetaminophen 160 MG Oral Tablet","Acetaminophen 21.7 MG/ML / Dextromethorphan Hydrobromide 1 MG/ML / doxylamine succinate 0.417 MG/ML Oral Solution","Acetaminophen 325 MG / Hydrocodone Bitartrate 7.5 MG Oral Tablet","Acetaminophen 325 MG / Oxycodone Hydrochloride 5 MG Oral Tablet","Acetaminophen 325 MG Oral Tablet","Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet","Amoxicillin 250 MG Oral Capsule","Ampicillin 100 MG/ML Injectable Solution","Aspirin 81 MG Oral Tablet","Chlorpheniramine Maleate 2 MG/ML Oral Solution","Diclofenac","Diphenhydramine Hydrochloride 25 MG Oral Tablet","Doxycycline Monohydrate 50 MG Oral Tablet","Haemophilus influenzae type b vaccine, PRP-OMP conjugate","Ibuprofen 100 MG Oral Tablet","Ibuprofen 200 MG Oral Tablet","Meperidine Hydrochloride 50 MG Oral Tablet","Naproxen sodium 220 MG Oral Tablet","Nitrofurantoin 5 MG/ML Oral Suspension","Penicillin G 375 MG/ML Injectable Solution","Penicillin V Potassium 250 MG Oral Tablet","Penicillin V Potassium 500 MG Oral Tablet","Phenazopyridine hydrochloride 100 MG Oral Tablet","Prednisone 5 MG Oral Tablet","celecoxib","hepatitis A vaccine, adult dosage","hepatitis B vaccine, adult dosage","poliovirus vaccine, inactivated","tetanus and diphtheria toxoids, adsorbed, preservative free, for adult use","varicella virus vaccine","zoster vaccine, live","{7 (Ethinyl Estradiol 0.035 MG / norgestimate 0.18 MG Oral Tablet) / 7 (Ethinyl Estradiol 0.035 MG / norgestimate 0.215 MG Oral Tablet) / 7 (Ethinyl Estradiol 0.035 MG / norgestimate 0.25 MG Oral Tablet) / 7 (Inert Ingredients 1 MG Oral Tablet) } Pack [Or","{7 (Inert Ingredients 1 MG Oral Tablet) / 21 (Mestranol 0.05 MG / Norethindrone 1 MG Oral Tablet) } Pack [Norinyl 1+50 28 Day]","Acetaminophen 160 MG Oral Tablet","Acetaminophen 325 MG Oral Tablet","Aspirin 81 MG Oral Tablet","Ibuprofen 100 MG Oral Tablet","Ibuprofen 200 MG Oral Tablet","Naproxen sodium 220 MG Oral Tablet"],"concept_id":["4084167","4294548","260139","4112343","4310024","440448","133834","440086","4051466","257012","375671","378001","195588","4266809","4116491","30753","4156265","4296204","4059173","4237458","4278672","4142905","4134304","192671","4146173","4109685","4155034","4113008","4152936","80180","372328","4027663","40486433","4048171","4285898","4296205","4283893","78272","28060","81893","40481087","4218389","81151","4191853","4198190","4062501","4195803","4170947","4043071","4197460","4293740","4010253","4058899","4163872","4024289","4047491","4243062","4252419","4151422","4107731","44783196","4125906","40169216","1154615","1127078","40229134","40162522","40231925","1127433","1713671","19073183","19129655","19059056","19112599","1124300","40232448","46233988","40213314","19019979","19078461","40165015","1115171","920300","19006318","19133873","19133905","40236824","1551192","1118084","40213296","40213306","40213160","40213227","40213251","40213260","19128022","19128065","1127078","1127433","19059056","19019979","19078461","1115171"],"percentage":[3.68,12.38,56.52,62.27,3.98,2.51,2.14,5.53,2.65,11.94,3.46,13.63,3.24,3.02,3.91,4.27,6.71,5.08,7.96,8.18,9.51,4.57,8.4,4.27,3.61,6.78,6.85,5.6,6.48,20.85,66.99,9.73,2.14,2.43,3.91,2.95,12.23,10.91,36.77,3.54,72.29,10.1,100,5.08,2.51,2.65,2.51,26.23,3.24,3.68,6.78,2.14,8.18,10.1,7.96,9.51,8.4,3.76,20.78,3.83,2.65,26.75,2.65,2.65,41.19,21.81,3.46,3.91,54.31,36.77,3.98,14.22,62.05,2.06,6.93,3.61,12.68,15.48,5.67,8.7,3.76,3.46,6.34,28.3,36.18,7.66,6.34,3.68,13.93,7.96,16.65,73.25,21.22,6.63,3.1,2.58,9.95,14.66,24.32,34.64,3.39,14.15,8.84]},"columns":[{"id":"cdm_name","name":"cdm_name","type":"character"},{"id":"cohort_name","name":"cohort_name","type":"character"},{"id":"window","name":"window","type":"character"},{"id":"concept_name","name":"concept_name","type":"character"},{"id":"concept_id","name":"concept_id","type":"character"},{"id":"percentage","name":"percentage","type":"numeric"}],"dataKey":"879f80989d78e46389554407a2acc4dd"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>As we can see we have identified numerous concepts for which at least
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"cdm_name":["GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed","GiBleed"],"cohort_name":["ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain","ankle_sprain"],"window":["-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","0 to 0","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","-inf to -1","0 to 0","0 to 0","0 to 0","0 to 0","0 to 0","0 to 0"],"concept_name":["Acute allergic reaction","Acute bacterial sinusitis","Acute bronchitis","Acute viral pharyngitis","Angiodysplasia of stomach","Appendicitis","Atopic dermatitis","Child attention deficit disorder","Childhood asthma","Chronic sinusitis","Concussion with loss of consciousness","Concussion with no loss of consciousness","Cystitis","Diverticular disease","Escherichia coli urinary tract infection","Esophagitis","Facial laceration","First degree burn","Fracture of ankle","Fracture of clavicle","Fracture of forearm","Fracture of rib","Fracture subluxation of wrist","Gastrointestinal hemorrhage","Injury of tendon of the rotator cuff of shoulder","Laceration of foot","Laceration of forearm","Laceration of hand","Laceration of thigh","Osteoarthritis","Otitis media","Peptic ulcer","Perennial allergic rhinitis","Perennial allergic rhinitis with seasonal variation","Polyp of colon","Second degree burn","Sinusitis","Sprain of wrist","Streptococcal sore throat","Ulcerative colitis","Viral sinusitis","Whiplash injury to neck","Sprain of ankle","Allergy screening test","Appendectomy","Asthma screening","Bone density scan","Bone immobilization","Cognitive and behavioral therapy","Injection of epinephrine","Injection of tetanus antitoxin","Nasal sinus endoscopy","Plain X-ray of clavicle","Plain chest X-ray","Radiography of ankle","Radiography of humerus","Radiography of wrist","Radiologic examination of knee","Sputum examination","Subcutaneous immunotherapy","Surgical manipulation of joint of knee","Suture open wound","120 ACTUAT Fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler","200 ACTUAT Albuterol 0.09 MG/ACTUAT Metered Dose Inhaler","Acetaminophen 160 MG Oral Tablet","Acetaminophen 21.7 MG/ML / Dextromethorphan Hydrobromide 1 MG/ML / doxylamine succinate 0.417 MG/ML Oral Solution","Acetaminophen 325 MG / Hydrocodone Bitartrate 7.5 MG Oral Tablet","Acetaminophen 325 MG / Oxycodone Hydrochloride 5 MG Oral Tablet","Acetaminophen 325 MG Oral Tablet","Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet","Amoxicillin 250 MG Oral Capsule","Ampicillin 100 MG/ML Injectable Solution","Aspirin 81 MG Oral Tablet","Chlorpheniramine Maleate 2 MG/ML Oral Solution","Diclofenac","Diphenhydramine Hydrochloride 25 MG Oral Tablet","Doxycycline Monohydrate 50 MG Oral Tablet","Haemophilus influenzae type b vaccine, PRP-OMP conjugate","Ibuprofen 100 MG Oral Tablet","Ibuprofen 200 MG Oral Tablet","Meperidine Hydrochloride 50 MG Oral Tablet","Naproxen sodium 220 MG Oral Tablet","Nitrofurantoin 5 MG/ML Oral Suspension","Penicillin G 375 MG/ML Injectable Solution","Penicillin V Potassium 250 MG Oral Tablet","Penicillin V Potassium 500 MG Oral Tablet","Phenazopyridine hydrochloride 100 MG Oral Tablet","Prednisone 5 MG Oral Tablet","celecoxib","hepatitis A vaccine, adult dosage","hepatitis B vaccine, adult dosage","poliovirus vaccine, inactivated","tetanus and diphtheria toxoids, adsorbed, preservative free, for adult use","varicella virus vaccine","zoster vaccine, live","{7 (Ethinyl Estradiol 0.035 MG / norgestimate 0.18 MG Oral Tablet) / 7 (Ethinyl Estradiol 0.035 MG / norgestimate 0.215 MG Oral Tablet) / 7 (Ethinyl Estradiol 0.035 MG / norgestimate 0.25 MG Oral Tablet) / 7 (Inert Ingredients 1 MG Oral Tablet) } Pack [Or","{7 (Inert Ingredients 1 MG Oral Tablet) / 21 (Mestranol 0.05 MG / Norethindrone 1 MG Oral Tablet) } Pack [Norinyl 1+50 28 Day]","Acetaminophen 160 MG Oral Tablet","Acetaminophen 325 MG Oral Tablet","Aspirin 81 MG Oral Tablet","Ibuprofen 100 MG Oral Tablet","Ibuprofen 200 MG Oral Tablet","Naproxen sodium 220 MG Oral Tablet"],"concept_id":["4084167","4294548","260139","4112343","4310024","440448","133834","440086","4051466","257012","375671","378001","195588","4266809","4116491","30753","4156265","4296204","4059173","4237458","4278672","4142905","4134304","192671","4146173","4109685","4155034","4113008","4152936","80180","372328","4027663","40486433","4048171","4285898","4296205","4283893","78272","28060","81893","40481087","4218389","81151","4191853","4198190","4062501","4195803","4170947","4043071","4197460","4293740","4010253","4058899","4163872","4024289","4047491","4243062","4252419","4151422","4107731","44783196","4125906","40169216","1154615","1127078","40229134","40162522","40231925","1127433","1713671","19073183","19129655","19059056","19112599","1124300","40232448","46233988","40213314","19019979","19078461","40165015","1115171","920300","19006318","19133873","19133905","40236824","1551192","1118084","40213296","40213306","40213160","40213227","40213251","40213260","19128022","19128065","1127078","1127433","19059056","19019979","19078461","1115171"],"percentage":[3.68,12.38,56.52,62.27,3.98,2.51,2.14,5.53,2.65,11.94,3.46,13.63,3.24,3.02,3.91,4.27,6.71,5.08,7.96,8.18,9.51,4.57,8.4,4.27,3.61,6.78,6.85,5.6,6.48,20.85,66.99,9.73,2.14,2.43,3.91,2.95,12.23,10.91,36.77,3.54,72.29,10.1,100,5.08,2.51,2.65,2.51,26.23,3.24,3.68,6.78,2.14,8.18,10.1,7.96,9.51,8.4,3.76,20.78,3.83,2.65,26.75,2.65,2.65,41.19,21.81,3.46,3.91,54.31,36.77,3.98,14.22,62.05,2.06,6.93,3.61,12.68,15.48,5.67,8.7,3.76,3.46,6.34,28.3,36.18,7.66,6.34,3.68,13.93,7.96,16.65,73.25,21.22,6.63,3.1,2.58,9.95,14.66,24.32,34.64,3.39,14.15,8.84]},"columns":[{"id":"cdm_name","name":"cdm_name","type":"character"},{"id":"cohort_name","name":"cohort_name","type":"character"},{"id":"window","name":"window","type":"character"},{"id":"concept_name","name":"concept_name","type":"character"},{"id":"concept_id","name":"concept_id","type":"character"},{"id":"percentage","name":"percentage","type":"numeric"}],"dataKey":"470ead2dbe6293db052603f2c63bd75b"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script><p>As we can see we have identified numerous concepts for which at least
 10% of our study population had a record. Often with larger cohorts and
 real patient-level data we will obtain many times more results when
 running large scale characterisation. One option we have to help
@@ -146,23 +143,23 @@ for example, we select the top 5 concepts.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tableTopLargeScaleCharacteristics.html">tableTopLargeScaleCharacteristics</a></span><span class="op">(</span><span class="va">lsc</span>,</span>
 <span>                                  topConcepts <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div id="zvnegslqeq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#zvnegslqeq table {
+<div id="vjfhcepyvz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vjfhcepyvz table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#zvnegslqeq thead, #zvnegslqeq tbody, #zvnegslqeq tfoot, #zvnegslqeq tr, #zvnegslqeq td, #zvnegslqeq th {
+#vjfhcepyvz thead, #vjfhcepyvz tbody, #vjfhcepyvz tfoot, #vjfhcepyvz tr, #vjfhcepyvz td, #vjfhcepyvz th {
   border-style: none;
 }
 
-#zvnegslqeq p {
+#vjfhcepyvz p {
   margin: 0;
   padding: 0;
 }
 
-#zvnegslqeq .gt_table {
+#vjfhcepyvz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -175,25 +172,25 @@ for example, we select the top 5 concepts.</p>
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: #D9D9D9;
   border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
+  border-bottom-width: 3px;
+  border-bottom-color: #D9D9D9;
+  border-left-style: solid;
+  border-left-width: 3px;
+  border-left-color: #D9D9D9;
 }
 
-#zvnegslqeq .gt_caption {
+#vjfhcepyvz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#zvnegslqeq .gt_title {
+#vjfhcepyvz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -205,7 +202,7 @@ for example, we select the top 5 concepts.</p>
   border-bottom-width: 0;
 }
 
-#zvnegslqeq .gt_subtitle {
+#vjfhcepyvz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -217,7 +214,7 @@ for example, we select the top 5 concepts.</p>
   border-top-width: 0;
 }
 
-#zvnegslqeq .gt_heading {
+#vjfhcepyvz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -229,13 +226,13 @@ for example, we select the top 5 concepts.</p>
   border-right-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_bottom_border {
+#vjfhcepyvz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_col_headings {
+#vjfhcepyvz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -250,7 +247,7 @@ for example, we select the top 5 concepts.</p>
   border-right-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_col_heading {
+#vjfhcepyvz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -270,7 +267,7 @@ for example, we select the top 5 concepts.</p>
   overflow-x: hidden;
 }
 
-#zvnegslqeq .gt_column_spanner_outer {
+#vjfhcepyvz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -282,15 +279,15 @@ for example, we select the top 5 concepts.</p>
   padding-right: 4px;
 }
 
-#zvnegslqeq .gt_column_spanner_outer:first-child {
+#vjfhcepyvz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#zvnegslqeq .gt_column_spanner_outer:last-child {
+#vjfhcepyvz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#zvnegslqeq .gt_column_spanner {
+#vjfhcepyvz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -302,11 +299,11 @@ for example, we select the top 5 concepts.</p>
   width: 100%;
 }
 
-#zvnegslqeq .gt_spanner_row {
+#vjfhcepyvz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#zvnegslqeq .gt_group_heading {
+#vjfhcepyvz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -332,7 +329,7 @@ for example, we select the top 5 concepts.</p>
   text-align: left;
 }
 
-#zvnegslqeq .gt_empty_group_heading {
+#vjfhcepyvz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -347,15 +344,15 @@ for example, we select the top 5 concepts.</p>
   vertical-align: middle;
 }
 
-#zvnegslqeq .gt_from_md > :first-child {
+#vjfhcepyvz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#zvnegslqeq .gt_from_md > :last-child {
+#vjfhcepyvz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#zvnegslqeq .gt_row {
+#vjfhcepyvz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -374,7 +371,7 @@ for example, we select the top 5 concepts.</p>
   overflow-x: hidden;
 }
 
-#zvnegslqeq .gt_stub {
+#vjfhcepyvz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -387,7 +384,7 @@ for example, we select the top 5 concepts.</p>
   padding-right: 5px;
 }
 
-#zvnegslqeq .gt_stub_row_group {
+#vjfhcepyvz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -401,15 +398,15 @@ for example, we select the top 5 concepts.</p>
   vertical-align: top;
 }
 
-#zvnegslqeq .gt_row_group_first td {
+#vjfhcepyvz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#zvnegslqeq .gt_row_group_first th {
+#vjfhcepyvz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#zvnegslqeq .gt_summary_row {
+#vjfhcepyvz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -419,16 +416,16 @@ for example, we select the top 5 concepts.</p>
   padding-right: 5px;
 }
 
-#zvnegslqeq .gt_first_summary_row {
+#vjfhcepyvz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_first_summary_row.thick {
+#vjfhcepyvz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#zvnegslqeq .gt_last_summary_row {
+#vjfhcepyvz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -438,7 +435,7 @@ for example, we select the top 5 concepts.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_grand_summary_row {
+#vjfhcepyvz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -448,7 +445,7 @@ for example, we select the top 5 concepts.</p>
   padding-right: 5px;
 }
 
-#zvnegslqeq .gt_first_grand_summary_row {
+#vjfhcepyvz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -458,7 +455,7 @@ for example, we select the top 5 concepts.</p>
   border-top-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_last_grand_summary_row_top {
+#vjfhcepyvz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -468,20 +465,20 @@ for example, we select the top 5 concepts.</p>
   border-bottom-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_striped {
+#vjfhcepyvz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#zvnegslqeq .gt_table_body {
+#vjfhcepyvz .gt_table_body {
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_footnotes {
+#vjfhcepyvz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -495,7 +492,7 @@ for example, we select the top 5 concepts.</p>
   border-right-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_footnote {
+#vjfhcepyvz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -504,7 +501,7 @@ for example, we select the top 5 concepts.</p>
   padding-right: 5px;
 }
 
-#zvnegslqeq .gt_sourcenotes {
+#vjfhcepyvz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -518,7 +515,7 @@ for example, we select the top 5 concepts.</p>
   border-right-color: #D3D3D3;
 }
 
-#zvnegslqeq .gt_sourcenote {
+#vjfhcepyvz .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -526,72 +523,72 @@ for example, we select the top 5 concepts.</p>
   padding-right: 5px;
 }
 
-#zvnegslqeq .gt_left {
+#vjfhcepyvz .gt_left {
   text-align: left;
 }
 
-#zvnegslqeq .gt_center {
+#vjfhcepyvz .gt_center {
   text-align: center;
 }
 
-#zvnegslqeq .gt_right {
+#vjfhcepyvz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#zvnegslqeq .gt_font_normal {
+#vjfhcepyvz .gt_font_normal {
   font-weight: normal;
 }
 
-#zvnegslqeq .gt_font_bold {
+#vjfhcepyvz .gt_font_bold {
   font-weight: bold;
 }
 
-#zvnegslqeq .gt_font_italic {
+#vjfhcepyvz .gt_font_italic {
   font-style: italic;
 }
 
-#zvnegslqeq .gt_super {
+#vjfhcepyvz .gt_super {
   font-size: 65%;
 }
 
-#zvnegslqeq .gt_footnote_marks {
+#vjfhcepyvz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#zvnegslqeq .gt_asterisk {
+#vjfhcepyvz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#zvnegslqeq .gt_indent_1 {
+#vjfhcepyvz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#zvnegslqeq .gt_indent_2 {
+#vjfhcepyvz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#zvnegslqeq .gt_indent_3 {
+#vjfhcepyvz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#zvnegslqeq .gt_indent_4 {
+#vjfhcepyvz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#zvnegslqeq .gt_indent_5 {
+#vjfhcepyvz .gt_indent_5 {
   text-indent: 25px;
 }
 
-#zvnegslqeq .katex-display {
+#vjfhcepyvz .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#zvnegslqeq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#vjfhcepyvz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -870,23 +867,23 @@ table using the PatientProfiles package).</p>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/tableTopLargeScaleCharacteristics.html">tableTopLargeScaleCharacteristics</a></span><span class="op">(</span><span class="va">lsc</span><span class="op">)</span></span></code></pre></div>
-<div id="fyoqaitrxp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#fyoqaitrxp table {
+<div id="sxvyzievva" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#sxvyzievva table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#fyoqaitrxp thead, #fyoqaitrxp tbody, #fyoqaitrxp tfoot, #fyoqaitrxp tr, #fyoqaitrxp td, #fyoqaitrxp th {
+#sxvyzievva thead, #sxvyzievva tbody, #sxvyzievva tfoot, #sxvyzievva tr, #sxvyzievva td, #sxvyzievva th {
   border-style: none;
 }
 
-#fyoqaitrxp p {
+#sxvyzievva p {
   margin: 0;
   padding: 0;
 }
 
-#fyoqaitrxp .gt_table {
+#sxvyzievva .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -899,25 +896,25 @@ table using the PatientProfiles package).</p>
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: #D9D9D9;
   border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
+  border-bottom-width: 3px;
+  border-bottom-color: #D9D9D9;
+  border-left-style: solid;
+  border-left-width: 3px;
+  border-left-color: #D9D9D9;
 }
 
-#fyoqaitrxp .gt_caption {
+#sxvyzievva .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#fyoqaitrxp .gt_title {
+#sxvyzievva .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -929,7 +926,7 @@ table using the PatientProfiles package).</p>
   border-bottom-width: 0;
 }
 
-#fyoqaitrxp .gt_subtitle {
+#sxvyzievva .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -941,7 +938,7 @@ table using the PatientProfiles package).</p>
   border-top-width: 0;
 }
 
-#fyoqaitrxp .gt_heading {
+#sxvyzievva .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -953,13 +950,13 @@ table using the PatientProfiles package).</p>
   border-right-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_bottom_border {
+#sxvyzievva .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_col_headings {
+#sxvyzievva .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -974,7 +971,7 @@ table using the PatientProfiles package).</p>
   border-right-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_col_heading {
+#sxvyzievva .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -994,7 +991,7 @@ table using the PatientProfiles package).</p>
   overflow-x: hidden;
 }
 
-#fyoqaitrxp .gt_column_spanner_outer {
+#sxvyzievva .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1006,15 +1003,15 @@ table using the PatientProfiles package).</p>
   padding-right: 4px;
 }
 
-#fyoqaitrxp .gt_column_spanner_outer:first-child {
+#sxvyzievva .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#fyoqaitrxp .gt_column_spanner_outer:last-child {
+#sxvyzievva .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#fyoqaitrxp .gt_column_spanner {
+#sxvyzievva .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1026,11 +1023,11 @@ table using the PatientProfiles package).</p>
   width: 100%;
 }
 
-#fyoqaitrxp .gt_spanner_row {
+#sxvyzievva .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#fyoqaitrxp .gt_group_heading {
+#sxvyzievva .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1056,7 +1053,7 @@ table using the PatientProfiles package).</p>
   text-align: left;
 }
 
-#fyoqaitrxp .gt_empty_group_heading {
+#sxvyzievva .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1071,15 +1068,15 @@ table using the PatientProfiles package).</p>
   vertical-align: middle;
 }
 
-#fyoqaitrxp .gt_from_md > :first-child {
+#sxvyzievva .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#fyoqaitrxp .gt_from_md > :last-child {
+#sxvyzievva .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#fyoqaitrxp .gt_row {
+#sxvyzievva .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1098,7 +1095,7 @@ table using the PatientProfiles package).</p>
   overflow-x: hidden;
 }
 
-#fyoqaitrxp .gt_stub {
+#sxvyzievva .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1111,7 +1108,7 @@ table using the PatientProfiles package).</p>
   padding-right: 5px;
 }
 
-#fyoqaitrxp .gt_stub_row_group {
+#sxvyzievva .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1125,15 +1122,15 @@ table using the PatientProfiles package).</p>
   vertical-align: top;
 }
 
-#fyoqaitrxp .gt_row_group_first td {
+#sxvyzievva .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#fyoqaitrxp .gt_row_group_first th {
+#sxvyzievva .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#fyoqaitrxp .gt_summary_row {
+#sxvyzievva .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1143,16 +1140,16 @@ table using the PatientProfiles package).</p>
   padding-right: 5px;
 }
 
-#fyoqaitrxp .gt_first_summary_row {
+#sxvyzievva .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_first_summary_row.thick {
+#sxvyzievva .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#fyoqaitrxp .gt_last_summary_row {
+#sxvyzievva .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1162,7 +1159,7 @@ table using the PatientProfiles package).</p>
   border-bottom-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_grand_summary_row {
+#sxvyzievva .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1172,7 +1169,7 @@ table using the PatientProfiles package).</p>
   padding-right: 5px;
 }
 
-#fyoqaitrxp .gt_first_grand_summary_row {
+#sxvyzievva .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1182,7 +1179,7 @@ table using the PatientProfiles package).</p>
   border-top-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_last_grand_summary_row_top {
+#sxvyzievva .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1192,20 +1189,20 @@ table using the PatientProfiles package).</p>
   border-bottom-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_striped {
+#sxvyzievva .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#fyoqaitrxp .gt_table_body {
+#sxvyzievva .gt_table_body {
   border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
+  border-top-width: 3px;
+  border-top-color: #D9D9D9;
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_footnotes {
+#sxvyzievva .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1219,7 +1216,7 @@ table using the PatientProfiles package).</p>
   border-right-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_footnote {
+#sxvyzievva .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1228,7 +1225,7 @@ table using the PatientProfiles package).</p>
   padding-right: 5px;
 }
 
-#fyoqaitrxp .gt_sourcenotes {
+#sxvyzievva .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1242,7 +1239,7 @@ table using the PatientProfiles package).</p>
   border-right-color: #D3D3D3;
 }
 
-#fyoqaitrxp .gt_sourcenote {
+#sxvyzievva .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1250,72 +1247,72 @@ table using the PatientProfiles package).</p>
   padding-right: 5px;
 }
 
-#fyoqaitrxp .gt_left {
+#sxvyzievva .gt_left {
   text-align: left;
 }
 
-#fyoqaitrxp .gt_center {
+#sxvyzievva .gt_center {
   text-align: center;
 }
 
-#fyoqaitrxp .gt_right {
+#sxvyzievva .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#fyoqaitrxp .gt_font_normal {
+#sxvyzievva .gt_font_normal {
   font-weight: normal;
 }
 
-#fyoqaitrxp .gt_font_bold {
+#sxvyzievva .gt_font_bold {
   font-weight: bold;
 }
 
-#fyoqaitrxp .gt_font_italic {
+#sxvyzievva .gt_font_italic {
   font-style: italic;
 }
 
-#fyoqaitrxp .gt_super {
+#sxvyzievva .gt_super {
   font-size: 65%;
 }
 
-#fyoqaitrxp .gt_footnote_marks {
+#sxvyzievva .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#fyoqaitrxp .gt_asterisk {
+#sxvyzievva .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#fyoqaitrxp .gt_indent_1 {
+#sxvyzievva .gt_indent_1 {
   text-indent: 5px;
 }
 
-#fyoqaitrxp .gt_indent_2 {
+#sxvyzievva .gt_indent_2 {
   text-indent: 10px;
 }
 
-#fyoqaitrxp .gt_indent_3 {
+#sxvyzievva .gt_indent_3 {
   text-indent: 15px;
 }
 
-#fyoqaitrxp .gt_indent_4 {
+#sxvyzievva .gt_indent_4 {
   text-indent: 20px;
 }
 
-#fyoqaitrxp .gt_indent_5 {
+#sxvyzievva .gt_indent_5 {
   text-indent: 25px;
 }
 
-#fyoqaitrxp .katex-display {
+#sxvyzievva .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#fyoqaitrxp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#sxvyzievva div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1684,7 +1681,7 @@ the <code>reference</code> arguement inside the function.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
