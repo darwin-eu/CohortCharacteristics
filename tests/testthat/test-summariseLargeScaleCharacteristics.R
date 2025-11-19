@@ -71,6 +71,12 @@ test_that("basic functionality summarise large scale characteristics", {
   ) |>
     copyCdm()
 
+  table_empty_1 <- cdm$cohort1 |> dplyr::filter(subject_id == 3)
+
+  expect_message(summariseLargeScaleCharacteristics(table_empty_1,
+                                                    eventInWindow = c("drug_exposure",
+                                                                      "condition_occurrence")))
+
   concept <- dplyr::tibble(
     concept_id = c(1125315L, 1503328L, 1516978L, 317009L, 378253L, 4266367L),
     domain_id = NA_character_,
@@ -293,7 +299,24 @@ test_that("basic functionality summarise large scale characteristics", {
         includeSource = TRUE
       )
   )
+  expect_no_error(
+    result3 <- cdm$my_cohort |>
+      summariseLargeScaleCharacteristics(
+        window = list(c(-Inf, -1), c(1, Inf)),
+        eventInWindow = "condition_occurrence",
+        includeSource = c(FALSE,TRUE)
+      )
+  )
+  expect_true(dplyr::anti_join(result1 |> dplyr::select(-result_id),
+                               result3 |> dplyr::select(-result_id)) |>
+                nrow() == 0)
+
+  expect_true(dplyr::anti_join(result2 |> dplyr::select(-result_id),
+                               result3 |> dplyr::select(-result_id)) |>
+                nrow() == 0)
+
   result2 <- tidy(result2)
+
   expect_true(all(c("concept_id", "source_concept_id", "source_concept_name") %in% colnames(result2)))
   expect_true(
     result2 |>

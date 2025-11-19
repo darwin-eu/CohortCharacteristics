@@ -10,6 +10,7 @@ tableCharacteristics(
   header = c("cdm_name", "cohort_name"),
   groupColumn = character(),
   hide = c(additionalColumns(result), settingsColumns(result)),
+  style = "default",
   .options = list()
 )
 }
@@ -27,6 +28,12 @@ tableCharacteristics(
 
 \item{hide}{Columns to hide from the visualisation. See options with
 \code{availableTableColumns(result)}.}
+
+\item{style}{Named list that specifies how to style the different parts of
+the table generated. It can either be a pre-defined style ("default" or
+"darwin" - the latter just for gt and flextable), NULL to get the table
+default style, or custom. Keep in mind that styling code is different for
+all table styles. To see the different styles see \code{visOmopResults::tableStyle()}.}
 
 \item{.options}{A named list with additional formatting options.
 \code{visOmopResults::tableOptions()} shows allowed arguments and their default values.}

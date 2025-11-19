@@ -42,6 +42,7 @@ tableCohortCount <- function(result,
                              header = "cohort_name",
                              groupColumn = character(),
                              hide = c("variable_level", settingsColumns(result)),
+                             style = "default",
                              .options = list()) {
   result |>
     tableCohortCharacteristics(
@@ -53,6 +54,7 @@ tableCohortCount <- function(result,
       modifyResults = NULL,
       estimateName = c("N" = "<count>"),
       type = type,
+      style = style,
       .options = .options
     )
 }

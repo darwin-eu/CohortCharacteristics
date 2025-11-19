@@ -25,8 +25,7 @@ summariseCharacteristics(
   conceptIntersectDays = list(),
   otherVariables = character(),
   estimates = list(),
-  weights = NULL,
-  otherVariablesEstimates = lifecycle::deprecated()
+  weights = NULL
 )
 }
 \arguments{
@@ -87,16 +86,15 @@ PatientProfiles::addConceptIntersectDays() to add variables to summarise.}
 summarised.}
 
 \item{estimates}{To modify the default estimates for a variable.
-By default: 'min', 'q25', 'median', 'q75', 'max' for "date", "numeric" and
+By default: 'min', 'q25', 'median', 'q75', 'max' for "date", for "numeric" and
 "integer" variables ("numeric" and "integer" also use 'mean' and 'sd'
 estimates). 'count' and 'percentage' for "categorical" and "binary".
 You have to provide them as a list: \code{list(age = c("median", "density"))}. You
 can also use 'date', 'numeric', 'integer', 'binary', 'categorical',
-'demographics', 'intersect', 'other', 'table_intersect_count', ...}
+'demographics', 'intersect', 'other', 'table_intersect_count', ... as valid labels,
+see available estimates using \code{PatientProfiles::availableEstimates()}}
 
 \item{weights}{Column in cohort that points to weights of each individual.}
-
-\item{otherVariablesEstimates}{deprecated.}
 }
 \value{
 A summary of the characteristics of the cohorts in the cohort table.

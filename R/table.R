@@ -64,6 +64,7 @@ tableCohortCharacteristics <- function(result,
                                        modifyResults,
                                        estimateName,
                                        type,
+                                       style,
                                        .options = list(),
                                        call = parent.frame()) {
   rlang::check_installed("visOmopResults")
@@ -76,7 +77,7 @@ tableCohortCharacteristics <- function(result,
     omopgenerics::filterSettings(.data$result_type == .env$resultType)
   if (nrow(result) == 0) {
     cli::cli_warn("There are no results with `result_type = {resultType}`")
-    return(emptyTable(type))
+    return(emptyTable(type, style))
   }
 
   checkVersion(result)
@@ -118,10 +119,11 @@ tableCohortCharacteristics <- function(result,
       type = type,
       hide = c("estimate_type", hide),
       groupColumn = groupColumn,
+      style = style,
       .options = .options
     )
 }
-emptyTable <- function(type) {
+emptyTable <- function(type, style) {
   omopgenerics::emptySummarisedResult() |>
-    visOmopResults::visOmopTable(type = type)
+    visOmopResults::visOmopTable(type = type, style = style)
 }

@@ -54,7 +54,8 @@
 #'
 plotLargeScaleCharacteristics <- function(result,
                                           facet = c("cdm_name", "cohort_name"),
-                                          colour = "variable_level") {
+                                          colour = "variable_level",
+                                          style = "default") {
   # validate result
   result <- omopgenerics::validateResultArgument(result)
 
@@ -70,6 +71,7 @@ plotLargeScaleCharacteristics <- function(result,
       x = "variable_level",
       y = "percentage",
       oneVariable = FALSE,
-      toYears = FALSE
+      toYears = FALSE,
+      style = style
     )
 }

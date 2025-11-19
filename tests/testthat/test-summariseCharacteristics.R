@@ -707,7 +707,7 @@ test_that("arguments tableIntersect", {
       (results %>% dplyr::pull("variable_level"))
   )
 
-  expect_false(
+  expect_true(
     "51 to 150" %in%
       (results %>% dplyr::pull("variable_level"))
   )
@@ -1375,6 +1375,20 @@ test_that("arguments conceptIntersect", {
       as.numeric() < 0
   ))
 
+  # expect time between cohorts
+  results <- summariseCharacteristics(cohort = cdm$sinusitis)
+  expect_true("Days to next record" %in% results$variable_name)
+
+  cdm <- CDMConnector::generateConceptCohortSet(
+    cdm = cdm, conceptSet = list("sinusitis" = c(4294548L, 40481087L, 257012L)),
+    name = "sinusitis",
+    end = 0,
+    limit = "all"
+  )
+  results <- summariseCharacteristics(cohort = cdm$sinusitis)
+  expect_true("Days to next record" %in% results$variable_name)
+  expect_no_error(tableCharacteristics(result = results))
+
   dropCreatedTables(cdm = cdm)
 })
 
@@ -1420,9 +1434,11 @@ test_that("output is always the same", {
     ) |>
     copyCdm()
 
-  cdm2 <- CDMConnector::copyCdmTo(
-    con = duckdb::dbConnect(drv = duckdb::duckdb()), cdm = cdm1, schema = "main"
+  src <- CDMConnector::dbSource(
+    con = duckdb::dbConnect(drv = duckdb::duckdb()),
+    writeSchema = "main"
   )
+  cdm2 <- omopgenerics::insertCdmTo(cdm = dplyr::collect(cdm1), to = src)
 
   result1 <- summariseCharacteristics(cdm1$cohort) |>
     dplyr::mutate(estimate_value = dplyr::if_else(
@@ -1481,7 +1497,7 @@ test_that("arrange ageGroup", {
     summariseCharacteristics(demographics = FALSE, ageGroup = ageGroup)
   expect_identical(
     res1$variable_level |> unique() |> purrr::keep(\(x) !is.na(x)),
-    names(ageGroup)
+    sort(names(ageGroup))
   )
 
   # descending order
@@ -1500,6 +1516,7 @@ test_that("arrange ageGroup", {
   )
   res3 <- cdm$my_cohort |>
     summariseCharacteristics(demographics = FALSE, ageGroup = ageGroup)
+
   expect_equal(
     res3 |>
       dplyr::filter(!grepl("Number", .data$variable_name)) |>
@@ -1514,6 +1531,18 @@ test_that("arrange ageGroup", {
         variable_level = names(ageGroup[[2]])
       )),
     ignore_attr = TRUE
+  )
+
+  # all age groups are present
+  ageGroup <- list("G1" = c(0, 49), "G2" = c(50, 99), "G3" = c(100, 150))
+  res4 <- cdm$my_cohort |>
+    summariseCharacteristics(demographics = FALSE, ageGroup = ageGroup)
+  expect_identical(
+    res4 |>
+      dplyr::filter(.data$variable_name == "Age group") |>
+      dplyr::pull("variable_level") |>
+      unique(),
+    names(ageGroup)
   )
 
   dropCreatedTables(cdm = cdm)

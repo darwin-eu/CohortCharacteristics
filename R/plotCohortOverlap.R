@@ -41,6 +41,7 @@ plotCohortOverlap <- function(result,
                               uniqueCombinations = TRUE,
                               facet = c("cdm_name", "cohort_name_reference"),
                               colour = "variable_name",
+                              style = "default",
                               .options = lifecycle::deprecated()) {
   rlang::check_installed("visOmopResults")
   if (lifecycle::is_present(.options)) {
@@ -105,10 +106,10 @@ plotCohortOverlap <- function(result,
     y = "percentage",
     facet = facet,
     colour = colour,
-    label = notUnique
+    label = notUnique,
+    style = style
   )  +
     ggplot2::geom_bar(stat = "identity") +
-    ggplot2::theme_bw() +
     ggplot2::coord_flip() +
     ggplot2::theme(
       legend.position = "top",

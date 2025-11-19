@@ -55,6 +55,7 @@ tableCohortTiming <- function(result,
                               header = strataColumns(result),
                               groupColumn = c("cdm_name"),
                               hide = c("variable_level", settingsColumns(result)),
+                              style = "default",
                               .options = list()) {
   omopgenerics::assertChoice(timeScale, c("days", "years"), length = 1)
   omopgenerics::assertLogical(uniqueCombinations, length = 1)
@@ -83,6 +84,7 @@ tableCohortTiming <- function(result,
         "Range" = "<min> to <max>"
       ),
       type = type,
+      style = style,
       .options = .options
     )
 }
