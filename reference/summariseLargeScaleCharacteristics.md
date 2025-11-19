@@ -1,0 +1,107 @@
+# This function is used to summarise the large scale characteristics of a cohort table
+
+This function is used to summarise the large scale characteristics of a
+cohort table
+
+## Usage
+
+``` r
+summariseLargeScaleCharacteristics(
+  cohort,
+  cohortId = NULL,
+  strata = list(),
+  window = list(c(-Inf, -366), c(-365, -31), c(-30, -1), c(0, 0), c(1, 30), c(31, 365),
+    c(366, Inf)),
+  eventInWindow = NULL,
+  episodeInWindow = NULL,
+  indexDate = "cohort_start_date",
+  censorDate = NULL,
+  includeSource = FALSE,
+  minimumFrequency = 0.005,
+  excludedCodes = c(0)
+)
+```
+
+## Arguments
+
+- cohort:
+
+  A cohort_table object.
+
+- cohortId:
+
+  A cohort definition id to restrict by. If NULL, all cohorts will be
+  included.
+
+- strata:
+
+  A list of variables to stratify results. These variables must have
+  been added as additional columns in the cohort table.
+
+- window:
+
+  Temporal windows that we want to characterize.
+
+- eventInWindow:
+
+  Tables to characterise the events in the window. eventInWindow must be
+  provided if episodeInWindow is not specified.
+
+- episodeInWindow:
+
+  Tables to characterise the episodes in the window. episodeInWindow
+  must be provided if eventInWindow is not specified.
+
+- indexDate:
+
+  Variable in x that contains the date to compute the intersection.
+
+- censorDate:
+
+  whether to censor overlap events at a specific date or a column date
+  of x
+
+- includeSource:
+
+  Whether to include source concepts.
+
+- minimumFrequency:
+
+  Minimum frequency of codes to be reported. If a concept_id has a
+  frequency smaller than `minimumFrequency` in a certain window that
+  estimate will be eliminated from the result object.
+
+- excludedCodes:
+
+  Codes excluded.
+
+## Value
+
+The output of this function is a `ResultSummary` containing the relevant
+information.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+library(CohortCharacteristics)
+library(DrugUtilisation)
+library(dplyr, warn.conflicts = FALSE)
+library(omock)
+
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+
+cdm <- generateIngredientCohortSet(
+  cdm = cdm, name = "my_cohort", ingredient = "acetaminophen"
+)
+
+cdm$my_cohort |>
+  summariseLargeScaleCharacteristics(
+    window = list(c(-365, -1), c(1, 365)),
+    eventInWindow = "condition_occurrence"
+  ) |>
+  glimpse()
+
+cdmDisconnect(cdm)
+} # }
+```

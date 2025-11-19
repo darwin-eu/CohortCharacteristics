@@ -1,0 +1,126 @@
+# Summarise large scale characteristics
+
+## Introduction
+
+In the previous vignette we have seen how we can use the
+CohortCharacteristics package to summarise a set of pre-specified
+characteristics of a study cohort. These characteristics included
+patient demographics like age and sex, and also concept sets and cohorts
+that we defined. Another, often complimentary, way that we can approach
+characterising a study cohort is by simply summarising all clinical
+events we see for them in some window around their index date (cohort
+entry).
+
+To show how large scale characterisation can work we’ll first create a
+first-ever ankle sprain study cohort using the Eunomia synthetic data.
+
+``` r
+library(omock)
+library(CDMConnector)
+library(dplyr, warn.conflicts = FALSE)
+library(PatientProfiles)
+library(CohortCharacteristics)
+
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
+
+cdm <- generateConceptCohortSet(
+  cdm = cdm,
+  name = "ankle_sprain",
+  conceptSet = list("ankle_sprain" = 81151),
+  end = "event_end_date",
+  limit = "first",
+  overwrite = TRUE
+)
+```
+
+## Large scale characteristics of study cohorts
+
+To summarise our cohort of individuals with an ankle sprain we will look
+at their records in three tables of the OMOP CDM
+(*condition_occurrence*, *procedure_occurrence*, and *drug_exposure*)
+over two time windows (any time prior to their index date, and on index
+date). For conditions and procedures we will identify whether someone
+had a new record starting in the time window. Meanwhile, for drug
+exposures we will consider whether they had a new or ongoing record in
+the period.
+
+Lastly, but important to note, we are only going to only return results
+for concepts for which at least 10% of the study cohort had a record.
+
+``` r
+lsc <- cdm$ankle_sprain |>
+  summariseLargeScaleCharacteristics(
+    window = list(c(-Inf, -1), c(0, 0)),
+    eventInWindow = c(
+      "condition_occurrence",
+      "procedure_occurrence"
+    ),
+    episodeInWindow = "drug_exposure",
+    minimumFrequency = 0.1
+  )
+
+tableLargeScaleCharacteristics(lsc)
+```
+
+As we can see we have identified numerous concepts for which at least
+10% of our study population had a record. Often with larger cohorts and
+real patient-level data we will obtain many times more results when
+running large scale characterisation. One option we have to help
+summarise our results is to pick out the most frequent concepts. Here,
+for example, we select the top 5 concepts.
+
+``` r
+tableTopLargeScaleCharacteristics(lsc,
+                                  topConcepts = 5)
+```
+
+[TABLE]
+
+## Stratified large scale characteristics
+
+Like when summarising pre-specified patient characteristics, we can also
+get stratified results when summarising large scale characteristics.
+Here, for example, large scale characteristics are stratified by sex
+(which we add as an additional column to our cohort table using the
+PatientProfiles package).
+
+``` r
+lsc <- cdm$ankle_sprain |>
+  addSex() |>
+  summariseLargeScaleCharacteristics(
+    window = list(c(-Inf, -1), c(0, 0)),
+    strata = list("sex"),
+    eventInWindow = "drug_exposure",
+    minimumFrequency = 0.1
+  )
+
+tableTopLargeScaleCharacteristics(lsc)
+```
+
+[TABLE]
+
+## Plot large scale characteristics
+
+`plotLargeScaleCharacteristics` and
+`plotComparedLargeScaleCharacteristics` can be use to generate plot for
+visualising the large scale characteristics
+
+``` r
+plotLargeScaleCharacteristics(lsc)
+```
+
+`plotComparedLargeScaleCharacteristics` allows you to compare the
+difference in prevalence of the large scale covariates between two
+window. The reference cohort and time window are set using the
+`reference` arguement inside the function.
+
+``` r
+plotComparedLargeScaleCharacteristics(
+  result = lsc,
+  colour = "sex",
+  reference = 'overall',
+  facet = cohort_name ~ variable_level
+)
+```
+
+![](summarise_large_scale_characteristics_files/figure-html/unnamed-chunk-7-1.png)

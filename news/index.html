@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,9 +36,28 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/v1.0.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1.0" id="cohortcharacteristics-110">CohortCharacteristics 1.1.0<a class="anchor" aria-label="anchor" href="#cohortcharacteristics-110"></a></h2><p class="text-muted">CRAN release: 2025-11-19</p>
+<ul><li>Add style argument to account for <code>visOmopResults</code> release by <a href="https://github.com/ilovemane" class="external-link">@ilovemane</a> <a href="https://github.com/catalamarti" class="external-link">@catalamarti</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/360" class="external-link">#360</a></li>
+<li>Add ‘Days to next record’ as part of the demographics in <code><a href="../reference/summariseCharacteristics.html">summariseCharacteristics()</a></code> by <a href="https://github.com/catalamarti" class="external-link">@catalamarti</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/378" class="external-link">#378</a></li>
+<li>Add all age group (even if zero counts) in <code><a href="../reference/summariseCharacteristics.html">summariseCharacteristics()</a></code> by <a href="https://github.com/catalamarti" class="external-link">@catalamarti</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/378" class="external-link">#378</a></li>
+<li>Use <code>clock</code> functions for date difference by <a href="https://github.com/catalamarti" class="external-link">@catalamarti</a> <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/367" class="external-link">#367</a></li>
+<li>Use <code>omock</code> for clean examples of mock data by catalamarti <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/367" class="external-link">#367</a></li>
+<li>Remove otherVariablesEstimates by <a href="https://github.com/ilovemane" class="external-link">@ilovemane</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/362" class="external-link">#362</a></li>
+<li>Allow to use includeSource = c(T,F) by <a href="https://github.com/ilovemane" class="external-link">@ilovemane</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/359" class="external-link">#359</a></li>
+<li>add progress message by <a href="https://github.com/ilovemane" class="external-link">@ilovemane</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/372" class="external-link">#372</a></li>
+<li>improve estimate documentation by <a href="https://github.com/ilovemane" class="external-link">@ilovemane</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/371" class="external-link">#371</a></li>
+<li>fix order in tableCharacteristics by <a href="https://github.com/ilovemane" class="external-link">@ilovemane</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/378" class="external-link">#378</a></li>
+<li>fix png by <a href="https://github.com/ilovemane" class="external-link">@ilovemane</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/377" class="external-link">#377</a></li>
+<li>emptySummarise results by <a href="https://github.com/ilovemane" class="external-link">@ilovemane</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/370" class="external-link">#370</a></li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.0.2" id="cohortcharacteristics-102">CohortCharacteristics 1.0.2<a class="anchor" aria-label="anchor" href="#cohortcharacteristics-102"></a></h2><p class="text-muted">CRAN release: 2025-10-23</p>
+<ul><li>Update documentation by <a href="https://github.com/catalamarti" class="external-link">@catalamarti</a></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.1" id="cohortcharacteristics-101">CohortCharacteristics 1.0.1<a class="anchor" aria-label="anchor" href="#cohortcharacteristics-101"></a></h2><p class="text-muted">CRAN release: 2025-09-30</p>
 <ul><li>Update tests with copyCdm() (compatibility with PatientProfiles) by <a href="https://github.com/catalamarti" class="external-link">@catalamarti</a> in <a href="https://github.com/darwin-eu/CohortCharacteristics/issues/357" class="external-link">#357</a></li>
@@ -125,7 +144,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
