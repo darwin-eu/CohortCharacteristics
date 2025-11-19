@@ -21,7 +21,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/darwin-eu/CohortCharacteristics/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/darwin-eu/CohortCharacteristics/blob/v1.1.0/DESCRIPTION)
 
 Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M
 (2025). *CohortCharacteristics: Summarise and Visualise Characteristics
