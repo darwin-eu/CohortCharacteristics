@@ -1,3 +1,22 @@
+# CohortCharacteristics 1.1.0
+
+* Add style argument to account for `visOmopResults` release by @ilovemane @catalamarti in #360
+* Add 'Days to next record' as part of the demographics in `summariseCharacteristics()` by @catalamarti in #378
+* Add all age group (even if zero counts) in `summariseCharacteristics()` by @catalamarti in #378
+* Use `clock` functions for date difference by @catalamarti #367
+* Use `omock` for clean examples of mock data by catalamarti #367
+* Remove otherVariablesEstimates by @ilovemane in #362
+* Allow to use includeSource = c(T,F) by @ilovemane in #359
+* add progress message by @ilovemane in #372
+* improve estimate documentation by @ilovemane in #371
+* fix order in tableCharacteristics by @ilovemane in #378
+* fix png by @ilovemane in #377
+* emptySummarise results by @ilovemane in #370
+
+# CohortCharacteristics 1.0.2
+
+* Update documentation by @catalamarti
+
 # CohortCharacteristics 1.0.1
 
 * Update tests with copyCdm() (compatibility with PatientProfiles) by @catalamarti in #357

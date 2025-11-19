@@ -102,6 +102,7 @@ test_that("test plot", {
     colour = c("variable_name", "variable_level")
   )
 
+
   expect_true(ggplot2::is_ggplot(plot))
 
   # boxplot
@@ -110,7 +111,8 @@ test_that("test plot", {
       dplyr::filter(variable_name == "Age"),
     plotType = "boxplot",
     facet = "variable_name",
-    colour = c("cohort_name")
+    colour = c("cohort_name"),
+    style = "darwin"
   )
 
   expect_true(ggplot2::is_ggplot(plot2))
@@ -124,7 +126,27 @@ test_that("test plot", {
   expect_no_error(plotCharacteristics(
     result = test_data |>
       dplyr::filter(variable_name == "Age"),
+    plotType = "boxplot",
+    style  = "darwin"
+  ))
+
+  expect_no_error(plotCharacteristics(
+    result = test_data |>
+      dplyr::filter(variable_name == "Age"),
+    plotType = "boxplot"
+  ))
+
+  expect_no_error(plotCharacteristics(
+    result = test_data |>
+      dplyr::filter(variable_name == "Age"),
     plotType = "barplot"
+  ))
+
+  expect_no_error(plotCharacteristics(
+    result = test_data |>
+      dplyr::filter(variable_name == "Age"),
+    plotType = "scatterplot",
+    style = "default"
   ))
 
   expect_no_error(plotCharacteristics(

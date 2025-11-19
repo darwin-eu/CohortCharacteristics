@@ -23,6 +23,7 @@ plotInternal <- function(result,
                          excludeGroup = character(),
                          x,
                          y,
+                         style,
                          call = parent.frame()) {
   rlang::check_installed("visOmopResults")
 
@@ -116,7 +117,8 @@ plotInternal <- function(result,
       ymax = "max",
       facet = facet,
       colour = colour,
-      label = notUnique
+      label = notUnique,
+      style = style
     )
   } else if (plotType == "densityplot") {
     p <- visOmopResults::scatterPlot(
@@ -131,7 +133,8 @@ plotInternal <- function(result,
       facet = facet,
       colour = colour,
       group = group,
-      label = notUnique
+      label = notUnique,
+      style = style
     )
   } else if (plotType == "scatterplot") {
     p <- visOmopResults::scatterPlot(
@@ -146,7 +149,8 @@ plotInternal <- function(result,
       facet = facet,
       colour = colour,
       group = group,
-      label = notUnique
+      label = notUnique,
+      style = style
     )
   } else if (plotType == "barplot") {
     p <- visOmopResults::barPlot(
@@ -155,12 +159,11 @@ plotInternal <- function(result,
       y = y,
       facet = facet,
       colour = colour,
-      label = notUnique
+      label = notUnique,
+      style = style
     )
   }
 
-  p +
-    ggplot2::theme_bw()
 }
 asCharacterFacet <- function(x) {
   if (rlang::is_formula(x)) {

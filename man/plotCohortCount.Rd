@@ -4,7 +4,13 @@
 \alias{plotCohortCount}
 \title{Plot the result of summariseCohortCount.}
 \usage{
-plotCohortCount(result, x = NULL, facet = c("cdm_name"), colour = NULL)
+plotCohortCount(
+  result,
+  x = NULL,
+  facet = c("cdm_name"),
+  colour = NULL,
+  style = "default"
+)
 }
 \arguments{
 \item{result}{A summarised_result object.}
@@ -17,6 +23,12 @@ columns.}
 
 \item{colour}{Columns to color by. See options with
 \code{availablePlotColumns(result)}.}
+
+\item{style}{Named list that specifies how to style the different parts of
+the table generated. It can either be a pre-defined style ("default" or
+"darwin" - the latter just for gt and flextable), NULL to get the table
+default style, or custom. Keep in mind that styling code is different for
+all table styles. To see the different styles see \code{visOmopResults::tableStyle()}.}
 }
 \value{
 A ggplot.

@@ -19,6 +19,7 @@
 #' `r lifecycle::badge("experimental")`
 #'
 #' @inheritParams resultDoc
+#' @inheritParams plotDoc
 #' @param colour Columns to color by. See options with
 #' `availablePlotColumns(result)`.
 #' @param reference A named character to set up the reference. It must be one of
@@ -66,7 +67,8 @@ plotComparedLargeScaleCharacteristics <- function(result,
                                                   colour,
                                                   reference = NULL,
                                                   facet = NULL,
-                                                  missings = 0) {
+                                                  missings = 0,
+                                                  style = "default") {
   rlang::check_installed("visOmopResults")
 
   # initial checks
@@ -122,7 +124,7 @@ plotComparedLargeScaleCharacteristics <- function(result,
     p <- visOmopResults::scatterPlot(
       result = result, x= "reference_percentage", y = "percentage",
       point = TRUE, line = FALSE, ribbon = FALSE, ymin = NULL, ymax = NULL,
-      facet = facet, colour = colour, group = NULL, label = label
+      facet = facet, colour = colour, group = NULL, label = label, style = style
     ) +
       ggplot2::geom_line(
         mapping = ggplot2::aes(x = .data$x, y = .data$y),

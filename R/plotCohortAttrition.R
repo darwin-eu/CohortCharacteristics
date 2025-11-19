@@ -315,9 +315,9 @@ exportGraph <- function(graph, type, n) {
       rlang::check_installed("png")
       svg <- DiagrammeRsvg::export_svg(graph)
       fileName <- tempfile(fileext = ".png")
-      rsvg::rsvg_png(charToRaw(svg), fileName, width = n * 2000)
+      rsvg::rsvg_png(charToRaw(svg), fileName, width = n*2000)
       img <- png::readPNG(fileName)
-      graphics::plot.new()
+      grid::grid.newpage()
       grid::grid.raster(img)
       graph <- img
       unlink(fileName)

@@ -75,6 +75,7 @@ plotCharacteristics <- function(result,
                                 plotType = "barplot",
                                 facet = NULL,
                                 colour = NULL,
+                                style = "default",
                                 plotStyle = lifecycle::deprecated()) {
   # check input
   result <- omopgenerics::validateResultArgument(result)
@@ -124,7 +125,8 @@ plotCharacteristics <- function(result,
       x = x,
       y = estimate,
       oneVariable = TRUE,
-      toYears = FALSE
+      toYears = FALSE,
+      style = style
     ) +
       ggplot2::ylab(lab)
   } else {
@@ -138,7 +140,8 @@ plotCharacteristics <- function(result,
       uniqueCombinations = FALSE,
       oneVariable = TRUE,
       toYears = FALSE,
-      excludeGroup = "variable_level"
+      excludeGroup = "variable_level",
+      style = style
     ) +
       ggplot2::labs(
         title = ggplot2::element_blank(),

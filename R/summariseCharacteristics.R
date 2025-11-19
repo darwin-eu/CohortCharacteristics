@@ -52,14 +52,14 @@
 #' @param otherVariables Other variables contained in cohort that you want to be
 #' summarised.
 #' @param estimates To modify the default estimates for a variable.
-#' By default: 'min', 'q25', 'median', 'q75', 'max' for "date", "numeric" and
+#' By default: 'min', 'q25', 'median', 'q75', 'max' for "date", for "numeric" and
 #' "integer" variables ("numeric" and "integer" also use 'mean' and 'sd'
 #' estimates). 'count' and 'percentage' for "categorical" and "binary".
 #' You have to provide them as a list: `list(age = c("median", "density"))`. You
 #' can also use 'date', 'numeric', 'integer', 'binary', 'categorical',
-#' 'demographics', 'intersect', 'other', 'table_intersect_count', ...
+#' 'demographics', 'intersect', 'other', 'table_intersect_count', ... as valid labels,
+#' see available estimates using `PatientProfiles::availableEstimates()`
 #' @param weights Column in cohort that points to weights of each individual.
-#' @param otherVariablesEstimates deprecated.
 #'
 #' @return A summary of the characteristics of the cohorts in the cohort table.
 #'
@@ -114,8 +114,7 @@ summariseCharacteristics <- function(cohort,
                                      conceptIntersectDays = list(),
                                      otherVariables = character(),
                                      estimates = list(),
-                                     weights = NULL,
-                                     otherVariablesEstimates = lifecycle::deprecated()) {
+                                     weights = NULL) {
   # check initial tables
   cdm <- omopgenerics::cdmReference(cohort)
   cohort <- omopgenerics::validateCohortArgument(cohort)
@@ -141,15 +140,6 @@ summariseCharacteristics <- function(cohort,
   omopgenerics::assertList(estimates, named = TRUE, class = "character")
   if (!is.null(weights)) {
     weights <- omopgenerics::validateColumn(weights, x = cohort, type = "numeric")
-  }
-
-  if (lifecycle::is_present(otherVariablesEstimates)) {
-    lifecycle::deprecate_stop(
-      when = "0.4.0",
-      what = "summariseCharacteristics(otherVariablesEstimates= )",
-      with = "summariseCharacteristics(estimates= )",
-      details = "See `estimates` argument documentation."
-    )
   }
 
   srSet <- dplyr::tibble(
@@ -224,6 +214,8 @@ summariseCharacteristics <- function(cohort,
   )
   variables <- list()
 
+  pref <- omopgenerics::tmpPrefix()
+
   # demographics
   if (demographics | length(ageGroup) > 0) {
     cli::cli_alert_info("adding demographics columns")
@@ -233,6 +225,7 @@ summariseCharacteristics <- function(cohort,
     priorObservation <- uniqueVariableName()
     futureObservation <- uniqueVariableName()
     duration <- uniqueVariableName()
+    time_from_end <- uniqueVariableName()
     demographicsCategorical <- sex
 
     if (!is.null(ageGroup)) {
@@ -255,12 +248,12 @@ summariseCharacteristics <- function(cohort,
     if (demographics) {
       dic <- dic |>
         dplyr::union_all(dplyr::tibble(
-          short_name = c(sex, age, priorObservation, futureObservation, duration),
+          short_name = c(sex, age, priorObservation, futureObservation, duration, time_from_end),
           new_variable_name = c(
             "sex", "age", "prior_observation", "future_observation",
-            "days_in_cohort"
+            "days_in_cohort", "days_to_next_record"
           ),
-          new_variable_level = as.character(NA),
+          new_variable_level = rep(as.character(NA), 6),
           table = as.character(NA),
           window = as.character(NA),
           value = as.character(NA)
@@ -268,7 +261,7 @@ summariseCharacteristics <- function(cohort,
       variables <- variables |>
         updateVariables(list(
           date = c("cohort_start_date", "cohort_end_date"),
-          numeric = c(priorObservation, futureObservation, age, duration),
+          numeric = c(priorObservation, futureObservation, age, duration, time_from_end),
           categorical = sex,
           demographics = c(
             priorObservation, futureObservation, age, duration, sex,
@@ -290,13 +283,26 @@ summariseCharacteristics <- function(cohort,
         priorObservation = demographics,
         priorObservationName = priorObservation,
         futureObservation = demographics,
-        futureObservationName = futureObservation
-      ) %>%
-      dplyr::mutate(!!duration := as.integer(clock::date_count_between(
-        start = .data$cohort_start_date,
-        end = .data$cohort_end_date,
-        precision = "day"
-      )) + 1L)
+        futureObservationName = futureObservation,
+        name = omopgenerics::uniqueTableName(prefix = pref)
+      ) |>
+      dplyr::group_by(.data$cohort_definition_id, .data$subject_id) |>
+      dplyr::mutate(next_start = dplyr::lead(.data$cohort_start_date, order_by = .data$cohort_start_date)) |>
+      dplyr::ungroup() |>
+      dplyr::mutate(
+        !!duration := as.integer(clock::date_count_between(
+          start = .data$cohort_start_date,
+          end = .data$cohort_end_date,
+          precision = "day"
+        )) + 1L,
+        !!time_from_end := as.integer(clock::date_count_between(
+          start = .data$cohort_end_date,
+          end = .data$next_start,
+          precision = "day"
+        ))
+      ) |>
+      dplyr::select(!"next_start") |>
+      dplyr::compute(name = omopgenerics::uniqueTableName(prefix = pref))
   }
 
   # intersects
@@ -379,6 +385,7 @@ summariseCharacteristics <- function(cohort,
       variables <- updateVariables(variables, vars)
 
       val$x <- cohort
+      val$name <- omopgenerics::uniqueTableName(prefix = pref)
 
       cohort <- do.call(eval(parse(text = funName)), val)
 
@@ -447,6 +454,36 @@ summariseCharacteristics <- function(cohort,
       dplyr::distinct()
   ) |>
     dplyr::mutate(order_id = dplyr::row_number())
+
+  # all age groups
+  if (length(ageGroup) > 0) {
+    cols <- colnames(results)
+    cols <- cols[cols != "estimate_value"]
+    ageGroupsCounts <- results |>
+      dplyr::select(!c(
+        "variable_name", "variable_level", "estimate_name", "estimate_type",
+        "estimate_value"
+      )) |>
+      dplyr::distinct() |>
+      dplyr::cross_join(
+        ageGroup |>
+          purrr::map(\(x) dplyr::tibble(variable_level = names(x))) |>
+          dplyr::bind_rows(.id = "variable_name") |>
+          dplyr::cross_join(dplyr::tibble(
+            estimate_name = c("count", "percentage"),
+            estimate_type = c("integer", "percentage"),
+            estimate_value = "0"
+          ))
+      ) |>
+      dplyr::anti_join(
+        results |>
+          dplyr::select(!"estimate_value"),
+        by = cols
+      )
+    results <- results |>
+      dplyr::union_all(ageGroupsCounts)
+  }
+
   results <- results |>
     dplyr::left_join(
       combinations,
@@ -461,7 +498,8 @@ summariseCharacteristics <- function(cohort,
   # rename variables
   results <- results |>
     dplyr::left_join(
-      dic |> dplyr::rename("variable_name" = "short_name"),
+      dic |>
+        dplyr::rename("variable_name" = "short_name"),
       by = "variable_name"
     ) |>
     dplyr::mutate(
@@ -488,6 +526,9 @@ summariseCharacteristics <- function(cohort,
     dplyr::select(!c("table", "window", "value")) |>
     dplyr::mutate("result_id" = 1L) |>
     omopgenerics::newSummarisedResult(settings = srSet)
+
+  # drop intermediate tables
+  omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(pref))
 
   cli::cli_alert_success("summariseCharacteristics finished!")
 
@@ -555,7 +596,8 @@ arrangeAgeGroup <- function(x, ageGroup) {
     dplyr::inner_join(variableId, by = "variable_name") |>
     dplyr::full_join(tib, by = c("variable_name", "variable_level")) |>
     dplyr::mutate(id = dplyr::coalesce(.data$id, 0L)) |>
-    dplyr::arrange(.data$variable_id, .data$id) |>
+    # sort by variable, age group or alphabetical order of variable_level
+    dplyr::arrange(.data$variable_id, .data$id, .data$variable_level) |>
     dplyr::select("variable_name", "variable_level")
 }
 variablesEstimates <- function(variables, estimates, dic) {

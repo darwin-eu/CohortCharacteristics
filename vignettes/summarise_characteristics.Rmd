@@ -59,7 +59,8 @@ chars |>
   glimpse()
 ```
 
-Now we have generated the results, we can create a nice table in gt format to display the results using `tableCharacteristics` function.
+Now we have generated the results, we can create a nice table in gt format to display the results using `tableCharacteristics` function. By default it returns summary statistics for, number records, number subjects, age, cohort_start_date, cohort_end_date, prior_observations, future_observations and days in cohort.
+Days in cohort is defined as the number of days between the cohort start and end dates, inclusive of both boundaries (i.e., cohort_end_date – cohort_start_date + 1). This represents the total duration an individual in the cohort. In contrast, future observation time is defined as the time from the cohort start date to the end of the individual’s observation period (observation_period_end_date – cohort_start_date). Prior observation works similar to future observation but look at observations before cohort_start_date, hence defined as (cohort_start_date - observation_period_start_date). The difference in definitions arises because days in cohort captures a duration within the cohort, while future observation time measures a remaining time window for potential follow-up beyond cohort entry.
 ```{r}
 tableCharacteristics(chars)
 ```

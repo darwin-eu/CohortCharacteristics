@@ -18,6 +18,7 @@
 #' window.
 #'
 #' @inheritParams resultDoc
+#' @inheritParams tableDoc
 #' @param topConcepts Number of concepts to restrict the table.
 #' @param type Type of table, it can be any of the supported
 #' `visOmopResults::tableType()` formats.
@@ -53,7 +54,8 @@
 #'
 tableTopLargeScaleCharacteristics <- function(result,
                                               topConcepts = 10,
-                                              type = "gt") {
+                                              type = "gt",
+                                              style = "default") {
   rlang::check_installed("visOmopResults")
 
   # check input
@@ -62,6 +64,7 @@ tableTopLargeScaleCharacteristics <- function(result,
   topConcepts <- as.integer(topConcepts)
   omopgenerics::assertNumeric(topConcepts, integerish = TRUE, length = 1, min = 1)
   omopgenerics::assertChoice(type, choices = visOmopResults::tableType(), length = 1)
+  omopgenerics::assertChoice(style, choices = c("default", "darwin"), length = 1)
 
   # create table
   x <- result |>
@@ -118,7 +121,7 @@ tableTopLargeScaleCharacteristics <- function(result,
 
   # final table
   tab <- x |>
-    visOmopResults::visTable(header = header, type = type, hide = hide)
+    visOmopResults::visTable(header = header, type = type, hide = hide, style = style)
 
   if (type == "gt") {
     tab <- gt::fmt_markdown(tab)

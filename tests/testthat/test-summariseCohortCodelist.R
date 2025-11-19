@@ -12,7 +12,8 @@ test_that("test summarise cohortCodelist attribute", {
 
   # add codelist
   my_cohort <- dplyr::tibble(
-    cohort_definition_id = 1L, subject_id = 1L,
+    cohort_definition_id = 1L,
+    subject_id = 1L,
     cohort_start_date = as.Date("2020-01-01"),
     cohort_end_date = as.Date("2020-01-01")
   )

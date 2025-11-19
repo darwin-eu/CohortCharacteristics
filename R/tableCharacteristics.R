@@ -42,9 +42,9 @@ tableCharacteristics <- function(result,
                                  header = c("cdm_name", "cohort_name"),
                                  groupColumn = character(),
                                  hide = c(additionalColumns(result), settingsColumns(result)),
+                                 style = "default",
                                  .options = list()) {
-  result |>
-    tableCohortCharacteristics(
+  result |> tableCohortCharacteristics(
       resultType = "summarise_characteristics",
       header = header,
       groupColumn = groupColumn,
@@ -62,6 +62,7 @@ tableCharacteristics <- function(result,
         "Range" = "<min> to <max>"
       ),
       type = type,
+      style = style,
       .options = .options
     )
 }

@@ -93,11 +93,31 @@ summariseLargeScaleCharacteristics <- function(cohort,
   if (is.null(eventInWindow) && is.null(episodeInWindow)) {
     cli::cli_abort("'eventInWindow' or 'episodeInWindow' must be provided")
   }
-  omopgenerics::assertLogical(includeSource, length = 1)
+  omopgenerics::assertLogical(includeSource)
+
+  if (length(includeSource) > 2) {
+    cli::cli_abort("{.arg includeSource} must have length 1 or 2,
+                   not {length(includeSource)}")
+  }
+
   omopgenerics::assertNumeric(minimumFrequency, min = 0, max = 1)
   omopgenerics::assertNumeric(excludedCodes, integerish = TRUE, null = TRUE)
 
   cdm <- omopgenerics::validateCdmArgument(cdm)
+  #includeSource
+  uniqueIncludeSource <- unique(includeSource) |> length()
+  if (uniqueIncludeSource == 2) {
+    includeSource = TRUE
+  }
+
+  # get analysis table
+  analyses <- getAnalyses(eventInWindow, episodeInWindow, includeSource)
+
+  # return empty cohort summarise Result if cohort table is empty
+  if(omopgenerics::isTableEmpty(cohort)){
+    cli::cli_inform("Empty cohort table: returning empty summarised result")
+    return(.buildEmptyLscResultFromAnalyses(analyses))
+  }
 
   # warn if strata has missing values
   for (k in seq_along(strata)) {
@@ -117,10 +137,13 @@ summariseLargeScaleCharacteristics <- function(cohort,
 
   # initial table
   cohort <- PatientProfiles::filterCohortId(cohort = cohort, cohortId = cohortId)
-  x <- getInitialTable(cohort, tablePrefix, indexDate, censorDate)
+  # return empty cohort summarise Result if cohort table is empty after filter
+  if(omopgenerics::isTableEmpty(cohort)){
+    cli::cli_inform("Empty cohort table after filter to cohortId: returning empty summarised result")
+    return(.buildEmptyLscResultFromAnalyses(analyses))
+  }
 
-  # get analysis table
-  analyses <- getAnalyses(eventInWindow, episodeInWindow, includeSource)
+  x <- getInitialTable(cohort, tablePrefix, indexDate, censorDate)
 
   minWindow <- min(unlist(window))
   maxWindow <- max(unlist(window))
@@ -140,6 +163,10 @@ summariseLargeScaleCharacteristics <- function(cohort,
     for (k in seq_len(nrow(analysesTable))) {
       tableAnalysis <- getTableAnalysis(table, analysesTable[k, ], tablePrefix)
       for (win in seq_along(window)) {
+
+        " - getting characteristics from table {.pkg {tab}} ({i} of {length(tables)}) for time window {window[[win]]}" |>
+          cli::cli_progress_message()
+
         tableWindow <- getTableWindow(tableAnalysis, window[[win]], tablePrefix)
         lsc <- lsc |>
           dplyr::bind_rows(
@@ -163,6 +190,22 @@ summariseLargeScaleCharacteristics <- function(cohort,
     addCols <- c("concept_id", "source_concept_id", "source_concept_name")
   } else {
     addCols <- "concept_id"
+  }
+
+  # count by concept_id when includeSource is TRUE
+  if (uniqueIncludeSource == 2){
+
+  lsc_standard <- lsc |>
+    dplyr::select(-dplyr::any_of(c("source"))) |>
+    dplyr::group_by(
+      .data$concept, .data$strata_name, .data$strata_level,
+      .data$group_name, .data$group_level, .data$window_name,
+      .data$table_name, .data$type
+    ) |>
+    dplyr::summarise(count = sum(.data$count), .groups = "drop") |>
+    dplyr::mutate(analysis = "standard")
+
+  lsc <- dplyr::bind_rows(lsc, lsc_standard)
   }
 
   # format results
@@ -232,6 +275,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
 getAnalyses <- function(eventInWindow, episodeInWindow, includeSource) {
   atc <- c("ATC 1st", "ATC 2nd", "ATC 3rd", "ATC 4th", "ATC 5th")
   icd10 <- c("icd10 chapter", "icd10 subchapter")
+
   analysis <- ifelse(includeSource, "standard-source", "standard")
   dplyr::tibble(table = eventInWindow %||% character(), type = "event") |>
     dplyr::union_all(
@@ -581,4 +625,24 @@ getTableWindow <- function(table, window, tablePrefix) {
       overwrite = TRUE
     )
   return(tableWindow)
+}
+.buildEmptyLscResultFromAnalyses <-  function(analyses) {
+
+  sets <- analyses |>
+    dplyr::distinct(
+      table_name = .data$table,
+      type       = .data$type,
+      analysis   = .data$analysis
+    ) |>
+    dplyr::mutate(
+      result_id       = as.integer(dplyr::row_number()),
+      result_type     = "summarise_large_scale_characteristics",
+      package_name    = "CohortCharacteristics",
+      package_version = pkgVersion()
+    )
+
+  omopgenerics::newSummarisedResult(
+    x        = omopgenerics::emptySummarisedResult(),
+    settings = sets
+  )
 }
