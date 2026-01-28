@@ -8,8 +8,8 @@ window.}
 tableTopLargeScaleCharacteristics(
   result,
   topConcepts = 10,
-  type = "gt",
-  style = "default"
+  type = NULL,
+  style = NULL
 )
 }
 \arguments{
@@ -20,11 +20,22 @@ tableTopLargeScaleCharacteristics(
 \item{type}{Type of table, it can be any of the supported
 \code{visOmopResults::tableType()} formats.}
 
-\item{style}{Named list that specifies how to style the different parts of
-the table generated. It can either be a pre-defined style ("default" or
-"darwin" - the latter just for gt and flextable), NULL to get the table
-default style, or custom. Keep in mind that styling code is different for
-all table styles. To see the different styles see \code{visOmopResults::tableStyle()}.}
+\item{style}{Defines the visual formatting of the table. This argument can
+be provided in one of the following ways:
+\enumerate{
+\item \strong{Pre-defined style}: Use the name of a built-in style (e.g., "darwin").
+See \code{visOmopResults::tableStyle()} for available options.
+\item \strong{YAML file path}: Provide the path to an existing .yml file defining a
+new style.
+\item \strong{List of custome R code}: Supply a block of custom R code or a named
+list describing styles for each table section. This code must be specific to
+the selected table type.
+}
+
+If style = \code{NULL}, the function will use global
+options (see \code{visOmopResults::setGlobalTableOptions()}) or an existing
+\verb{_brand.yml} file (if found); otherwise, the default style is applied. For
+more details, see the \emph{Styles} vignette in \strong{visOmopResults} website.}
 }
 \value{
 A formated table.

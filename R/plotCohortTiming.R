@@ -70,7 +70,7 @@ plotCohortTiming <- function(result,
                              uniqueCombinations = TRUE,
                              facet = c("cdm_name", "cohort_name_reference"),
                              colour = c("cohort_name_comparator"),
-                             style = "default") {
+                             style = NULL) {
   # specific checks
   omopgenerics::assertChoice(plotType, c("boxplot", "densityplot"), length = 1)
   omopgenerics::assertChoice(timeScale, c("days", "years"), length = 1)

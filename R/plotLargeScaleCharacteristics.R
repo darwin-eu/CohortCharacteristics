@@ -55,7 +55,7 @@
 plotLargeScaleCharacteristics <- function(result,
                                           facet = c("cdm_name", "cohort_name"),
                                           colour = "variable_level",
-                                          style = "default") {
+                                          style = NULL) {
   # validate result
   result <- omopgenerics::validateResultArgument(result)
 

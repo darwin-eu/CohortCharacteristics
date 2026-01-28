@@ -38,13 +38,14 @@
 #' }
 #'
 tableCharacteristics <- function(result,
-                                 type = "gt",
+                                 type = NULL,
                                  header = c("cdm_name", "cohort_name"),
                                  groupColumn = character(),
                                  hide = c(additionalColumns(result), settingsColumns(result)),
-                                 style = "default",
+                                 style = NULL,
                                  .options = list()) {
-  result |> tableCohortCharacteristics(
+  result |>
+    tableCohortCharacteristics(
       resultType = "summarise_characteristics",
       header = header,
       groupColumn = groupColumn,
@@ -52,7 +53,7 @@ tableCharacteristics <- function(result,
       rename = c("CDM name" = "cdm_name"),
       modifyResults = \(x, ...) {
         x |>
-          dplyr::filter(!.data$estimate_name %in% c("density_x", "density_y"))
+          dplyr::filter(!stringr::str_detect(.data$estimate_name, "^density_[xy]"))
       },
       estimateName = c(
         "N (%)" = "<count> (<percentage>%)",

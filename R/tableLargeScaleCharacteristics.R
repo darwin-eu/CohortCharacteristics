@@ -54,8 +54,8 @@
 #'
 tableTopLargeScaleCharacteristics <- function(result,
                                               topConcepts = 10,
-                                              type = "gt",
-                                              style = "default") {
+                                              type = NULL,
+                                              style = NULL) {
   rlang::check_installed("visOmopResults")
 
   # check input
@@ -63,8 +63,7 @@ tableTopLargeScaleCharacteristics <- function(result,
     omopgenerics::filterSettings(.data$result_type == "summarise_large_scale_characteristics")
   topConcepts <- as.integer(topConcepts)
   omopgenerics::assertNumeric(topConcepts, integerish = TRUE, length = 1, min = 1)
-  omopgenerics::assertChoice(type, choices = visOmopResults::tableType(), length = 1)
-  omopgenerics::assertChoice(style, choices = c("default", "darwin"), length = 1)
+  type <- validateType(type)
 
   # create table
   x <- result |>
@@ -257,4 +256,11 @@ qSmd <- function(ref, comp) {
     ref == 100 & comp == 100 ~ 0,
     .default = round(suppressWarnings((comp - ref)/sqrt((comp * (100 - comp) + ref * (100 - ref)) / 2)), 4)
   )
+}
+validateType <- function(type) {
+  if (is.null(type)) {
+    type <- getOption(x = paste0("visOmopResults.tableType"), default = "gt")
+  }
+  omopgenerics::assertChoice(type, choices = visOmopResults::tableType(), length = 1)
+  return(type)
 }

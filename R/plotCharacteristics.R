@@ -75,7 +75,7 @@ plotCharacteristics <- function(result,
                                 plotType = "barplot",
                                 facet = NULL,
                                 colour = NULL,
-                                style = "default",
+                                style = NULL,
                                 plotStyle = lifecycle::deprecated()) {
   # check input
   result <- omopgenerics::validateResultArgument(result)
@@ -103,9 +103,11 @@ plotCharacteristics <- function(result,
   if (!plotType %in% c("boxplot","densityplot")) {
     estimate <- unique(result$estimate_name)
     if (length(estimate) > 1) {
-      return(emptyPlot(
-        "Only one estimate name can be plotted at a time.",
-        "Please filter estimate_name column in results before passing to plotCharacteristics()"
+      return(visOmopResults::emptyPlot(
+        title = "Only one estimate name can be plotted at a time.",
+        subtitle = "Please filter estimate_name column in results before passing to plotCharacteristics()",
+        style = style,
+        type = "ggplot"
       ))
     }
     lab <- paste0(lab, " (", estimate, ")")

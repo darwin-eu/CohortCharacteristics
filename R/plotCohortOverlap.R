@@ -41,7 +41,7 @@ plotCohortOverlap <- function(result,
                               uniqueCombinations = TRUE,
                               facet = c("cdm_name", "cohort_name_reference"),
                               colour = "variable_name",
-                              style = "default",
+                              style = NULL,
                               .options = lifecycle::deprecated()) {
   rlang::check_installed("visOmopResults")
   if (lifecycle::is_present(.options)) {
@@ -57,7 +57,11 @@ plotCohortOverlap <- function(result,
     omopgenerics::filterSettings(.data$result_type == "summarise_cohort_overlap")
   if (nrow(result) == 0) {
     cli::cli_warn("No results found with `result_type == 'summarise_cohort_overlap'`")
-    return(emptyPlot("No results found with `result_type == 'summarise_cohort_overlap'`"))
+    return(visOmopResults::emptyPlot(
+      title = "No results found with `result_type == 'summarise_cohort_overlap'`",
+      style = style,
+      type = "ggplot"
+    ))
   }
 
   checkVersion(result)

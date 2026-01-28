@@ -64,13 +64,33 @@ summariseCohortTiming <- function(cohort,
   omopgenerics::assertCharacter(estimates)
   timing <- estimates
 
+  # ---- if no timing estimates requested, return empty result with settings ----
   if (length(timing) == 0) {
-    return(omopgenerics::emptySummarisedResult())
+    cli::cli_inform("No timing estimates requested: returning empty summarised timing result.")
+    return(.buildEmptySummariseCohortTimingResult(
+      restrictToFirstEntry = restrictToFirstEntry
+    ))
+  }
+
+  # ---- if cohort table is empty before any filtering ----
+  if (omopgenerics::isTableEmpty(cohort)) {
+    cli::cli_inform("Cohort table is empty: returning empty summarised timing result.")
+    return(.buildEmptySummariseCohortTimingResult(
+      restrictToFirstEntry = restrictToFirstEntry
+    ))
   }
 
   cohort <- cohort |>
     PatientProfiles::filterCohortId(cohortId = cohortId) |>
     PatientProfiles::addCohortName()
+
+  # ---- if table becomes empty after filtering by cohortId ----
+  if (omopgenerics::isTableEmpty(cohort)) {
+    cli::cli_inform("Empty cohort table after filtering by cohortId: returning empty summarised timing result.")
+    return(.buildEmptySummariseCohortTimingResult(
+      restrictToFirstEntry = restrictToFirstEntry
+    ))
+  }
 
   if (isTRUE(restrictToFirstEntry)) {
     cohort <- cohort |>
@@ -225,4 +245,18 @@ sortWindow <- function(window) {
     dplyr::bind_rows() |>
     dplyr::arrange(.data$first, .data$second) |>
     dplyr::pull("window_name")
+}
+
+.buildEmptySummariseCohortTimingResult <- function(restrictToFirstEntry) {
+  settings <- dplyr::tibble(
+    result_id = 1L,
+    package_name = "CohortCharacteristics",
+    package_version = pkgVersion(),
+    result_type = "summarise_cohort_timing",
+    restrict_to_first_entry = as.character(restrictToFirstEntry)
+  )
+
+  x <- omopgenerics::emptySummarisedResult(settings = settings)
+
+  return(x)
 }

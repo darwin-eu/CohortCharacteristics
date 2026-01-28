@@ -68,7 +68,7 @@ plotComparedLargeScaleCharacteristics <- function(result,
                                                   reference = NULL,
                                                   facet = NULL,
                                                   missings = 0,
-                                                  style = "default") {
+                                                  style = NULL) {
   rlang::check_installed("visOmopResults")
 
   # initial checks

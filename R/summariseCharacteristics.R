@@ -495,6 +495,15 @@ summariseCharacteristics <- function(cohort,
     dplyr::arrange(.data$order_id) |>
     dplyr::select(-"order_id")
 
+
+  #concat for density estimate
+  results <- results |>
+    dplyr::mutate(estimate_name = dplyr::if_else(
+      .data$estimate_name %in% c("density_y", "density_x"),
+      paste0(.data$estimate_name, "_", stringr::str_extract(.data$variable_level, "\\d+$")),  # extract trailing digits
+      .data$estimate_name
+    ))
+
   # rename variables
   results <- results |>
     dplyr::left_join(
@@ -538,7 +547,7 @@ summariseCharacteristics <- function(cohort,
 updateVariables <- function(variables,
                             args) {
   for (nm in names(args)) {
-    variables[[nm]] <- c(variables[[nm]], args[[nm]])
+    variables[[nm]] <- unique(c(variables[[nm]], args[[nm]]))
   }
   return(variables)
 }
@@ -641,11 +650,16 @@ variablesEstimates <- function(variables, estimates, dic) {
   )
   newEstimates <- newEstimates |>
     purrr::imap(\(x, nm) {
-      if (is.null(x)) {
+
         type <- names(defaults)[names(defaults) %in% newVariables[[nm]]]
-        x <- unique(unlist(defaults[type]))
-      }
-      x
+        base <- unique(unlist(defaults[type]))
+
+        # if user provided something (e.g., "density"), add it; otherwise keep defaults
+        if (!is.null(x)) {
+          base <- unique(c(base, x))
+        }
+
+        base
     }) |>
     purrr::compact()
 

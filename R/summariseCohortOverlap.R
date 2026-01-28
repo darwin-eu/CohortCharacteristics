@@ -65,12 +65,27 @@ summariseCohortOverlap <- function(cohort,
 
   strataCols <- unique(unlist(strata))
 
+  # initial table
+  cohort <- PatientProfiles::filterCohortId(cohort = cohort, cohortId = cohortId)
+
+  # return empty cohort summarise Result if cohort table is empty
+  if(omopgenerics::isTableEmpty(cohort)){
+    cli::cli_inform("Cohort table is empty: returning empty summarised result.")
+    return(.buildEmptySummariseResultsOverlap(overlapBy = overlapBy))
+  }
+
   cohort <- cohort |>
     PatientProfiles::addCohortName() |>
     PatientProfiles::filterCohortId(cohortId = cohortId) |>
     dplyr::select(dplyr::all_of(c("cohort_name", overlapBy, strataCols))) |>
     dplyr::distinct() |>
     dplyr::compute(name = tmpName, temporary = FALSE)
+
+  # return empty cohort summarise Result if cohort table is empty after filter
+  if(omopgenerics::isTableEmpty(cohort)){
+    cli::cli_inform("Empty cohort table after filtering by cohortId: returning empty summarised result")
+    return(.buildEmptySummariseResultsOverlap(overlapBy = overlapBy))
+  }
 
   # create a unique_id
   if (length(overlapBy) > 1) {
@@ -220,3 +235,20 @@ getOverlapEstimates <- function(x) {
         )
     )
 }
+
+.buildEmptySummariseResultsOverlap <- function(cohort, overlapBy = "subject_id") {
+  settings <- dplyr::tibble(
+    result_id = 1L,
+    result_type = "summarise_cohort_overlap",
+    package_name = "CohortCharacteristics",
+    package_version = pkgVersion(),
+    group = "cohort_name_reference &&& cohort_name_comparator",
+    overlap_by = paste0(overlapBy, collapse = "; ")
+  )
+
+  x <- omopgenerics::emptySummarisedResult(settings = settings)
+
+  return(x)
+
+}
+

@@ -37,6 +37,13 @@ test_that("summariseCohortTiming", {
   ) |>
     copyCdm()
 
+  #check empty cohort table
+  timing_empty <- summariseCohortTiming(cdm$table |> dplyr::filter(cohort_definition_id == 200),
+                                        restrictToFirstEntry = TRUE)
+
+  expect_true(timing_empty |> dplyr::tally() == 0)
+  expect_true(omopgenerics::settings(timing_empty) |> dplyr::tally() > 0)
+
   timing1 <- summariseCohortTiming(cdm$table,
     restrictToFirstEntry = TRUE
   )

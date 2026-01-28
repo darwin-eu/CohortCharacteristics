@@ -1,9 +1,9 @@
 Package: CohortCharacteristics
 Type: Package
 Title: Summarise and Visualise Characteristics of Patients in the OMOP CDM
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(
-    person("Marti", "Catala", , "marti.catalasabate@ndorms.ox.ac.uk", 
+    person("Martí", "Català", , "marti.catalasabate@ndorms.ox.ac.uk", 
     role = c("aut", "cre"), comment = c(ORCID = "0000-0003-3308-9905")),
     person("Yuchen", "Guo", , "yuchen.guo@ndorms.ox.ac.uk", role = c("aut"),
     comment = c(ORCID = "0000-0002-0847-4855")),
@@ -18,7 +18,7 @@ Authors@R: c(
     person("Marta", "Alcalde", , "marta.alcaldeherraiz@ndorms.ox.ac.uk", 
     role = c("aut"), comment = c(ORCID = "0009-0002-4405-1814"))
     )
-Maintainer: Marti Catala <marti.catalasabate@ndorms.ox.ac.uk>
+Maintainer: Martí Català <marti.catalasabate@ndorms.ox.ac.uk>
 Description: Summarise and visualise the characteristics of patients in data 
     mapped to the Observational Medical Outcomes Partnership (OMOP) common data 
     model (CDM).
@@ -53,7 +53,6 @@ Suggests:
     CohortConstructor,
     covr,
     DBI,
-    dbplyr,
     DiagrammeR,
     DiagrammeRsvg,
     DrugUtilisation,
