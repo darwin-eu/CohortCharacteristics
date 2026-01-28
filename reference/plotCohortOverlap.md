@@ -10,7 +10,7 @@ plotCohortOverlap(
   uniqueCombinations = TRUE,
   facet = c("cdm_name", "cohort_name_reference"),
   colour = "variable_name",
-  style = "default",
+  style = NULL,
   .options = lifecycle::deprecated()
 )
 ```
@@ -36,12 +36,13 @@ plotCohortOverlap(
 
 - style:
 
-  Named list that specifies how to style the different parts of the
-  table generated. It can either be a pre-defined style ("default" or
-  "darwin" - the latter just for gt and flextable), NULL to get the
-  table default style, or custom. Keep in mind that styling code is
-  different for all table styles. To see the different styles see
-  [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html).
+  Visual theme to apply. Character, or `NULL`. If a character, this may
+  be either the name of a built-in style (see `plotStyle()`), or a path
+  to a `.yml` file that defines a custom style. If NULL, the function
+  will use the explicit default style, unless a global style option is
+  set (see `setGlobalPlotOptions()`), or a \_brand.yml file is present
+  (in that order). Refer to the package vignette on styles to learn
+  more.
 
 - .options:
 
@@ -58,8 +59,6 @@ A ggplot.
 library(CohortCharacteristics)
 
 cdm <- mockCohortCharacteristics()
-#> Warning: There are observation period end dates after the current date: 2025-11-19
-#> ℹ The latest max observation period end date found is 2031-09-13
 
 overlap <- summariseCohortOverlap(cdm$cohort2)
 

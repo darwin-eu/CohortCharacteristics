@@ -9,8 +9,8 @@ window.
 tableTopLargeScaleCharacteristics(
   result,
   topConcepts = 10,
-  type = "gt",
-  style = "default"
+  type = NULL,
+  style = NULL
 )
 ```
 
@@ -32,12 +32,26 @@ tableTopLargeScaleCharacteristics(
 
 - style:
 
-  Named list that specifies how to style the different parts of the
-  table generated. It can either be a pre-defined style ("default" or
-  "darwin" - the latter just for gt and flextable), NULL to get the
-  table default style, or custom. Keep in mind that styling code is
-  different for all table styles. To see the different styles see
-  [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html).
+  Defines the visual formatting of the table. This argument can be
+  provided in one of the following ways:
+
+  1.  **Pre-defined style**: Use the name of a built-in style (e.g.,
+      "darwin"). See
+      [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html)
+      for available options.
+
+  2.  **YAML file path**: Provide the path to an existing .yml file
+      defining a new style.
+
+  3.  **List of custome R code**: Supply a block of custom R code or a
+      named list describing styles for each table section. This code
+      must be specific to the selected table type.
+
+  If style = `NULL`, the function will use global options (see
+  [`visOmopResults::setGlobalTableOptions()`](https://darwin-eu.github.io/visOmopResults/reference/setGlobalTableOptions.html))
+  or an existing `_brand.yml` file (if found); otherwise, the default
+  style is applied. For more details, see the *Styles* vignette in
+  **visOmopResults** website.
 
 ## Value
 

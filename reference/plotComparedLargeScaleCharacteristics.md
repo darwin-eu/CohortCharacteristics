@@ -11,7 +11,7 @@ plotComparedLargeScaleCharacteristics(
   reference = NULL,
   facet = NULL,
   missings = 0,
-  style = "default"
+  style = NULL
 )
 ```
 
@@ -42,12 +42,13 @@ plotComparedLargeScaleCharacteristics(
 
 - style:
 
-  Named list that specifies how to style the different parts of the
-  table generated. It can either be a pre-defined style ("default" or
-  "darwin" - the latter just for gt and flextable), NULL to get the
-  table default style, or custom. Keep in mind that styling code is
-  different for all table styles. To see the different styles see
-  [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html).
+  Visual theme to apply. Character, or `NULL`. If a character, this may
+  be either the name of a built-in style (see `plotStyle()`), or a path
+  to a `.yml` file that defines a custom style. If NULL, the function
+  will use the explicit default style, unless a global style option is
+  set (see `setGlobalPlotOptions()`), or a \_brand.yml file is present
+  (in that order). Refer to the package vignette on styles to learn
+  more.
 
 ## Value
 

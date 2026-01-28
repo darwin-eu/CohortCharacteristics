@@ -53,6 +53,8 @@ A mock cdm_reference object created following user's specifications.
 library(CohortCharacteristics)
 
 cdm <- mockCohortCharacteristics()
+#> Warning: There are observation period end dates after the current date: 2026-01-28
+#> ℹ The latest max observation period end date found is 2027-01-06
 
 # }
 ```

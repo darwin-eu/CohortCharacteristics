@@ -15,7 +15,7 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Marti Catala <marti.catalasabate@ndorms.ox.ac.uk>
+**Maintainer**: Martí Català <marti.catalasabate@ndorms.ox.ac.uk>
 ([ORCID](https://orcid.org/0000-0003-3308-9905))
 
 Authors:

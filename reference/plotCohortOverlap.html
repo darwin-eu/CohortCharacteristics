@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot the result of summariseCohortOverlap.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/v1.1.0/R/plotCohortOverlap.R" class="external-link"><code>R/plotCohortOverlap.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/R/plotCohortOverlap.R" class="external-link"><code>R/plotCohortOverlap.R</code></a></small>
       <div class="d-none name"><code>plotCohortOverlap.Rd</code></div>
     </div>
 
@@ -51,7 +51,7 @@
 <span>  uniqueCombinations <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cdm_name"</span>, <span class="st">"cohort_name_reference"</span><span class="op">)</span>,</span>
 <span>  colour <span class="op">=</span> <span class="st">"variable_name"</span>,</span>
-<span>  style <span class="op">=</span> <span class="st">"default"</span>,</span>
+<span>  style <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  .options <span class="op">=</span> <span class="fu">lifecycle</span><span class="fu">::</span><span class="fu"><a href="https://lifecycle.r-lib.org/reference/deprecated.html" class="external-link">deprecated</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -81,11 +81,12 @@ columns.</p></dd>
 
 
 <dt id="arg-style">style<a class="anchor" aria-label="anchor" href="#arg-style"></a></dt>
-<dd><p>Named list that specifies how to style the different parts of
-the table generated. It can either be a pre-defined style ("default" or
-"darwin" - the latter just for gt and flextable), NULL to get the table
-default style, or custom. Keep in mind that styling code is different for
-all table styles. To see the different styles see <code><a href="https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html" class="external-link">visOmopResults::tableStyle()</a></code>.</p></dd>
+<dd><p>Visual theme to apply. Character, or <code>NULL</code>. If a character, this
+may be either the name of a built-in style (see <code>plotStyle()</code>), or a path to
+a <code>.yml</code> file that defines a custom style. If NULL, the function will use the
+explicit default style, unless a global style option is set (see
+<code>setGlobalPlotOptions()</code>), or a _brand.yml file is present (in that order).
+Refer to the package vignette on styles to learn more.</p></dd>
 
 
 <dt id="arg--options">.options<a class="anchor" aria-label="anchor" href="#arg--options"></a></dt>
@@ -103,8 +104,6 @@ all table styles. To see the different styles see <code><a href="https://darwin-
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CohortCharacteristics/">CohortCharacteristics</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="mockCohortCharacteristics.html">mockCohortCharacteristics</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are observation period end dates after the current date: 2025-11-19</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The latest max observation period end date found is 2031-09-13</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">overlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="summariseCohortOverlap.html">summariseCohortOverlap</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -120,7 +119,7 @@ all table styles. To see the different styles see <code><a href="https://darwin-
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Marti Catala, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Nuria Mercade-Besora, Marta Alcalde.</p>
+  <p>Developed by Martí Català, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Nuria Mercade-Besora, Marta Alcalde.</p>
 </div>
 
 <div class="pkgdown-footer-right">

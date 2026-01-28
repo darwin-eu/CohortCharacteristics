@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Summarise characteristics of cohorts in a cohort table</h1>
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/v1.1.0/R/summariseCharacteristics.R" class="external-link"><code>R/summariseCharacteristics.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/R/summariseCharacteristics.R" class="external-link"><code>R/summariseCharacteristics.R</code></a></small>
       <div class="d-none name"><code>summariseCharacteristics.Rd</code></div>
     </div>
 
@@ -197,6 +197,8 @@ see available estimates using <code><a href="https://darwin-eu.github.io/Patient
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/PatientProfiles/" class="external-link">PatientProfiles</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="mockCohortCharacteristics.html">mockCohortCharacteristics</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There are observation period end dates after the current date: 2026-01-28</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The latest max observation period end date found is 2035-12-04</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cdm</span><span class="op">$</span><span class="va">cohort1</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://darwin-eu.github.io/PatientProfiles/reference/addSex.html" class="external-link">addSex</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
@@ -229,7 +231,7 @@ see available estimates using <code><a href="https://darwin-eu.github.io/Patient
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> summarising cohort <span style="color: #0000BB;">cohort_2</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> summarising cohort <span style="color: #0000BB;">cohort_3</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> summariseCharacteristics finished!</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 920</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rows: 844</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Columns: 13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ result_id        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1<span style="color: #949494;">,</span>…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ cdm_name         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "PP_MOCK"<span style="color: #949494;">, </span>"PP_MOCK"<span style="color: #949494;">, </span>"PP_MOCK"<span style="color: #949494;">, </span>"PP_MOCK"<span style="color: #949494;">, </span>"PP_MOCK"…</span>
@@ -241,7 +243,7 @@ see available estimates using <code><a href="https://darwin-eu.github.io/Patient
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ variable_level   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">N</span>…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ estimate_name    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "count"<span style="color: #949494;">, </span>"count"<span style="color: #949494;">, </span>"min"<span style="color: #949494;">, </span>"q25"<span style="color: #949494;">, </span>"median"<span style="color: #949494;">, </span>"q75"<span style="color: #949494;">, </span>"max…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ estimate_type    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "integer"<span style="color: #949494;">, </span>"integer"<span style="color: #949494;">, </span>"date"<span style="color: #949494;">, </span>"date"<span style="color: #949494;">, </span>"date"<span style="color: #949494;">, </span>"date"<span style="color: #949494;">,</span>…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $ estimate_value   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "5"<span style="color: #949494;">, </span>"5"<span style="color: #949494;">, </span>"1930-02-09"<span style="color: #949494;">, </span>"1966-02-09"<span style="color: #949494;">, </span>"1971-03-07"<span style="color: #949494;">, </span>"…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ estimate_value   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "4"<span style="color: #949494;">, </span>"4"<span style="color: #949494;">, </span>"1910-11-23"<span style="color: #949494;">, </span>"1915-03-08"<span style="color: #949494;">, </span>"1937-09-28"<span style="color: #949494;">, </span>"…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ additional_name  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"…</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ additional_level <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"<span style="color: #949494;">, </span>"overall"…</span>
 <span class="r-in"><span></span></span>
@@ -253,7 +255,7 @@ see available estimates using <code><a href="https://darwin-eu.github.io/Patient
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Marti Catala, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Nuria Mercade-Besora, Marta Alcalde.</p>
+  <p>Developed by Martí Català, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Nuria Mercade-Besora, Marta Alcalde.</p>
 </div>
 
 <div class="pkgdown-footer-right">

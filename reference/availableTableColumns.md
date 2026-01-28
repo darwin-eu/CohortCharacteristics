@@ -30,8 +30,6 @@ result <- summariseCharacteristics(cdm$cohort1)
 availableTableColumns(result)
 
 }
-#> Warning: There are observation period end dates after the current date: 2025-11-19
-#> ℹ The latest max observation period end date found is 2026-11-01
 #> ℹ adding demographics columns
 #> ℹ summarising data
 #> ℹ summarising cohort cohort_1

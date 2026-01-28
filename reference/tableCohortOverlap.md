@@ -8,11 +8,11 @@
 tableCohortOverlap(
   result,
   uniqueCombinations = TRUE,
-  type = "gt",
+  type = NULL,
   header = c("variable_name"),
   groupColumn = c("cdm_name"),
   hide = c("variable_level", settingsColumns(result)),
-  style = "default",
+  style = NULL,
   .options = list()
 )
 ```
@@ -29,8 +29,11 @@ tableCohortOverlap(
 
 - type:
 
-  Type of table. Check supported types with
-  [`visOmopResults::tableType()`](https://darwin-eu.github.io/visOmopResults/reference/tableType.html).
+  Character string specifying the desired output table format. See
+  [`visOmopResults::tableType()`](https://darwin-eu.github.io/visOmopResults/reference/tableType.html)
+  for supported table types. If type = `NULL`, global options (set via
+  [`visOmopResults::setGlobalTableOptions()`](https://darwin-eu.github.io/visOmopResults/reference/setGlobalTableOptions.html))
+  will be used if available; otherwise, a default 'gt' table is created.
 
 - header:
 
@@ -48,12 +51,26 @@ tableCohortOverlap(
 
 - style:
 
-  Named list that specifies how to style the different parts of the
-  table generated. It can either be a pre-defined style ("default" or
-  "darwin" - the latter just for gt and flextable), NULL to get the
-  table default style, or custom. Keep in mind that styling code is
-  different for all table styles. To see the different styles see
-  [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html).
+  Defines the visual formatting of the table. This argument can be
+  provided in one of the following ways:
+
+  1.  **Pre-defined style**: Use the name of a built-in style (e.g.,
+      "darwin"). See
+      [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html)
+      for available options.
+
+  2.  **YAML file path**: Provide the path to an existing .yml file
+      defining a new style.
+
+  3.  **List of custome R code**: Supply a block of custom R code or a
+      named list describing styles for each table section. This code
+      must be specific to the selected table type.
+
+  If style = `NULL`, the function will use global options (see
+  [`visOmopResults::setGlobalTableOptions()`](https://darwin-eu.github.io/visOmopResults/reference/setGlobalTableOptions.html))
+  or an existing `_brand.yml` file (if found); otherwise, the default
+  style is applied. For more details, see the *Styles* vignette in
+  **visOmopResults** website.
 
 - .options:
 
@@ -105,21 +122,21 @@ cohort_2
 
 N (%)
 
-3 (75.00%)
+2 (40.00%)
 
 0 (0.00%)
 
-1 (25.00%)
+3 (60.00%)
 
 cohort_3
 
 N (%)
 
-3 (33.33%)
+2 (28.57%)
 
 0 (0.00%)
 
-6 (66.67%)
+5 (71.43%)
 
 cohort_2
 
@@ -127,10 +144,10 @@ cohort_3
 
 N (%)
 
-1 (14.29%)
+3 (37.50%)
 
 0 (0.00%)
 
-6 (85.71%)
+5 (62.50%)
 
 \# }

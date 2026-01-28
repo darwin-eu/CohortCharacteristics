@@ -1,5 +1,26 @@
 # Changelog
 
+## CohortCharacteristics 1.1.1
+
+CRAN release: 2026-01-28
+
+- Update default of style and type to NULL by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#381](https://github.com/darwin-eu/CohortCharacteristics/issues/381)
+  [\#394](https://github.com/darwin-eu/CohortCharacteristics/issues/394)
+- Issue with TRUE and FALSE in LSC by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#391](https://github.com/darwin-eu/CohortCharacteristics/issues/391)
+- Add support for ‘visit_detail’ in summariseLargeScaleCharacteristics
+  by [@ilovemane](https://github.com/ilovemane) in
+  [\#392](https://github.com/darwin-eu/CohortCharacteristics/issues/392)
+- Refine handling of density estimates in characteristics by
+  [@ilovemane](https://github.com/ilovemane) in
+  [\#387](https://github.com/darwin-eu/CohortCharacteristics/issues/387)
+- Handle empty cohort tables in summarise functions by
+  [@ilovemane](https://github.com/ilovemane) in
+  [\#383](https://github.com/darwin-eu/CohortCharacteristics/issues/383)
+
 ## CohortCharacteristics 1.1.0
 
 CRAN release: 2025-11-19

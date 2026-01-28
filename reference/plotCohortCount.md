@@ -10,7 +10,7 @@ plotCohortCount(
   x = NULL,
   facet = c("cdm_name"),
   colour = NULL,
-  style = "default"
+  style = NULL
 )
 ```
 
@@ -35,12 +35,13 @@ plotCohortCount(
 
 - style:
 
-  Named list that specifies how to style the different parts of the
-  table generated. It can either be a pre-defined style ("default" or
-  "darwin" - the latter just for gt and flextable), NULL to get the
-  table default style, or custom. Keep in mind that styling code is
-  different for all table styles. To see the different styles see
-  [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html).
+  Visual theme to apply. Character, or `NULL`. If a character, this may
+  be either the name of a built-in style (see `plotStyle()`), or a path
+  to a `.yml` file that defines a custom style. If NULL, the function
+  will use the explicit default style, unless a global style option is
+  set (see `setGlobalPlotOptions()`), or a \_brand.yml file is present
+  (in that order). Refer to the package vignette on styles to learn
+  more.
 
 ## Value
 
@@ -55,8 +56,8 @@ library(PatientProfiles)
 library(dplyr, warn.conflicts = FALSE)
 
 cdm <- mockCohortCharacteristics(numberIndividuals = 100)
-#> Warning: There are observation period end dates after the current date: 2025-11-19
-#> ℹ The latest max observation period end date found is 2032-03-12
+#> Warning: There are observation period end dates after the current date: 2026-01-28
+#> ℹ The latest max observation period end date found is 2032-09-05
 
 counts <- cdm$cohort2 |>
   addSex() |>

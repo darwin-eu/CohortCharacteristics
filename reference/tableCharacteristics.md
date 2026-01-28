@@ -7,11 +7,11 @@
 ``` r
 tableCharacteristics(
   result,
-  type = "gt",
+  type = NULL,
   header = c("cdm_name", "cohort_name"),
   groupColumn = character(),
   hide = c(additionalColumns(result), settingsColumns(result)),
-  style = "default",
+  style = NULL,
   .options = list()
 )
 ```
@@ -24,8 +24,11 @@ tableCharacteristics(
 
 - type:
 
-  Type of table. Check supported types with
-  [`visOmopResults::tableType()`](https://darwin-eu.github.io/visOmopResults/reference/tableType.html).
+  Character string specifying the desired output table format. See
+  [`visOmopResults::tableType()`](https://darwin-eu.github.io/visOmopResults/reference/tableType.html)
+  for supported table types. If type = `NULL`, global options (set via
+  [`visOmopResults::setGlobalTableOptions()`](https://darwin-eu.github.io/visOmopResults/reference/setGlobalTableOptions.html))
+  will be used if available; otherwise, a default 'gt' table is created.
 
 - header:
 
@@ -43,12 +46,26 @@ tableCharacteristics(
 
 - style:
 
-  Named list that specifies how to style the different parts of the
-  table generated. It can either be a pre-defined style ("default" or
-  "darwin" - the latter just for gt and flextable), NULL to get the
-  table default style, or custom. Keep in mind that styling code is
-  different for all table styles. To see the different styles see
-  [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html).
+  Defines the visual formatting of the table. This argument can be
+  provided in one of the following ways:
+
+  1.  **Pre-defined style**: Use the name of a built-in style (e.g.,
+      "darwin"). See
+      [`visOmopResults::tableStyle()`](https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html)
+      for available options.
+
+  2.  **YAML file path**: Provide the path to an existing .yml file
+      defining a new style.
+
+  3.  **List of custome R code**: Supply a block of custom R code or a
+      named list describing styles for each table section. This code
+      must be specific to the selected table type.
+
+  If style = `NULL`, the function will use global options (see
+  [`visOmopResults::setGlobalTableOptions()`](https://darwin-eu.github.io/visOmopResults/reference/setGlobalTableOptions.html))
+  or an existing `_brand.yml` file (if found); otherwise, the default
+  style is applied. For more details, see the *Styles* vignette in
+  **visOmopResults** website.
 
 - .options:
 
@@ -67,6 +84,8 @@ A formatted table.
 library(CohortCharacteristics)
 
 cdm <- mockCohortCharacteristics()
+#> Warning: There are observation period end dates after the current date: 2026-01-28
+#> ℹ The latest max observation period end date found is 2030-07-06
 
 result <- summariseCharacteristics(cdm$cohort1)
 #> ℹ adding demographics columns
@@ -107,11 +126,11 @@ Number records
 
 N
 
+4
+
 3
 
-2
-
-5
+3
 
 Number subjects
 
@@ -119,11 +138,11 @@ Number subjects
 
 N
 
+4
+
 3
 
-2
-
-5
+3
 
 Cohort start date
 
@@ -131,19 +150,19 @@ Cohort start date
 
 Median \[Q25 - Q75\]
 
-1939-04-04 \[1931-03-07 - 1962-11-03\]
+1956-03-13 \[1934-06-15 - 1983-10-06\]
 
-1956-05-23 \[1952-07-16 - 1960-03-30\]
+1980-10-23 \[1945-11-16 - 1985-12-18\]
 
-1970-07-27 \[1928-11-20 - 1970-12-30\]
+1932-12-15 \[1924-12-14 - 1937-04-05\]
 
 Range
 
-1923-02-07 to 1986-06-03
+1932-01-19 to 2003-08-17
 
-1948-09-07 to 1964-02-06
+1910-12-10 to 1991-02-12
 
-1918-02-19 to 1986-06-26
+1916-12-12 to 1941-07-25
 
 Cohort end date
 
@@ -151,19 +170,19 @@ Cohort end date
 
 Median \[Q25 - Q75\]
 
-1943-03-31 \[1934-08-30 - 1965-04-29\]
+1960-05-09 \[1935-12-13 - 1992-12-27\]
 
-1957-10-13 \[1953-11-08 - 1961-09-17\]
+1985-09-18 \[1949-02-26 - 1988-06-17\]
 
-1976-02-14 \[1944-02-02 - 1995-01-09\]
+1934-12-20 \[1926-07-11 - 1940-10-02\]
 
 Range
 
-1926-01-28 to 1987-05-28
+1935-02-09 to 2018-07-05
 
-1949-12-05 to 1965-08-21
+1912-08-07 to 1991-03-16
 
-1920-06-10 to 2002-07-14
+1918-01-29 to 1946-07-16
 
 Age
 
@@ -171,27 +190,27 @@ Age
 
 Median \[Q25 - Q75\]
 
-16 \[16 - 18\]
+12 \[8 - 17\]
 
-15 \[9 - 21\]
+23 \[13 - 30\]
 
-16 \[5 - 22\]
+11 \[8 - 16\]
 
 Mean (SD)
 
-16.67 (2.08)
+12.75 (10.69)
 
-15.00 (16.97)
+21.33 (17.56)
 
-13.60 (10.78)
+12.33 (9.07)
 
 Range
 
-15 to 19
+0 to 26
 
-3 to 27
+3 to 38
 
-0 to 25
+4 to 22
 
 Sex
 
@@ -199,21 +218,21 @@ Female
 
 N (%)
 
-2 (66.67%)
+2 (50.00%)
 
-1 (50.00%)
+1 (33.33%)
 
-2 (40.00%)
+3 (100.00%)
 
 Male
 
 N (%)
 
-1 (33.33%)
+2 (50.00%)
 
-1 (50.00%)
+2 (66.67%)
 
-3 (60.00%)
+–
 
 Prior observation
 
@@ -221,27 +240,27 @@ Prior observation
 
 Median \[Q25 - Q75\]
 
-5,937 \[5,726 - 6,515\]
+4,621 \[3,096 - 6,279\]
 
-5,621 \[3,483 - 7,759\]
+8,696 \[5,068 - 11,308\]
 
-6,207 \[1,875 - 8,359\]
+4,363 \[3,014 - 6,374\]
 
 Mean (SD)
 
-6,182.00 (816.55)
+4,754.00 (3,974.25)
 
-5,621.00 (6,047.18)
+8,018.67 (6,268.51)
 
-5,191.00 (3,995.19)
+4,804.33 (3,380.67)
 
 Range
 
-5,516 to 7,093
+50 to 9,724
 
-1,345 to 9,897
+1,439 to 13,921
 
-207 to 9,307
+1,666 to 8,384
 
 Future observation
 
@@ -249,27 +268,27 @@ Future observation
 
 Median \[Q25 - Q75\]
 
-6,601 \[6,402 - 7,606\]
+6,548 \[2,965 - 9,649\]
 
-1,005 \[990 - 1,020\]
+2,478 \[1,309 - 3,920\]
 
-3,803 \[2,547 - 6,393\]
+2,078 \[1,409 - 2,210\]
 
 Mean (SD)
 
-7,138.67 (1,291.37)
+6,065.25 (4,296.56)
 
-1,005.00 (43.84)
+2,659.67 (2,615.24)
 
-5,330.00 (4,025.61)
+1,720.00 (858.91)
 
 Range
 
-6,203 to 8,612
+1,344 to 9,820
 
-974 to 1,036
+140 to 5,361
 
-2,037 to 11,870
+740 to 2,342
 
 Days in cohort
 
@@ -277,27 +296,27 @@ Days in cohort
 
 Median \[Q25 - Q75\]
 
-1,087 \[724 - 1,272\]
+1,900 \[928 - 3,372\]
 
-509 \[482 - 536\]
+607 \[320 - 1,200\]
 
-3,120 \[1,873 - 5,553\]
+736 \[575 - 1,277\]
 
 Mean (SD)
 
-968.33 (558.54)
+2,398.50 (2,245.36)
 
-509.00 (76.37)
+810.67 (897.01)
 
-4,613.00 (4,322.01)
+989.33 (735.48)
 
 Range
 
-360 to 1,458
+356 to 5,437
 
-455 to 563
+33 to 1,792
 
-843 to 11,676
+414 to 1,818
 
 Days to next record
 

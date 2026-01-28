@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +36,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>create a ggplot from the output of summariseLargeScaleCharacteristics.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/v1.1.0/R/plotLargeScaleCharacteristics.R" class="external-link"><code>R/plotLargeScaleCharacteristics.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/darwin-eu/CohortCharacteristics/blob/main/R/plotLargeScaleCharacteristics.R" class="external-link"><code>R/plotLargeScaleCharacteristics.R</code></a></small>
       <div class="d-none name"><code>plotLargeScaleCharacteristics.Rd</code></div>
     </div>
 
@@ -50,7 +50,7 @@
 <span>  <span class="va">result</span>,</span>
 <span>  facet <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cdm_name"</span>, <span class="st">"cohort_name"</span><span class="op">)</span>,</span>
 <span>  colour <span class="op">=</span> <span class="st">"variable_level"</span>,</span>
-<span>  style <span class="op">=</span> <span class="st">"default"</span></span>
+<span>  style <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,11 +74,12 @@ columns.</p></dd>
 
 
 <dt id="arg-style">style<a class="anchor" aria-label="anchor" href="#arg-style"></a></dt>
-<dd><p>Named list that specifies how to style the different parts of
-the table generated. It can either be a pre-defined style ("default" or
-"darwin" - the latter just for gt and flextable), NULL to get the table
-default style, or custom. Keep in mind that styling code is different for
-all table styles. To see the different styles see <code><a href="https://darwin-eu.github.io/visOmopResults/reference/tableStyle.html" class="external-link">visOmopResults::tableStyle()</a></code>.</p></dd>
+<dd><p>Visual theme to apply. Character, or <code>NULL</code>. If a character, this
+may be either the name of a built-in style (see <code>plotStyle()</code>), or a path to
+a <code>.yml</code> file that defines a custom style. If NULL, the function will use the
+explicit default style, unless a global style option is set (see
+<code>setGlobalPlotOptions()</code>), or a _brand.yml file is present (in that order).
+Refer to the package vignette on styles to learn more.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -121,7 +122,7 @@ all table styles. To see the different styles see <code><a href="https://darwin-
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Marti Catala, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Nuria Mercade-Besora, Marta Alcalde.</p>
+  <p>Developed by Martí Català, Yuchen Guo, Kim Lopez-Guell, Edward Burn, Nuria Mercade-Besora, Marta Alcalde.</p>
 </div>
 
 <div class="pkgdown-footer-right">

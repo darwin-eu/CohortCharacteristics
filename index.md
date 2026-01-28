@@ -281,9 +281,8 @@ result |>
 
 Disconnect from your database using
 [`CDMConnector::cdmDisconnect()`](https://darwin-eu.github.io/omopgenerics/reference/cdmDisconnect.html)
-to close the connection or with
-[`mockDisconnect()`](https://darwin-eu.github.io/PatientProfiles/reference/mockDisconnect.html)
-to close connection and delete the created mock data:
+to close the connection or with `mockDisconnect()` to close connection
+and delete the created mock data:
 
 ``` r
 mockDisconnect(cdm)
