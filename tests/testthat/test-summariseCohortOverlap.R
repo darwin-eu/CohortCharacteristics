@@ -43,7 +43,14 @@ test_that("summariseCohortOverlap", {
   ) |>
     copyCdm()
 
+  #check empty table
+  overlap_empty <- summariseCohortOverlap(cdm$table |> dplyr::filter(cohort_definition_id == 200))
+
+  expect_true(overlap_empty |> dplyr::tally() == 0)
+  expect_true(omopgenerics::settings(overlap_empty) |> dplyr::tally() > 0)
+
   overlap1 <- summariseCohortOverlap(cdm$table)
+
   expect_equal(
     omopgenerics::resultColumns("summarised_result"),
     colnames(overlap1)

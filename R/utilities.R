@@ -58,15 +58,6 @@ changeDaysToYears <- function(x, est = NULL, fact = 1 / 365.25) {
       estimate_type = dplyr::if_else(.env$id, "numeric", .data$estimate_type)
     )
 }
-emptyPlot <- function(title = "No result to plot",
-                      subtitle = "") {
-  ggplot2::ggplot() +
-    ggplot2::theme_void() +
-    ggplot2::labs(
-      title = title,
-      subtitle = subtitle
-    )
-}
 pkgVersion <- function() {
   as.character(utils::packageVersion("CohortCharacteristics"))
 }

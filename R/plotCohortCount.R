@@ -51,7 +51,7 @@ plotCohortCount <- function(result,
                             x = NULL,
                             facet = c("cdm_name"),
                             colour = NULL,
-                            style = "default") {
+                            style = NULL) {
   p <- plotInternal(
     result = result,
     resultType = "summarise_cohort_count",

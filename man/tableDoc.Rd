@@ -4,8 +4,10 @@
 \alias{tableDoc}
 \title{Helper for consistent documentation of \code{table}.}
 \arguments{
-\item{type}{Type of table. Check supported types with
-\code{visOmopResults::tableType()}.}
+\item{type}{Character string specifying the desired output table format. See
+\code{visOmopResults::tableType()} for supported table types. If type = \code{NULL},
+global options (set via \code{visOmopResults::setGlobalTableOptions()}) will be
+used if available; otherwise, a default 'gt' table is created.}
 
 \item{header}{Columns to use as header. See options with
 \code{availableTableColumns(result)}.}
@@ -16,14 +18,26 @@
 \item{hide}{Columns to hide from the visualisation. See options with
 \code{availableTableColumns(result)}.}
 
-\item{style}{Named list that specifies how to style the different parts of
-the table generated. It can either be a pre-defined style ("default" or
-"darwin" - the latter just for gt and flextable), NULL to get the table
-default style, or custom. Keep in mind that styling code is different for
-all table styles. To see the different styles see \code{visOmopResults::tableStyle()}.}
+\item{style}{Defines the visual formatting of the table. This argument can
+be provided in one of the following ways:
+\enumerate{
+\item \strong{Pre-defined style}: Use the name of a built-in style (e.g., "darwin").
+See \code{visOmopResults::tableStyle()} for available options.
+\item \strong{YAML file path}: Provide the path to an existing .yml file defining a
+new style.
+\item \strong{List of custome R code}: Supply a block of custom R code or a named
+list describing styles for each table section. This code must be specific to
+the selected table type.
+}
+
+If style = \code{NULL}, the function will use global
+options (see \code{visOmopResults::setGlobalTableOptions()}) or an existing
+\verb{_brand.yml} file (if found); otherwise, the default style is applied. For
+more details, see the \emph{Styles} vignette in \strong{visOmopResults} website.}
 
 \item{.options}{A named list with additional formatting options.
-\code{visOmopResults::tableOptions()} shows allowed arguments and their default values.}
+\code{visOmopResults::tableOptions()} shows allowed arguments and their default
+values.}
 }
 \description{
 Helper for consistent documentation of \code{table}.

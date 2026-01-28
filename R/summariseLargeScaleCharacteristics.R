@@ -85,7 +85,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
   tables <- c(
     "visit_occurrence", "condition_occurrence", "drug_exposure",
     "procedure_occurrence", "device_exposure", "measurement", "observation",
-    "drug_era", "condition_era", "specimen",
+    "drug_era", "condition_era", "specimen", "visit_detail",
     paste("ATC", c("1st", "2nd", "3rd", "4th", "5th"))
   )
   omopgenerics::assertChoice(eventInWindow, tables, null = TRUE)
@@ -94,6 +94,7 @@ summariseLargeScaleCharacteristics <- function(cohort,
     cli::cli_abort("'eventInWindow' or 'episodeInWindow' must be provided")
   }
   omopgenerics::assertLogical(includeSource)
+  includeSource <- unique(includeSource)
 
   if (length(includeSource) > 2) {
     cli::cli_abort("{.arg includeSource} must have length 1 or 2,
@@ -104,10 +105,24 @@ summariseLargeScaleCharacteristics <- function(cohort,
   omopgenerics::assertNumeric(excludedCodes, integerish = TRUE, null = TRUE)
 
   cdm <- omopgenerics::validateCdmArgument(cdm)
-  #includeSource
-  uniqueIncludeSource <- unique(includeSource) |> length()
-  if (uniqueIncludeSource == 2) {
-    includeSource = TRUE
+
+  if (length(includeSource) == 2) {
+    runLsc <- \(x) {
+      summariseLargeScaleCharacteristics(
+        cohort = cohort,
+        cohortId = cohortId,
+        strata = strata,
+        window = window,
+        eventInWindow = eventInWindow,
+        episodeInWindow = episodeInWindow,
+        indexDate = indexDate,
+        censorDate = censorDate,
+        includeSource = x,
+        minimumFrequency = minimumFrequency,
+        excludedCodes = excludedCodes
+      )
+    }
+    return(omopgenerics::bind(runLsc(TRUE), runLsc(FALSE)))
   }
 
   # get analysis table
@@ -190,22 +205,6 @@ summariseLargeScaleCharacteristics <- function(cohort,
     addCols <- c("concept_id", "source_concept_id", "source_concept_name")
   } else {
     addCols <- "concept_id"
-  }
-
-  # count by concept_id when includeSource is TRUE
-  if (uniqueIncludeSource == 2){
-
-  lsc_standard <- lsc |>
-    dplyr::select(-dplyr::any_of(c("source"))) |>
-    dplyr::group_by(
-      .data$concept, .data$strata_name, .data$strata_level,
-      .data$group_name, .data$group_level, .data$window_name,
-      .data$table_name, .data$type
-    ) |>
-    dplyr::summarise(count = sum(.data$count), .groups = "drop") |>
-    dplyr::mutate(analysis = "standard")
-
-  lsc <- dplyr::bind_rows(lsc, lsc_standard)
   }
 
   # format results
@@ -321,9 +320,9 @@ getInitialTable <- function(cohort, tablePrefix, indexDate, censorDate) {
       "end_obs"
     ) |>
     dplyr::distinct() |>
-    dbplyr::window_order(.data$subject_id, .data$cohort_start_date) |>
+    dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
     dplyr::mutate(obs_id = dplyr::row_number()) |>
-    dbplyr::window_order() |>
+    dplyr::arrange() |>
     dplyr::compute(name = paste0(tablePrefix, "individuals"))
   return(x)
 }

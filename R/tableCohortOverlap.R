@@ -40,11 +40,11 @@
 #'
 tableCohortOverlap <- function(result,
                                uniqueCombinations = TRUE,
-                               type = "gt",
+                               type = NULL,
                                header = c("variable_name"),
                                groupColumn = c("cdm_name"),
                                hide = c("variable_level", settingsColumns(result)),
-                               style = "default",
+                               style = NULL,
                                .options = list()) {
   omopgenerics::assertLogical(uniqueCombinations, length = 1)
   result |>

@@ -38,11 +38,11 @@
 #' }
 #'
 tableCohortAttrition <- function(result,
-                                 type = "gt",
+                                 type = NULL,
                                  header = "variable_name",
                                  groupColumn = c("cdm_name", "cohort_name"),
                                  hide = c("variable_level", "reason_id", "estimate_name", settingsColumns(result)),
-                                 style = "default",
+                                 style = NULL,
                                  .options = list()) {
   result |>
     tableCohortCharacteristics(

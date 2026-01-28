@@ -10,7 +10,7 @@ plotComparedLargeScaleCharacteristics(
   reference = NULL,
   facet = NULL,
   missings = 0,
-  style = "default"
+  style = NULL
 )
 }
 \arguments{
@@ -29,11 +29,12 @@ columns.}
 \item{missings}{Value to replace the missing value with. If NULL missing
 values will be eliminated.}
 
-\item{style}{Named list that specifies how to style the different parts of
-the table generated. It can either be a pre-defined style ("default" or
-"darwin" - the latter just for gt and flextable), NULL to get the table
-default style, or custom. Keep in mind that styling code is different for
-all table styles. To see the different styles see \code{visOmopResults::tableStyle()}.}
+\item{style}{Visual theme to apply. Character, or \code{NULL}. If a character, this
+may be either the name of a built-in style (see \code{plotStyle()}), or a path to
+a \code{.yml} file that defines a custom style. If NULL, the function will use the
+explicit default style, unless a global style option is set (see
+\code{setGlobalPlotOptions()}), or a _brand.yml file is present (in that order).
+Refer to the package vignette on styles to learn more.}
 }
 \value{
 A ggplot.

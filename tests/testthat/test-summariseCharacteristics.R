@@ -375,8 +375,8 @@ test_that("test summariseCharacteristics", {
   )
 
   expect_true(all(c("Blood type", "Number visits") %in% result$variable_name))
-  expect_true("mean" == unique(result$estimate_name[result$variable_name == "Number visits"]))
-  expect_true("count" == unique(result$estimate_name[result$variable_name == "Blood type"]))
+  expect_true("mean" %in% unique(result$estimate_name[result$variable_name == "Number visits"]))
+  expect_true("count" %in% unique(result$estimate_name[result$variable_name == "Blood type"]))
 
   expect_no_error(
     result <- summariseCharacteristics(
@@ -397,7 +397,7 @@ test_that("test summariseCharacteristics", {
     c("count", "percentage")
   )
   expect_true("Number visits" %in% result$variable_name |> unique())
-  expect_true("mean" == unique(result$estimate_name[result$variable_name == "Number visits"]))
+  expect_true("mean" %in% unique(result$estimate_name[result$variable_name == "Number visits"]))
 
   expect_no_error(
     result <- summariseCharacteristics(
@@ -413,8 +413,8 @@ test_that("test summariseCharacteristics", {
   )
 
   expect_true(all(c("Blood type", "Number visits") %in% result$variable_name))
-  expect_true("mean" == unique(result$estimate_name[result$variable_name == "Number visits"]))
-  expect_true("count" == unique(result$estimate_name[result$variable_name == "Blood type"]))
+  expect_true("mean" %in% unique(result$estimate_name[result$variable_name == "Number visits"]))
+  expect_true("count" %in% unique(result$estimate_name[result$variable_name == "Blood type"]))
 
   dropCreatedTables(cdm = cdm)
 })
@@ -1557,11 +1557,13 @@ test_that("test estimates", {
   result <- cdm$cohort1 |>
     summariseCharacteristics(estimates = list(age = "density"))
   estimatesAge <- result |>
+    dplyr::mutate(estimate_name = stringr::str_remove(estimate_name, "_\\d+$")) |>
     dplyr::filter(variable_name == "Age") |>
     dplyr::distinct(.data$estimate_name) |>
     dplyr::pull() |>
     sort()
-  expect_identical(estimatesAge, c("density_x", "density_y"))
+  expect_true(all(c("min", "q25","median",
+                          "q75","max","mean","sd","density_x","density_y") %in% estimatesAge))
 
   resultNormal <- cdm$cohort1 |>
     summariseCharacteristics() |>
@@ -1578,7 +1580,7 @@ test_that("test estimates", {
     dplyr::filter(.data$estimate_type == "date") |>
     dplyr::distinct(.data$estimate_name) |>
     dplyr::pull()
-  expect_identical(estimatesDate, "median")
+  expect_true("median" %in% estimatesDate)
 
   # ignored field
   expect_warning(

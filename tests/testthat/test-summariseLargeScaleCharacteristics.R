@@ -71,11 +71,13 @@ test_that("basic functionality summarise large scale characteristics", {
   ) |>
     copyCdm()
 
-  table_empty_1 <- cdm$cohort1 |> dplyr::filter(subject_id == 3)
+  table_empty_1 <- cdm$cohort1 |>
+    dplyr::filter(subject_id == 3)
 
-  expect_message(summariseLargeScaleCharacteristics(table_empty_1,
-                                                    eventInWindow = c("drug_exposure",
-                                                                      "condition_occurrence")))
+  expect_message(summariseLargeScaleCharacteristics(
+    table_empty_1,
+    eventInWindow = c("drug_exposure", "condition_occurrence")
+  ))
 
   concept <- dplyr::tibble(
     concept_id = c(1125315L, 1503328L, 1516978L, 317009L, 378253L, 4266367L),
@@ -277,9 +279,11 @@ test_that("basic functionality summarise large scale characteristics", {
   cdm <- omock::mockCdmFromDataset(datasetName = dbName, source = "local") |>
     copyCdm()
 
-  cdm <- CDMConnector::generateConceptCohortSet(cdm = cdm,
-                                                conceptSet = list(avp = 4112343),
-                                                name = "my_cohort")
+  cdm <- CDMConnector::generateConceptCohortSet(
+    cdm = cdm,
+    conceptSet = list(avp = 4112343),
+    name = "my_cohort"
+  )
 
   # include source table
   expect_no_error(
@@ -360,6 +364,33 @@ test_that("basic functionality summarise large scale characteristics", {
   expect_true("source_concept_id" %in% colnames(result2))
   expect_true("source_concept_name" %in% colnames(result2))
 
+  # source TRUE and FALSE combined
+  expect_no_error(
+    result1 <- cdm$my_cohort |>
+      summariseLargeScaleCharacteristics(
+        eventInWindow = c("condition_occurrence", "drug_exposure"),
+        minimumFrequency = 0,
+        includeSource = TRUE
+      )
+  )
+  expect_no_error(
+    result2 <- cdm$my_cohort |>
+      summariseLargeScaleCharacteristics(
+        eventInWindow = c("condition_occurrence", "drug_exposure"),
+        minimumFrequency = 0,
+        includeSource = FALSE
+      )
+  )
+  expect_no_error(
+    result3 <- cdm$my_cohort |>
+      summariseLargeScaleCharacteristics(
+        eventInWindow = c("condition_occurrence", "drug_exposure"),
+        minimumFrequency = 0,
+        includeSource = c(TRUE, FALSE)
+      )
+  )
+  expect_identical(result3, omopgenerics::bind(result1, result2))
+
   dropCreatedTables(cdm = cdm)
 
   skip("github tests break if we load the covid db")
@@ -399,6 +430,20 @@ test_that("basic functionality summarise large scale characteristics", {
         includeSource = TRUE
       )
   )
+
+  ##visit detail
+  expect_no_error(
+    result_visit <- cdm$my_cohort |>
+      summariseLargeScaleCharacteristics(
+        eventInWindow = "visit_detail",
+        includeSource = TRUE
+      )
+  )
+
+  expect_true(omopgenrics::settings(result_visit) |>
+                dplyr::pull(table_name) == "visit_detail")
+
+
   result2 <- tidy(result2)
   expect_true("concept_id" %in% colnames(result2))
   expect_true("source_concept_id" %in% colnames(result2))

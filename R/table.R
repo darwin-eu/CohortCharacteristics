@@ -77,7 +77,7 @@ tableCohortCharacteristics <- function(result,
     omopgenerics::filterSettings(.data$result_type == .env$resultType)
   if (nrow(result) == 0) {
     cli::cli_warn("There are no results with `result_type = {resultType}`")
-    return(emptyTable(type, style))
+    return(visOmopResults::emptyTable(style = style, type = type))
   }
 
   checkVersion(result)
@@ -122,8 +122,4 @@ tableCohortCharacteristics <- function(result,
       style = style,
       .options = .options
     )
-}
-emptyTable <- function(type, style) {
-  omopgenerics::emptySummarisedResult() |>
-    visOmopResults::visOmopTable(type = type, style = style)
 }

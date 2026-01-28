@@ -38,7 +38,7 @@ plotInternal <- function(result,
     mes <- "No results found with `result_type == '{resultType}'`" |>
       glue::glue()
     cli::cli_warn(mes)
-    return(emptyPlot(mes))
+    return(visOmopResults::emptyPlot(title = mes, style = style, type = "ggplot"))
   }
 
   checkVersion(result)
@@ -52,7 +52,7 @@ plotInternal <- function(result,
         cli::cli_fmt(collapse = TRUE) |>
         stringr::str_replace(pattern = "\n", replacement = " ")
       cli::cli_warn(mes)
-      return(emptyPlot(mes))
+      return(visOmopResults::emptyPlot(title = mes, style = style, type = "ggplot"))
     }
   }
 
@@ -69,8 +69,17 @@ plotInternal <- function(result,
         )
     }
   } else if (plotType == "densityplot") {
+
+
+
+
     result <- result |>
+      dplyr::mutate(estimate_name = stringr::str_remove(.data$estimate_name, "_\\d+$")) |>
       dplyr::filter(.data$estimate_name %in% c("density_x", "density_y"))
+
+
+
+
     if (toYears) {
       result <- result |>
         dplyr::mutate(estimate_value = dplyr::if_else(

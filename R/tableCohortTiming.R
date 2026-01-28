@@ -51,11 +51,11 @@
 tableCohortTiming <- function(result,
                               timeScale = "days",
                               uniqueCombinations = TRUE,
-                              type = "gt",
+                              type = NULL,
                               header = strataColumns(result),
                               groupColumn = c("cdm_name"),
                               hide = c("variable_level", settingsColumns(result)),
-                              style = "default",
+                              style = NULL,
                               .options = list()) {
   omopgenerics::assertChoice(timeScale, c("days", "years"), length = 1)
   omopgenerics::assertLogical(uniqueCombinations, length = 1)

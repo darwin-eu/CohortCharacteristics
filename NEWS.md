@@ -1,3 +1,11 @@
+# CohortCharacteristics 1.1.1
+
+* Update default of style and type to NULL by @catalamarti in #381 #394
+* Issue with TRUE and FALSE in LSC by @catalamarti in #391
+* Add support for 'visit_detail' in summariseLargeScaleCharacteristics by @ilovemane in #392
+* Refine handling of density estimates in characteristics by @ilovemane in #387
+* Handle empty cohort tables in summarise functions by @ilovemane in #383
+
 # CohortCharacteristics 1.1.0
 
 * Add style argument to account for `visOmopResults` release by @ilovemane @catalamarti in #360

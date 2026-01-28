@@ -38,11 +38,11 @@
 #' }
 #'
 tableCohortCount <- function(result,
-                             type = "gt",
+                             type = NULL,
                              header = "cohort_name",
                              groupColumn = character(),
                              hide = c("variable_level", settingsColumns(result)),
-                             style = "default",
+                             style = NULL,
                              .options = list()) {
   result |>
     tableCohortCharacteristics(
