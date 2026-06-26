@@ -329,6 +329,11 @@ summariseCharacteristics <- function(cohort,
       if (type == "cohort") {
         # cohort variables
         cohortInterest <- val$targetCohortTable
+        if ("targetCohortId" %in% names(val)) {
+          val$targetCohortId <- omopgenerics::validateCohortIdArgument(
+            val$targetCohortId, cohort = cdm[[cohortInterest]],
+          )
+        }
         set <- settings(cdm[[cohortInterest]])
         shortNames <- uniqueVariableName(nrow(set))
         attr(cdm[[cohortInterest]], "cohort_set") <- set |>
