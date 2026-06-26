@@ -172,8 +172,13 @@ summariseLargeScaleCharacteristics <- function(cohort,
     " - getting characteristics from table {.pkg {tab}} ({i} of {length(tables)})" |>
       cli::cli_progress_message()
     analysesTable <- analyses |> dplyr::filter(.data$table == .env$tab)
+    if(all(analysesTable$type == "event")){
+      onlyEvent <- TRUE
+    } else {
+      onlyEvent <- FALSE
+    }
     table <- getTable(
-      tab, x, includeSource, minWindow, maxWindow, tablePrefix
+      tab, x, includeSource, minWindow, maxWindow, tablePrefix, onlyEvent
     )
     for (k in seq_len(nrow(analysesTable))) {
       tableAnalysis <- getTableAnalysis(table, analysesTable[k, ], tablePrefix)
@@ -323,53 +328,104 @@ getInitialTable <- function(cohort, tablePrefix, indexDate, censorDate) {
     dplyr::arrange(.data$subject_id, .data$cohort_start_date) |>
     dplyr::mutate(obs_id = dplyr::row_number()) |>
     dplyr::arrange() |>
-    dplyr::compute(name = paste0(tablePrefix, "individuals"))
+    dplyr::mutate(
+      window_start = as.Date(clock::add_days(.data$cohort_start_date, .data$start_obs)),
+      window_end   = as.Date(clock::add_days(.data$cohort_start_date, .data$end_obs))
+    ) |>
+    dplyr::compute(name = paste0(tablePrefix, "individuals"),
+                   logPrefix = "CohortCharacteristics.getInitialTable")
+  addIndex(x, "subject_id")
   return(x)
 }
-getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix) {
+getTable <- function(tab, x, includeSource, minWindow, maxWindow, tablePrefix, onlyEvent) {
   cdm <- omopgenerics::cdmReference(x)
   toSelect <- c(
-    "subject_id" = "person_id",
-    "start_diff" = PatientProfiles::startDateColumn(tab),
-    "end_diff" = PatientProfiles::endDateColumn(tab) |>
-      dplyr::coalesce(PatientProfiles::startDateColumn(tab)),
     "standard" = PatientProfiles::standardConceptIdColumn(tab),
     "source" = PatientProfiles::sourceConceptIdColumn(tab)
   )
   if (includeSource == FALSE || is.na(PatientProfiles::sourceConceptIdColumn(tab))) {
     toSelect <- toSelect["source" != names(toSelect)]
   }
-  table <- cdm[[tab]] |>
-    dplyr::select(dplyr::all_of(toSelect)) |>
-    dplyr::inner_join(x, by = "subject_id") |>
-    dplyr::mutate(
-      end_diff = dplyr::coalesce(.data$end_diff, .data$start_diff),
-      start_diff = clock::date_count_between(
-        start = .data$cohort_start_date,
-        end = .data$start_diff,
-        precision = "day"
-      ),
-      end_diff = clock::date_count_between(
-        start = .data$cohort_start_date,
-        end = .data$end_diff,
-        precision = "day"
-      )
-    ) |>
-    dplyr::filter(
-      .data$end_diff >= .data$start_obs & .data$start_diff <= .data$end_obs
-    )
+
+  if (onlyEvent) {
+    filterSpec <- glue::glue(".data[[PatientProfiles::startDateColumn(tab)]] >= .data$window_start & .data[[PatientProfiles::startDateColumn(tab)]] <= .data$window_end")
+  } else {
+    filterSpec <- glue::glue(".data$coalesced_end >= .data$window_start & .data[[PatientProfiles::startDateColumn(tab)]] <= .data$window_end")
+  }
   if (!is.infinite(minWindow)) {
-    table <- table |>
-      dplyr::filter(.data$end_diff >= .env$minWindow)
+    filterSpec <- c(
+      filterSpec,
+      glue::glue(".data$end_diff >= as.integer({minWindow})")
+    )
   }
   if (!is.infinite(maxWindow)) {
-    table <- table |>
-      dplyr::filter(.data$start_diff <= .env$maxWindow)
+    filterSpec <- c(
+      filterSpec,
+      glue::glue(".data$start_diff <= as.integer({maxWindow})")
+    )
   }
-  table <- table |>
-    dplyr::select(-"start_obs", -"end_obs") |>
-    dplyr::compute(name = paste0(tablePrefix, "table"))
+  filterSpec <- filterSpec |>
+    rlang::parse_exprs()
 
+  if (onlyEvent) {
+    table <- cdm[[tab]] |>
+      dplyr::select(dplyr::all_of(c(
+        "person_id", PatientProfiles::startDateColumn(tab), unname(toSelect)
+      ))) |>
+      dplyr::inner_join(x, by = c("person_id" = "subject_id")) |>
+      dplyr::mutate(
+        start_diff = as.integer(clock::date_count_between(
+          start = .data$cohort_start_date,
+          end   = .data[[PatientProfiles::startDateColumn(tab)]],
+          precision = "day"
+        )),
+        end_diff = as.integer(clock::date_count_between(
+          start = .data$cohort_start_date,
+          end   = .data[[PatientProfiles::startDateColumn(tab)]],
+          precision = "day"
+        ))
+      ) |>
+      dplyr::filter(!!!filterSpec) |>
+      dplyr::select(dplyr::all_of(c(
+        "subject_id" = "person_id", "cohort_start_date", "start_obs", "end_obs",
+        "obs_id", "start_diff", "end_diff", toSelect
+      )))
+  } else {
+    table <- cdm[[tab]] |>
+      dplyr::select(dplyr::all_of(c(
+        "person_id", PatientProfiles::startDateColumn(tab),
+        PatientProfiles::endDateColumn(tab), unname(toSelect)
+      ))) |>
+      dplyr::inner_join(x, by = c("person_id" = "subject_id")) |>
+      dplyr::mutate(
+        coalesced_end = dplyr::coalesce(
+          .data[[PatientProfiles::endDateColumn(tab)]],
+          .data[[PatientProfiles::startDateColumn(tab)]]
+        )
+      ) |>
+      dplyr::mutate(
+        start_diff = as.integer(clock::date_count_between(
+          start = .data$cohort_start_date,
+          end   = .data[[PatientProfiles::startDateColumn(tab)]],
+          precision = "day"
+        )),
+        end_diff = as.integer(clock::date_count_between(
+          start = .data$cohort_start_date,
+          end   = .data$coalesced_end,
+          precision = "day"
+        )
+      )) |>
+      dplyr::filter(!!!filterSpec) |>
+      dplyr::select(dplyr::all_of(c(
+        "subject_id" = "person_id", "cohort_start_date", "start_obs", "end_obs",
+        "obs_id", "start_diff", "end_diff", toSelect
+      )))
+  }
+
+  table <- table |>
+    dplyr::compute(name = paste0(tablePrefix, "table"),
+                   logPrefix = "CohortCharacteristics.getTable")
+  addIndex(table, "subject_id")
   return(table)
 }
 summariseConcept <- function(cohort, tableWindow, strata, tablePrefix) {
@@ -392,7 +448,8 @@ summariseConcept <- function(cohort, tableWindow, strata, tablePrefix) {
       dplyr::compute(
         name = paste0(tablePrefix, "table_window_cohort"),
         temporary = FALSE,
-        overwrite = TRUE
+        overwrite = TRUE,
+        logPrefix = "CohortCharacteristics.summariseConcept"
       )
     result <- result |>
       dplyr::bind_rows(
@@ -588,7 +645,8 @@ getCodesGroup <- function(table, analysis, tablePrefix) {
     dplyr::compute(
       name = paste0(tablePrefix, "table_group"),
       temporary = FALSE,
-      overwrite = TRUE
+      overwrite = TRUE,
+      logPrefix = "CohortCharacteristics.getCodesGroup"
     )
   return(table)
 }
@@ -621,7 +679,8 @@ getTableWindow <- function(table, window, tablePrefix) {
     dplyr::compute(
       name = paste0(tablePrefix, "table_window"),
       temporary = FALSE,
-      overwrite = TRUE
+      overwrite = TRUE,
+      logPrefix = "CohortCharacteristics.getTableWindow"
     )
   return(tableWindow)
 }

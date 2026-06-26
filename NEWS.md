@@ -1,3 +1,9 @@
+# CohortCharacteristics 1.1.3
+
+* optimise lsc by @edward-burn in #406
+* Update citation by @catalamarti in #408
+* Move CDMConnector to suggests by @catalamarti in #409
+
 # CohortCharacteristics 1.1.2
 
 * Fix tests for duckdb 1.5.0 by @catalamarti in #404
