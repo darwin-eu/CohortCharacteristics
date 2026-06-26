@@ -10,6 +10,7 @@ We’ll begin by creating our condition study cohorts with the
 `generateConceptCohortSet` function from `CDMConnector`.
 
 ``` r
+
 library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
@@ -58,6 +59,7 @@ characteristics in the patients included in these cohorts. We’ll create
 two different age group in below example: under 50 and 50+.
 
 ``` r
+
 chars <- cdm$injuries |>
   summariseCharacteristics(ageGroup = list(c(0, 49), c(50, Inf)))
 chars |>
@@ -98,6 +100,7 @@ future observation time measures a remaining time window for potential
 follow-up beyond cohort entry.
 
 ``` r
+
 tableCharacteristics(chars)
 ```
 
@@ -109,6 +112,7 @@ one variable. So you will need to filter the results to the variable you
 want to create a plot for beforehand.
 
 ``` r
+
 chars |>
   filter(variable_name == "Age") |>
   plotCharacteristics(
@@ -127,6 +131,7 @@ interest. In this example we added an age group variable to our cohort
 table and then created the stratification for age group in our results.
 
 ``` r
+
 chars <- cdm$injuries |>
   addAge(ageGroup = list(
     c(0, 49),
@@ -139,6 +144,7 @@ Again we used the `tableCharacteristics` function to display the results
 in gt table format.
 
 ``` r
+
 tableCharacteristics(chars,
   groupColumn = "age_group"
 )
@@ -149,6 +155,7 @@ tableCharacteristics(chars,
 Then plotted age stratified prior observation time.
 
 ``` r
+
 chars |>
   filter(variable_name == "Prior observation") |>
   plotCharacteristics(
@@ -167,6 +174,7 @@ We explored whether patients had any exposure to a list of selected
 medications (acetaminophen, morphine, warfarin)
 
 ``` r
+
 medsCs <- getDrugIngredientCodes(
   cdm = cdm,
   name = c("acetaminophen", "morphine", "warfarin")
@@ -185,6 +193,7 @@ We can use the `intersects` arguement inside the function to get this
 information.
 
 ``` r
+
 chars <- cdm$injuries |>
   summariseCharacteristics(cohortIntersectFlag = list(
     "Medications prior to index date" = list(
@@ -201,6 +210,7 @@ chars <- cdm$injuries |>
 To view the summary table
 
 ``` r
+
 tableCharacteristics(chars)
 ```
 
@@ -209,6 +219,7 @@ tableCharacteristics(chars)
 To visualise the exposure of these drugs in a bar plot.
 
 ``` r
+
 plot_data <- chars |>
   filter(
     variable_name == "Medications prior to index date",
@@ -234,6 +245,7 @@ Instead of creating cohorts, we could have directly used our concept
 sets for medications when characterising our study cohorts.
 
 ``` r
+
 chars <- cdm$injuries |>
   summariseCharacteristics(conceptIntersectFlag = list(
     "Medications prior to index date" = list(
@@ -256,6 +268,7 @@ observation period. Meanwhile, when working with concept sets we will
 instead be working directly with record-level data.
 
 ``` r
+
 tableCharacteristics(chars)
 ```
 
@@ -268,6 +281,7 @@ in other clinical tables of the OMOP CDM. For example, here we add a
 count of visit occurrences
 
 ``` r
+
 chars <- cdm$injuries |>
   summariseCharacteristics(
     tableIntersectCount = list(
@@ -290,6 +304,7 @@ chars <- cdm$injuries |>
 ```
 
 ``` r
+
 tableCharacteristics(chars)
 ```
 

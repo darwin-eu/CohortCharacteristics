@@ -100,39 +100,3 @@ tableCohortCount(result)
 
 CDM name
 ```
-
-Variable name
-
-Estimate name
-
-Cohort name
-
-cohort_1
-
-cohort_2
-
-cohort_3
-
-PP_MOCK
-
-Number records
-
-N
-
-1
-
-3
-
-6
-
-Number subjects
-
-N
-
-1
-
-3
-
-6
-
-\# }

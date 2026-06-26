@@ -15,6 +15,7 @@ To show how large scale characterisation can work we’ll first create a
 first-ever ankle sprain study cohort using the Eunomia synthetic data.
 
 ``` r
+
 library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
@@ -48,6 +49,7 @@ Lastly, but important to note, we are only going to only return results
 for concepts for which at least 10% of the study cohort had a record.
 
 ``` r
+
 lsc <- cdm$ankle_sprain |>
   summariseLargeScaleCharacteristics(
     window = list(c(-Inf, -1), c(0, 0)),
@@ -70,6 +72,7 @@ summarise our results is to pick out the most frequent concepts. Here,
 for example, we select the top 5 concepts.
 
 ``` r
+
 tableTopLargeScaleCharacteristics(lsc,
                                   topConcepts = 5)
 ```
@@ -85,6 +88,7 @@ Here, for example, large scale characteristics are stratified by sex
 PatientProfiles package).
 
 ``` r
+
 lsc <- cdm$ankle_sprain |>
   addSex() |>
   summariseLargeScaleCharacteristics(
@@ -106,6 +110,7 @@ tableTopLargeScaleCharacteristics(lsc)
 visualising the large scale characteristics
 
 ``` r
+
 plotLargeScaleCharacteristics(lsc)
 ```
 
@@ -115,6 +120,7 @@ window. The reference cohort and time window are set using the
 `reference` arguement inside the function.
 
 ``` r
+
 plotComparedLargeScaleCharacteristics(
   result = lsc,
   colour = "sex",

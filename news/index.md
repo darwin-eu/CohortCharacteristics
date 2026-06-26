@@ -1,5 +1,16 @@
 # Changelog
 
+## CohortCharacteristics 1.1.2
+
+CRAN release: 2026-03-21
+
+- Fix tests for duckdb 1.5.0 by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#404](https://github.com/darwin-eu/CohortCharacteristics/issues/404)
+- Allow targetCohortId as cohort name in summariseCharacteristics by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#402](https://github.com/darwin-eu/CohortCharacteristics/issues/402)
+
 ## CohortCharacteristics 1.1.1
 
 CRAN release: 2026-01-28

@@ -56,6 +56,8 @@ library(CohortCharacteristics)
 library(dplyr, warn.conflicts = FALSE)
 
 cdm <- mockCohortCharacteristics(numberIndividuals = 100)
+#> Warning: There are observation period end dates after the current date: 2026-06-26
+#> ℹ The latest max observation period end date found is 2031-06-21
 
 summariseCohortTiming(cdm$cohort2) |>
   glimpse()

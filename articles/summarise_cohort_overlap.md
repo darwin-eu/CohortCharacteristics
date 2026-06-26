@@ -9,6 +9,7 @@ To see how this works let’s create a few medication cohorts with the
 Eunomia synthetic dataset.
 
 ``` r
+
 library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
@@ -56,6 +57,7 @@ cohortCount(cdm$meds)
 Now we have our cohorts we can summarise the overlap between them.
 
 ``` r
+
 medsOverlap <- cdm$meds |>
   summariseCohortOverlap()
 medsOverlap |>
@@ -83,12 +85,14 @@ combinations between the comparator and reference cohorts for the
 overlap.
 
 ``` r
+
 tableCohortOverlap(medsOverlap, uniqueCombinations = FALSE)
 ```
 
 [TABLE]
 
 ``` r
+
 plotCohortOverlap(medsOverlap, uniqueCombinations = FALSE)
 ```
 
@@ -99,6 +103,7 @@ obtain stratified estimates. In this example we’ll add age groups to our
 cohort table, and then obtain estimates stratified by these groups.
 
 ``` r
+
 cdm$meds <- cdm$meds |>
   addAge(ageGroup = list(c(0, 49), c(50, 150))) |>
   compute(temporary = FALSE, name = "meds") |>
@@ -111,12 +116,14 @@ As with our overall results, we can quickly create tables and figures to
 view our stratified results.
 
 ``` r
+
 tableCohortOverlap(medsOverlap, uniqueCombinations = FALSE)
 ```
 
 [TABLE]
 
 ``` r
+
 plotCohortOverlap(
   medsOverlap,
   facet = c("age_group"),

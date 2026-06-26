@@ -9,6 +9,7 @@ In this example we’ll look at the time between entering cohorts for
 acetaminophen, morphine, and oxycodone using the Eunomia data.
 
 ``` r
+
 library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
@@ -59,6 +60,7 @@ consider timing between an individual’s first record in each cohort
 (i.e. their first exposure to each of the medications).
 
 ``` r
+
 medsTiming <- cdm$meds |>
   summariseCohortTiming(restrictToFirstEntry = TRUE)
 medsTiming |>
@@ -84,38 +86,40 @@ As with cohort overlap, we have table and plotting functions to help
 view our results.
 
 ``` r
+
 tableCohortTiming(medsTiming, timeScale = "years", uniqueCombinations = FALSE)
 ```
 
-| Cohort name reference | Cohort name comparator | Variable name                | Estimate name        | Estimate value             |
-|-----------------------|------------------------|------------------------------|----------------------|----------------------------|
-| GiBleed               |                        |                              |                      |                            |
-| 11289_warfarin        | 161_acetaminophen      | number records               | N                    | 136                        |
-|                       |                        | number subjects              | N                    | 136                        |
-|                       |                        | years_between_cohort_entries | Median \[Q25 - Q75\] | -53.96 \[-66.97 - -46.34\] |
-|                       |                        |                              | Range                | -92.50 to 3.03             |
-|                       | 7052_morphine          | number records               | N                    | 6                          |
-|                       |                        | number subjects              | N                    | 6                          |
-|                       |                        | years_between_cohort_entries | Median \[Q25 - Q75\] | -4.54 \[-10.36 - 4.76\]    |
-|                       |                        |                              | Range                | -18.99 to 9.24             |
-| 161_acetaminophen     | 11289_warfarin         | number records               | N                    | 136                        |
-|                       |                        | number subjects              | N                    | 136                        |
-|                       |                        | years_between_cohort_entries | Median \[Q25 - Q75\] | 53.96 \[46.34 - 66.97\]    |
-|                       |                        |                              | Range                | -3.03 to 92.50             |
-|                       | 7052_morphine          | number records               | N                    | 35                         |
-|                       |                        | number subjects              | N                    | 35                         |
-|                       |                        | years_between_cohort_entries | Median \[Q25 - Q75\] | 15.79 \[5.02 - 33.51\]     |
-|                       |                        |                              | Range                | -33.72 to 77.29            |
-| 7052_morphine         | 11289_warfarin         | number records               | N                    | 6                          |
-|                       |                        | number subjects              | N                    | 6                          |
-|                       |                        | years_between_cohort_entries | Median \[Q25 - Q75\] | 4.54 \[-4.76 - 10.36\]     |
-|                       |                        |                              | Range                | -9.24 to 18.99             |
-|                       | 161_acetaminophen      | number records               | N                    | 35                         |
-|                       |                        | number subjects              | N                    | 35                         |
-|                       |                        | years_between_cohort_entries | Median \[Q25 - Q75\] | -15.79 \[-33.51 - -5.02\]  |
-|                       |                        |                              | Range                | -77.29 to 33.72            |
+| Cohort name reference | Cohort name comparator | Variable name | Estimate name | Estimate value |
+|----|----|----|----|----|
+| GiBleed |  |  |  |  |
+| 11289_warfarin | 161_acetaminophen | number records | N | 136 |
+|  |  | number subjects | N | 136 |
+|  |  | years_between_cohort_entries | Median \[Q25 - Q75\] | -53.96 \[-66.97 - -46.34\] |
+|  |  |  | Range | -92.50 to 3.03 |
+|  | 7052_morphine | number records | N | 6 |
+|  |  | number subjects | N | 6 |
+|  |  | years_between_cohort_entries | Median \[Q25 - Q75\] | -4.54 \[-10.36 - 4.76\] |
+|  |  |  | Range | -18.99 to 9.24 |
+| 161_acetaminophen | 11289_warfarin | number records | N | 136 |
+|  |  | number subjects | N | 136 |
+|  |  | years_between_cohort_entries | Median \[Q25 - Q75\] | 53.96 \[46.34 - 66.97\] |
+|  |  |  | Range | -3.03 to 92.50 |
+|  | 7052_morphine | number records | N | 35 |
+|  |  | number subjects | N | 35 |
+|  |  | years_between_cohort_entries | Median \[Q25 - Q75\] | 15.79 \[5.02 - 33.51\] |
+|  |  |  | Range | -33.72 to 77.29 |
+| 7052_morphine | 11289_warfarin | number records | N | 6 |
+|  |  | number subjects | N | 6 |
+|  |  | years_between_cohort_entries | Median \[Q25 - Q75\] | 4.54 \[-4.76 - 10.36\] |
+|  |  |  | Range | -9.24 to 18.99 |
+|  | 161_acetaminophen | number records | N | 35 |
+|  |  | number subjects | N | 35 |
+|  |  | years_between_cohort_entries | Median \[Q25 - Q75\] | -15.79 \[-33.51 - -5.02\] |
+|  |  |  | Range | -77.29 to 33.72 |
 
 ``` r
+
 plotCohortTiming(
   medsTiming,
   plotType = "boxplot",
@@ -131,6 +135,7 @@ make a density plot instead of a box plot. Note, for this we’ll need to
 set density to include ‘density’ as one of the estimates.
 
 ``` r
+
 plotCohortTiming(
   medsTiming,
   plotType = "densityplot",
@@ -145,6 +150,7 @@ As well as generating these estimates for cohorts overall, we can also
 obtain stratified estimates.
 
 ``` r
+
 cdm$meds <- cdm$meds |>
   addAge(ageGroup = list(c(0, 49), c(50, 150))) |>
   compute(temporary = FALSE, name = "meds") |>
@@ -161,6 +167,7 @@ tableCohortTiming(medsTiming, timeScale = "years")
 [TABLE]
 
 ``` r
+
 plotCohortTiming(medsTiming,
   plotType = "boxplot",
   timeScale = "years",

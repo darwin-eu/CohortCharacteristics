@@ -38,17 +38,20 @@ individuals within the cohort.
 You can install the latest version of CohortCharacteristics from CRAN:
 
 ``` r
+
 install.packages("CohortCharacteristics")
 ```
 
 Or install the development version from github:
 
 ``` r
+
 install.packages("pak")
 pak::pkg_install("darwin-eu/CohortCharacteristics")
 ```
 
 ``` r
+
 library(CohortCharacteristics)
 ```
 
@@ -84,6 +87,7 @@ downloaded using the CDMConnector package that will give us some more
 real results.
 
 ``` r
+
 library(CDMConnector)
 library(duckdb)
 library(dplyr, warn.conflicts = FALSE)
@@ -95,6 +99,7 @@ cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
 Let’s create a simple cohort:
 
 ``` r
+
 library(DrugUtilisation)
 cdm <- generateIngredientCohortSet(cdm = cdm, name = "my_cohort", ingredient = c("warfarin", "acetaminophen"))
 ```
@@ -105,6 +110,7 @@ We can get counts using the function
 [`summariseCohortCount()`](https://darwin-eu.github.io/CohortCharacteristics/reference/summariseCohortCount.md):
 
 ``` r
+
 result <- summariseCohortCount(cdm$my_cohort)
 result |>
   glimpse()
@@ -129,6 +135,7 @@ You can easily create a table using the associated table function,
 [`tableCohortCount()`](https://darwin-eu.github.io/CohortCharacteristics/reference/tableCohortCount.md):
 
 ``` r
+
 tableCohortCount(result, type = "flextable")
 ```
 
@@ -138,6 +145,7 @@ We could create a simple plot with
 [`plotCohortCount()`](https://darwin-eu.github.io/CohortCharacteristics/reference/plotCohortCount.md):
 
 ``` r
+
 result |>
   filter(variable_name == "Number subjects") |>
   plotCohortCount(x = "cohort_name", colour = "cohort_name")
@@ -151,16 +159,19 @@ then `plot`/`table`.
 ### Cohort attrition
 
 ``` r
+
 result <- summariseCohortAttrition(cdm$my_cohort)
 ```
 
 ``` r
+
 tableCohortAttrition(result, type = "flextable")
 ```
 
 ![](reference/figures/README-unnamed-chunk-12-1.png)
 
 ``` r
+
 result |>
   filter(group_level == "161_acetaminophen") |>
   plotCohortAttrition()
@@ -171,16 +182,19 @@ result |>
 ### Characteristics
 
 ``` r
+
 result <- summariseCharacteristics(cdm$my_cohort)
 ```
 
 ``` r
+
 tableCharacteristics(result, type = "flextable")
 ```
 
 ![](reference/figures/README-unnamed-chunk-16-1.png)
 
 ``` r
+
 result |>
   filter(variable_name == "Age") |>
   plotCharacteristics(plotType = "boxplot", colour = "cohort_name")
@@ -191,16 +205,19 @@ result |>
 ### Timing between cohorts
 
 ``` r
+
 result <- summariseCohortTiming(cdm$my_cohort)
 ```
 
 ``` r
+
 tableCohortTiming(result, type = "flextable")
 ```
 
 ![](reference/figures/README-unnamed-chunk-19-1.png)
 
 ``` r
+
 plotCohortTiming(
   result,
   uniqueCombinations = TRUE,
@@ -213,6 +230,7 @@ plotCohortTiming(
 ![](reference/figures/README-unnamed-chunk-20-1.png)
 
 ``` r
+
 plotCohortTiming(
   result,
   plotType = "densityplot",
@@ -228,16 +246,19 @@ plotCohortTiming(
 ### Overlap between cohort
 
 ``` r
+
 result <- summariseCohortOverlap(cdm$my_cohort)
 ```
 
 ``` r
+
 tableCohortOverlap(result, type = "flextable")
 ```
 
 ![](reference/figures/README-unnamed-chunk-23-1.png)
 
 ``` r
+
 plotCohortOverlap(result, uniqueCombinations = TRUE)
 ```
 
@@ -246,6 +267,7 @@ plotCohortOverlap(result, uniqueCombinations = TRUE)
 ### Large scale characteristics
 
 ``` r
+
 result <- cdm$my_cohort |>
   summariseLargeScaleCharacteristics(
     window = list(c(-90, -1), c(0, 0), c(1, 90)),
@@ -254,12 +276,14 @@ result <- cdm$my_cohort |>
 ```
 
 ``` r
+
 tableTopLargeScaleCharacteristics(result, type = "flextable")
 ```
 
 ![](reference/figures/README-unnamed-chunk-26-1.png)
 
 ``` r
+
 result |>
   omopgenerics::filterGroup(cohort_name == "acetaminophen") |>
   plotLargeScaleCharacteristics()
@@ -268,6 +292,7 @@ result |>
 ![](reference/figures/README-unnamed-chunk-27-1.png)
 
 ``` r
+
 result |>
   omopgenerics::filterGroup(cohort_name == "acetaminophen") |>
   plotComparedLargeScaleCharacteristics(
@@ -285,6 +310,7 @@ to close the connection or with `mockDisconnect()` to close connection
 and delete the created mock data:
 
 ``` r
+
 mockDisconnect(cdm)
 ```
 
@@ -303,6 +329,7 @@ compiling results from different cdm objects.
 **Not recommended**:
 
 ``` r
+
 cdm$my_cohort |>
   summariseCharacteristics() |>
   tableCharacteristics()
@@ -311,6 +338,7 @@ cdm$my_cohort |>
 **Recommended**:
 
 ``` r
+
 x <- summariseCharacteristics(cdm$my_cohort)
 
 tableCharacteristics(x)

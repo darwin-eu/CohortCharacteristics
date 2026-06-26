@@ -21,17 +21,17 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/darwin-eu/CohortCharacteristics/blob/v1.1.1/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/darwin-eu/CohortCharacteristics/blob/main/DESCRIPTION)
 
 Català M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M
 (2026). *CohortCharacteristics: Summarise and Visualise Characteristics
-of Patients in the OMOP CDM*. R package version 1.1.1,
+of Patients in the OMOP CDM*. R package version 1.1.2,
 <https://darwin-eu.github.io/CohortCharacteristics/>.
 
     @Manual{,
       title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},
       author = {Martí Català and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},
       year = {2026},
-      note = {R package version 1.1.1},
+      note = {R package version 1.1.2},
       url = {https://darwin-eu.github.io/CohortCharacteristics/},
     }

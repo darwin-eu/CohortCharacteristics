@@ -56,8 +56,6 @@ library(PatientProfiles)
 library(dplyr, warn.conflicts = FALSE)
 
 cdm <- mockCohortCharacteristics(numberIndividuals = 100)
-#> Warning: There are observation period end dates after the current date: 2026-01-28
-#> ℹ The latest max observation period end date found is 2032-09-05
 
 counts <- cdm$cohort2 |>
   addSex() |>

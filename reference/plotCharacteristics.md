@@ -74,10 +74,10 @@ results <- summariseCharacteristics(
 )
 #> ℹ adding demographics columns
 #> ℹ adding tableIntersectCount 1/1
-#> window names casted to snake_case:
+#> window names cast to snake_case:
 #> • `-365 to -1` -> `365_to_1`
 #> ℹ adding cohortIntersectFlag 1/1
-#> window names casted to snake_case:
+#> window names cast to snake_case:
 #> • `-365 to -1` -> `365_to_1`
 #> ℹ summarising data
 #> ℹ summarising cohort cohort_1
@@ -111,8 +111,6 @@ results |>
     facet = "cdm_name",
     colour = "cohort_name"
   )
-#> Ignoring unknown labels:
-#> • fill : "Cohort name"
 #> Warning: `label` cannot be a <ggplot2::element_blank> object.
 
 

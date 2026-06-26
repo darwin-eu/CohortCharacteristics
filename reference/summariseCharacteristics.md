@@ -163,8 +163,6 @@ library(CohortCharacteristics)
 library(PatientProfiles)
 
 cdm <- mockCohortCharacteristics()
-#> Warning: There are observation period end dates after the current date: 2026-01-28
-#> ℹ The latest max observation period end date found is 2035-12-04
 
 cdm$cohort1 |>
   addSex() |>
@@ -187,10 +185,10 @@ cdm$cohort1 |>
   glimpse()
 #> ℹ adding demographics columns
 #> ℹ adding cohortIntersectFlag 1/1
-#> window names casted to snake_case:
+#> window names cast to snake_case:
 #> • `-365 to 0` -> `365_to_0`
 #> ℹ adding cohortIntersectCount 1/1
-#> window names casted to snake_case:
+#> window names cast to snake_case:
 #> • `-365 to 0` -> `365_to_0`
 #> ℹ summarising data
 #> ℹ summarising cohort cohort_1
@@ -209,7 +207,7 @@ cdm$cohort1 |>
 #> $ variable_level   <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
 #> $ estimate_name    <chr> "count", "count", "min", "q25", "median", "q75", "max…
 #> $ estimate_type    <chr> "integer", "integer", "date", "date", "date", "date",…
-#> $ estimate_value   <chr> "4", "4", "1910-11-23", "1915-03-08", "1937-09-28", "…
+#> $ estimate_value   <chr> "5", "5", "1943-12-05", "1946-11-15", "1949-06-03", "…
 #> $ additional_name  <chr> "overall", "overall", "overall", "overall", "overall"…
 #> $ additional_level <chr> "overall", "overall", "overall", "overall", "overall"…
 

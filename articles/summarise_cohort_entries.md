@@ -9,6 +9,7 @@ hip fracture using the Eunomia synthetic data.
 We’ll begin by creating our study cohorts.
 
 ``` r
+
 library(omock)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
@@ -38,6 +39,7 @@ We can first quickly summarise and present the overall counts of our
 cohorts.
 
 ``` r
+
 cohortCounts <- summariseCohortCount(cdm$injuries)
 tableCohortCount(cohortCounts)
 ```
@@ -49,6 +51,7 @@ add age groups and then stratify our counts by t We can summarise the
 overall counts of our cohorts.
 
 ``` r
+
 cdm$injuries <- cdm$injuries |>
   addAge(
     ageGroup = list(c(0, 3), c(4, 17), c(18, Inf)),
@@ -65,6 +68,7 @@ We can also apply minimum cell count suppression to our cohort counts.
 In this case we will obscure any counts below 10.
 
 ``` r
+
 cohortCounts <- cohortCounts |>
   suppress(minCellCount = 10)
 tableCohortCount(cohortCounts)
@@ -80,6 +84,7 @@ those aged 18 or older. We can easily create plots summarising our
 cohort attrition.
 
 ``` r
+
 cdm <- generateConceptCohortSet(
   cdm = cdm,
   name = "ankle_sprain",
@@ -99,6 +104,7 @@ plotCohortAttrition(attritionSummary)
 ```
 
 ``` r
+
 cdm$ankle_sprain <- cdm$ankle_sprain |>
   addAge() |>
   filter(age >= 18) |>
@@ -114,6 +120,7 @@ We could, of course, have applied these requirements the other way
 around.
 
 ``` r
+
 cdm <- generateConceptCohortSet(
   cdm = cdm,
   name = "ankle_sprain",
@@ -142,6 +149,7 @@ As well as plotting cohort attrition, we can also create a table of our
 results.
 
 ``` r
+
 tableCohortAttrition(attritionSummary)
 ```
 
