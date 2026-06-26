@@ -99,6 +99,11 @@ summariseCohortTiming <- function(cohort,
       dplyr::ungroup()
   }
 
+  if (inherits(cohort, "tbl_duckdb_connection")) {
+    cohort <- cohort |>
+      dplyr::compute()
+  }
+
   strataCols <- unlist(strata) |> unique()
   # should we use addCohortIntersectDate instead to avoid potentially large number of rows?
   cohort_timings <- cohort |>
@@ -110,15 +115,10 @@ summariseCohortTiming <- function(cohort,
     ))) |>
     dplyr::inner_join(
       cohort |>
-        dplyr::rename_with(~ paste0(.x, "_comparator"),
-          .cols = c(
-            "cohort_definition_id", "cohort_start_date",
-            "cohort_end_date", "cohort_name"
-          )
-        ) |>
         dplyr::select(dplyr::all_of(c(
-          strataCols, "cohort_name_comparator",
-          "cohort_start_date_comparator", "cohort_end_date_comparator",
+          strataCols, "cohort_name_comparator" = "cohort_name",
+          "cohort_start_date_comparator" = "cohort_start_date",
+          "cohort_end_date_comparator" = "cohort_end_date",
           "subject_id"
         ))),
       by = c("subject_id", strataCols)

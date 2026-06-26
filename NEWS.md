@@ -1,3 +1,8 @@
+# CohortCharacteristics 1.1.2
+
+* Fix tests for duckdb 1.5.0 by @catalamarti in #404
+* Allow targetCohortId as cohort name in summariseCharacteristics by @catalamarti in #402
+
 # CohortCharacteristics 1.1.1
 
 * Update default of style and type to NULL by @catalamarti in #381 #394
