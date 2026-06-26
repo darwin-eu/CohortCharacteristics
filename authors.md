@@ -21,7 +21,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/darwin-eu/CohortCharacteristics/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/darwin-eu/CohortCharacteristics/blob/v1.1.3/inst/CITATION)
 
 Du M, Prats-Uribe A, Mercadé-Besora N, Lopez-Guell K, Guo Y,
 Alcalde-Herraiz M, Chen X, Delmestri A, Man WY, Duarte-Salles T, Palomar
