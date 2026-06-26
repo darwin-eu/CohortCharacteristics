@@ -1,0 +1,10 @@
+citHeader("To cite CohortCharacteristics package in publications please use:")
+
+bibentry(
+  bibtype = "Article",
+  title = "CohortCharacteristics: an R package for population characterisation in observational studies using the OMOP common data model",
+  author = "Mike Du and Albert Prats-Uribe and Núria Mercadé-Besora and Kim Lopez-Guell and Yuchen Guo and Marta Alcalde-Herraiz and Xihang Chen and Antonella Delmestri and Wai Yi Man and Talita Duarte-Salles and Anna Palomar and Agustina Giuliodori and Emanuel Brađašević and Antea Jezidžić and Elvira Bräuner and Susanne Bruun and Katia Verhamme and Mees Mosseveld and James T. Brash and Dina Vojinovic and Isabella Kaczmarczyk and Akram Mendez and Peter Rijnbeek and Daniel Prieto-Alhambra and Edward Burn and Martí Català",
+  journal = "European Journal of Epidemiology",
+  year = "2026",
+  doi = "10.1007/s10654-025-01352-4"
+)

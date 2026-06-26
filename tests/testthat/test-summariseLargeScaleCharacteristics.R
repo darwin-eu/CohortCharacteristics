@@ -102,7 +102,7 @@ test_that("basic functionality summarise large scale characteristics", {
   conceptId <- c(317009, 317009, 378253, 378253, 4266367, 4266367)
   windowName <- rep(c("0 to 0", "-inf to -366"), 3)
   cohortName <- rep(c("cohort_1"), 6)
-  count <- c(NA, 2, NA, 1, NA, 2)
+  count <- c(NA, 2, NA, 1, NA, NA)
   den <- c(3, 3, 3, 3, 3, 3)
   percentage <- as.character(round((100 * count / den), 2))
   for (k in seq_along(conceptId)) {
@@ -440,7 +440,7 @@ test_that("basic functionality summarise large scale characteristics", {
       )
   )
 
-  expect_true(omopgenrics::settings(result_visit) |>
+  expect_true(omopgenerics::settings(result_visit) |>
                 dplyr::pull(table_name) == "visit_detail")
 
 

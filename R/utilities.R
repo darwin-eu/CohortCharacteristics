@@ -61,3 +61,68 @@ changeDaysToYears <- function(x, est = NULL, fact = 1 / 365.25) {
 pkgVersion <- function() {
   as.character(utils::packageVersion("CohortCharacteristics"))
 }
+addIndex <- function(cohort, cols, unique = FALSE) {
+  dbType <- omopgenerics::sourceType(cohort)
+  if(is.null(dbType)){
+    return(invisible(NULL))
+  }
+
+  if (dbType == "postgresql") {
+    cdm <- omopgenerics::cdmReference(cohort)
+    name <- omopgenerics::tableName(cohort)
+
+    con <- attr(cdm, "dbcon")
+    schema <- attr(cdm, "write_schema")
+    if(length(schema) > 1){
+      prefix <- attr(cdm, "write_schema")["prefix"]
+      schema <- attr(cdm, "write_schema")["schema"]
+    } else {
+      prefix <- NULL
+    }
+
+    existingIndex <- DBI::dbGetQuery(con,
+                                     paste0("SELECT * FROM pg_indexes WHERE",
+                                            " schemaname = '",
+                                            schema,
+                                            "' AND tablename = '",
+                                            paste0(prefix, name),
+                                            "';"))
+    if(nrow(existingIndex) > 0){
+      return(invisible(NULL))
+    }
+
+    cols <- paste0(cols, collapse = ",")
+
+    if(isFALSE(unique)){
+      query <- paste0(
+        "CREATE INDEX ON ",
+        paste0(schema, ".", prefix, name),
+        " (",
+        cols,
+        ");"
+      )
+    } else {
+      query <- paste0(
+        "CREATE UNIQUE INDEX ON ",
+        paste0(schema, ".", prefix, name),
+        " (",
+        cols,
+        ");"
+      )
+    }
+
+    suppressMessages(DBI::dbExecute(con, query))
+
+    # lastly, update statistics
+    cli::cli_inform("Update statistics")
+    query <- paste0(
+      "ANALYZE ",
+      paste0(schema, ".", prefix, name)
+    )
+    suppressMessages(DBI::dbExecute(con, query))
+
+  }
+
+  return(invisible(NULL))
+
+}
