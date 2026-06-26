@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">CohortCharacteristics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,21 +73,27 @@
 <h2 id="package-overview">Package overview<a class="anchor" aria-label="anchor" href="#package-overview"></a>
 </h2>
 <p>CohortCharacteristics contains functions for summarising characteristics of cohorts of patients identified in an OMOP CDM dataset. Once a cohort table has been created, CohortCharacteristics provides a number of functions to help provide a summary of the characteristics of the individuals within the cohort.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#&gt; To cite package 'CohortCharacteristics' in publications use:</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#&gt; To cite CohortCharacteristics package in publications please use:</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt;   Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;   (????). _CohortCharacteristics: Summarise and Visualise</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt;   Characteristics of Patients in the OMOP CDM_. R package version</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt;   1.0.1, &lt;https://darwin-eu.github.io/CohortCharacteristics/&gt;.</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt;   @Manual{,</span></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt;     title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt;     author = {Marti Catala and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt;     note = {R package version 1.0.1},</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt;     url = {https://darwin-eu.github.io/CohortCharacteristics/},</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt;   }</span></span></code></pre></div>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt;   Du M, Prats-Uribe A, Mercadé-Besora N, Lopez-Guell K, Guo Y,</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;   Alcalde-Herraiz M, Chen X, Delmestri A, Man WY, Duarte-Salles T,</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt;   Palomar A, Giuliodori A, Brađašević E, Jezidžić A, Bräuner E, Bruun</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt;   S, Verhamme K, Mosseveld M, Brash JT, Vojinovic D, Kaczmarczyk I,</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt;   Mendez A, Rijnbeek P, Prieto-Alhambra D, Burn E, Català M (2026).</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;   "CohortCharacteristics: an R package for population characterisation</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt;   in observational studies using the OMOP common data model." _European</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt;   Journal of Epidemiology_. doi:10.1007/s10654-025-01352-4</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt;   &lt;https://doi.org/10.1007/s10654-025-01352-4&gt;.</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt;   @Article{,</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt;     title = {CohortCharacteristics: an R package for population characterisation in observational studies using the OMOP common data model},</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co">#&gt;     author = {Mike Du and Albert Prats-Uribe and Núria Mercadé-Besora and Kim Lopez-Guell and Yuchen Guo and Marta Alcalde-Herraiz and Xihang Chen and Antonella Delmestri and Wai Yi Man and Talita Duarte-Salles and Anna Palomar and Agustina Giuliodori and Emanuel Brađašević and Antea Jezidžić and Elvira Bräuner and Susanne Bruun and Katia Verhamme and Mees Mosseveld and James T. Brash and Dina Vojinovic and Isabella Kaczmarczyk and Akram Mendez and Peter Rijnbeek and Daniel Prieto-Alhambra and Edward Burn and Martí Català},</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt;     journal = {European Journal of Epidemiology},</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt;     year = {2026},</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;     doi = {10.1007/s10654-025-01352-4},</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="package-installation">Package installation<a class="anchor" aria-label="anchor" href="#package-installation"></a>
@@ -122,18 +128,16 @@
 <div class="section level3">
 <h3 id="mock-data">Mock data<a class="anchor" aria-label="anchor" href="#mock-data"></a>
 </h3>
-<p>Although the package provides some simple mock data for testing (<code><a href="reference/mockCohortCharacteristics.html">mockCohortCharacteristics()</a></code>), for these examples we will use the GiBleed dataset that can be downloaded using the CDMConnector package that will give us some more real results.</p>
+<p>Although the package provides some simple mock data for testing (<code><a href="reference/mockCohortCharacteristics.html">mockCohortCharacteristics()</a></code>), for these examples we will use the GiBleed dataset that can be downloaded using the omock package that will give us some synthetic data results.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/CDMConnector/" class="external-link">CDMConnector</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.duckdb.org/" class="external-link">duckdb</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ohdsi.github.io/omock/" class="external-link">omock</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/requireEunomia.html" class="external-link">requireEunomia</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dbi.r-dbi.org/reference/dbConnect.html" class="external-link">dbConnect</a></span><span class="op">(</span><span class="fu"><a href="https://r.duckdb.org/reference/duckdb.html" class="external-link">duckdb</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/eunomiaDir.html" class="external-link">eunomiaDir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/CDMConnector/reference/cdmFromCon.html" class="external-link">cdmFromCon</a></span><span class="op">(</span>con <span class="op">=</span> <span class="va">con</span>, cdmSchema <span class="op">=</span> <span class="st">"main"</span>, writeSchema <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/DrugUtilisation/" class="external-link">DrugUtilisation</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ohdsi.github.io/omock/reference/mockCdmFromDataset.html" class="external-link">mockCdmFromDataset</a></span><span class="op">(</span>datasetName <span class="op">=</span> <span class="st">"GiBleed"</span>, source <span class="op">=</span> <span class="st">"duckdb"</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s create a simple cohort:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://darwin-eu.github.io/DrugUtilisation/" class="external-link">DrugUtilisation</a></span><span class="op">)</span></span>
-<span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/DrugUtilisation/reference/generateIngredientCohortSet.html" class="external-link">generateIngredientCohortSet</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"my_cohort"</span>, ingredient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warfarin"</span>, <span class="st">"acetaminophen"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cdm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://darwin-eu.github.io/DrugUtilisation/reference/generateIngredientCohortSet.html" class="external-link">generateIngredientCohortSet</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span>, name <span class="op">=</span> <span class="st">"my_cohort"</span>, ingredient <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warfarin"</span>, <span class="st">"acetaminophen"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="cohort-counts">Cohort counts<a class="anchor" aria-label="anchor" href="#cohort-counts"></a>
@@ -146,7 +150,7 @@
 <span><span class="co">#&gt; Rows: 4</span></span>
 <span><span class="co">#&gt; Columns: 13</span></span>
 <span><span class="co">#&gt; $ result_id        &lt;int&gt; 1, 1, 1, 1</span></span>
-<span><span class="co">#&gt; $ cdm_name         &lt;chr&gt; "Synthea", "Synthea", "Synthea", "Synthea"</span></span>
+<span><span class="co">#&gt; $ cdm_name         &lt;chr&gt; "GiBleed", "GiBleed", "GiBleed", "GiBleed"</span></span>
 <span><span class="co">#&gt; $ group_name       &lt;chr&gt; "cohort_name", "cohort_name", "cohort_name", "cohort_…</span></span>
 <span><span class="co">#&gt; $ group_level      &lt;chr&gt; "acetaminophen", "acetaminophen", "warfarin", "warfar…</span></span>
 <span><span class="co">#&gt; $ strata_name      &lt;chr&gt; "overall", "overall", "overall", "overall"</span></span>
@@ -254,7 +258,6 @@
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">omopgenerics</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/filterGroup.html" class="external-link">filterGroup</a></span><span class="op">(</span><span class="va">cohort_name</span> <span class="op">==</span> <span class="st">"acetaminophen"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/plotLargeScaleCharacteristics.html">plotLargeScaleCharacteristics</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-27-1.png" width="100%"></p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">omopgenerics</span><span class="fu">::</span><span class="fu"><a href="https://darwin-eu.github.io/omopgenerics/reference/filterGroup.html" class="external-link">filterGroup</a></span><span class="op">(</span><span class="va">cohort_name</span> <span class="op">==</span> <span class="st">"acetaminophen"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -264,23 +267,16 @@
 <p><img src="reference/figures/README-unnamed-chunk-28-1.png" width="100%"></p>
 </div>
 <div class="section level3">
-<h3 id="disconnect">Disconnect<a class="anchor" aria-label="anchor" href="#disconnect"></a>
-</h3>
-<p>Disconnect from your database using <code><a href="https://darwin-eu.github.io/omopgenerics/reference/cdmDisconnect.html" class="external-link">CDMConnector::cdmDisconnect()</a></code> to close the connection or with <code>mockDisconnect()</code> to close connection and delete the created mock data:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">mockDisconnect</span><span class="op">(</span><span class="va">cdm</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
 <h3 id="recommendations">Recommendations<a class="anchor" aria-label="anchor" href="#recommendations"></a>
 </h3>
 <p>Although it is technically possible, we do not recommend to pipe table or plot functions with the summarise ones. The main reason is that summarise functions take some time to run, a large scale characterisation in a big cdm object can take a few hours. If we pipe the output to a table/plot function we loose the summarise result object. In fact, some times we would send code around to be ran in others database and what we want to export is the summarised_result objects and not the table or plot which we would like to build after compiling results from different cdm objects.</p>
 <p><strong>Not recommended</strong>:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">my_cohort</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/summariseCharacteristics.html">summariseCharacteristics</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tableCharacteristics.html">tableCharacteristics</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Recommended</strong>:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/summariseCharacteristics.html">summariseCharacteristics</a></span><span class="op">(</span><span class="va">cdm</span><span class="op">$</span><span class="va">my_cohort</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/tableCharacteristics.html">tableCharacteristics</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>

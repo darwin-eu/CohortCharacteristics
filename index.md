@@ -16,20 +16,26 @@ functions to help provide a summary of the characteristics of the
 individuals within the cohort.
 
 ``` R
-#> To cite package 'CohortCharacteristics' in publications use:
+#> To cite CohortCharacteristics package in publications please use:
 #> 
-#>   Catala M, Guo Y, Lopez-Guell K, Burn E, Mercade-Besora N, Alcalde M
-#>   (????). _CohortCharacteristics: Summarise and Visualise
-#>   Characteristics of Patients in the OMOP CDM_. R package version
-#>   1.0.1, <https://darwin-eu.github.io/CohortCharacteristics/>.
+#>   Du M, Prats-Uribe A, Mercadé-Besora N, Lopez-Guell K, Guo Y,
+#>   Alcalde-Herraiz M, Chen X, Delmestri A, Man WY, Duarte-Salles T,
+#>   Palomar A, Giuliodori A, Brađašević E, Jezidžić A, Bräuner E, Bruun
+#>   S, Verhamme K, Mosseveld M, Brash JT, Vojinovic D, Kaczmarczyk I,
+#>   Mendez A, Rijnbeek P, Prieto-Alhambra D, Burn E, Català M (2026).
+#>   "CohortCharacteristics: an R package for population characterisation
+#>   in observational studies using the OMOP common data model." _European
+#>   Journal of Epidemiology_. doi:10.1007/s10654-025-01352-4
+#>   <https://doi.org/10.1007/s10654-025-01352-4>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
-#>   @Manual{,
-#>     title = {CohortCharacteristics: Summarise and Visualise Characteristics of Patients in the OMOP CDM},
-#>     author = {Marti Catala and Yuchen Guo and Kim Lopez-Guell and Edward Burn and Nuria Mercade-Besora and Marta Alcalde},
-#>     note = {R package version 1.0.1},
-#>     url = {https://darwin-eu.github.io/CohortCharacteristics/},
+#>   @Article{,
+#>     title = {CohortCharacteristics: an R package for population characterisation in observational studies using the OMOP common data model},
+#>     author = {Mike Du and Albert Prats-Uribe and Núria Mercadé-Besora and Kim Lopez-Guell and Yuchen Guo and Marta Alcalde-Herraiz and Xihang Chen and Antonella Delmestri and Wai Yi Man and Talita Duarte-Salles and Anna Palomar and Agustina Giuliodori and Emanuel Brađašević and Antea Jezidžić and Elvira Bräuner and Susanne Bruun and Katia Verhamme and Mees Mosseveld and James T. Brash and Dina Vojinovic and Isabella Kaczmarczyk and Akram Mendez and Peter Rijnbeek and Daniel Prieto-Alhambra and Edward Burn and Martí Català},
+#>     journal = {European Journal of Epidemiology},
+#>     year = {2026},
+#>     doi = {10.1007/s10654-025-01352-4},
 #>   }
 ```
 
@@ -83,24 +89,22 @@ The package contain three types of functions:
 Although the package provides some simple mock data for testing
 ([`mockCohortCharacteristics()`](https://darwin-eu.github.io/CohortCharacteristics/reference/mockCohortCharacteristics.md)),
 for these examples we will use the GiBleed dataset that can be
-downloaded using the CDMConnector package that will give us some more
-real results.
+downloaded using the omock package that will give us some synthetic data
+results.
 
 ``` r
 
-library(CDMConnector)
-library(duckdb)
+library(omock)
 library(dplyr, warn.conflicts = FALSE)
-requireEunomia()
-con <- dbConnect(duckdb(), eunomiaDir())
-cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+library(DrugUtilisation)
+
+cdm <- mockCdmFromDataset(datasetName = "GiBleed", source = "duckdb")
 ```
 
 Let’s create a simple cohort:
 
 ``` r
 
-library(DrugUtilisation)
 cdm <- generateIngredientCohortSet(cdm = cdm, name = "my_cohort", ingredient = c("warfarin", "acetaminophen"))
 ```
 
@@ -117,7 +121,7 @@ result |>
 #> Rows: 4
 #> Columns: 13
 #> $ result_id        <int> 1, 1, 1, 1
-#> $ cdm_name         <chr> "Synthea", "Synthea", "Synthea", "Synthea"
+#> $ cdm_name         <chr> "GiBleed", "GiBleed", "GiBleed", "GiBleed"
 #> $ group_name       <chr> "cohort_name", "cohort_name", "cohort_name", "cohort_…
 #> $ group_level      <chr> "acetaminophen", "acetaminophen", "warfarin", "warfar…
 #> $ strata_name      <chr> "overall", "overall", "overall", "overall"
@@ -289,8 +293,6 @@ result |>
   plotLargeScaleCharacteristics()
 ```
 
-![](reference/figures/README-unnamed-chunk-27-1.png)
-
 ``` r
 
 result |>
@@ -301,18 +303,6 @@ result |>
 ```
 
 ![](reference/figures/README-unnamed-chunk-28-1.png)
-
-### Disconnect
-
-Disconnect from your database using
-[`CDMConnector::cdmDisconnect()`](https://darwin-eu.github.io/omopgenerics/reference/cdmDisconnect.html)
-to close the connection or with `mockDisconnect()` to close connection
-and delete the created mock data:
-
-``` r
-
-mockDisconnect(cdm)
-```
 
 ### Recommendations
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## CohortCharacteristics 1.1.3
+
+CRAN release: 2026-05-06
+
+- optimise lsc by [@edward-burn](https://github.com/edward-burn) in
+  [\#406](https://github.com/darwin-eu/CohortCharacteristics/issues/406)
+- Update citation by [@catalamarti](https://github.com/catalamarti) in
+  [\#408](https://github.com/darwin-eu/CohortCharacteristics/issues/408)
+- Move CDMConnector to suggests by
+  [@catalamarti](https://github.com/catalamarti) in
+  [\#409](https://github.com/darwin-eu/CohortCharacteristics/issues/409)
+
 ## CohortCharacteristics 1.1.2
 
 CRAN release: 2026-03-21
