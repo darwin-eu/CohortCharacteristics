@@ -329,6 +329,8 @@ getInitialTable <- function(cohort, tablePrefix, indexDate, censorDate) {
     dplyr::mutate(obs_id = dplyr::row_number()) |>
     dplyr::arrange() |>
     dplyr::mutate(
+      start_obs = as.integer(.data$start_obs),
+      end_obs = as.integer(.data$end_obs),
       window_start = as.Date(clock::add_days(.data$cohort_start_date, .data$start_obs)),
       window_end   = as.Date(clock::add_days(.data$cohort_start_date, .data$end_obs))
     ) |>
